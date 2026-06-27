@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.casehub</groupId>
+    <artifactId>casehub-fsitrading-parent</artifactId>
+    <version>0.2-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>casehub-fsitrading-app</artifactId>
+
+  <name>CaseHub FSI Trading :: App</name>
+  <description>FSI Trading Quarkus application — REST resources, JPA entities, Flyway migrations, foundation wiring</description>
+
+  <dependencies>
+
+    <!-- FSI Trading domain model -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-fsitrading-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- ================================================================ -->
+    <!-- Quarkus core                                                      -->
+    <!-- ================================================================ -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-h2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-scheduler</artifactId>
+    </dependency>
+
+    <!-- ================================================================ -->
+    <!-- CaseHub Foundation                                               -->
+    <!-- ================================================================ -->
+
+    <!-- MockPreferenceProvider @DefaultBean required at production augmentation time.
+         Must be runtime (not test) scope because quarkus:build validates CDI without
+         the test classpath. Scope rule: PLATFORM.md §casehub-platform-api. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform</artifactId>
+      <version>${casehub.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- JQEvaluator required by engine CDI beans -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-expression</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- YAML-backed PreferenceProvider — displaces MockPreferenceProvider @DefaultBean
+         automatically when on the classpath. Reads casehub.platform.config.files. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-config</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Layer 5: adaptive case engine -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-common</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-schema</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-scheduler-quartz</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Layer 9: oversight gate — ActionGateWorkItemHandler + WorkItemLifecycleAdapter -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-work-adapter</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <!-- Transitive of work-adapter; has embedded jandex.idx — auto-discovered -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-blackboard</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Layer 6: trust-weighted routing + WorkerDecisionEntry per worker execution -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-ledger</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- In-memory engine persistence SPIs (CaseInstanceRepository, EventLogRepository,
+         CaseMetaModelRepository) — activated at compile scope so the in-memory impls
+         are available at augmentation time without requiring PostgreSQL. -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-persistence-memory</artifactId>
+      <version>${casehub.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Layer 4: tamper-evident ledger (Merkle chain, GDPR erasure) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ledger-deployment</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Layer 2: human task lifecycle (WorkItem, SLA enforcement) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work-deployment</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Layer 3: typed agent communication (COMMAND/RESPONSE/DONE/DECLINE/FAILURE) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-deployment</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Worker framework -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-worker-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-worker</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- ================================================================ -->
+    <!-- Test                                                              -->
+    <!-- ================================================================ -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-testing</artifactId>
+      <version>${casehub.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-qhorus-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-engine-testing</artifactId>
+      <version>${casehub.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-worker-testing</artifactId>
+      <version>${casehub.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+              <goal>generate-code</goal>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.2.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>native</id>
+      <activation>
+        <property>
+          <name>native</name>
+        </property>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+        <quarkus.native.enabled>true</quarkus.native.enabled>
+      </properties>
+    </profile>
+  </profiles>
+
+</project>

@@ -1,0 +1,15 @@
+#!/bin/bash
+REMOTE="$1"
+UNPUSHED=$(git log @{u}..HEAD --oneline 2>/dev/null)
+if [ -n "$UNPUSHED" ]; then
+  COUNT=$(echo "$UNPUSHED" | wc -l | tr -d ' ')
+  echo ""
+  echo "╔══════════════════════════════════════════════════════════╗"
+  echo "║  Pre-push: ${COUNT} commit(s) about to push               "
+  echo "╠══════════════════════════════════════════════════════════╣"
+  echo "║  Run /git-squash to review history before pushing,      ║"
+  echo "║  or use --no-verify to skip.                            ║"
+  echo "╚══════════════════════════════════════════════════════════╝"
+  echo ""
+  exit 1
+fi
