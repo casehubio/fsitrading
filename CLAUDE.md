@@ -130,13 +130,9 @@ Path: `../parent/docs/AGENTIC-HARNESS-GUIDE.md`
 
 `casehub-fsitrading` is the **Financial Services Trading** application built on the CaseHub platform foundation.
 
-This is an **application layer**, not a framework. The foundation provides coordination, accountability, audit, and compliance primitives. casehub-fsitrading provides the trading domain logic on top: automated trading strategy execution, overnight bot management, market situation detection and response, position risk monitoring, and regulatory compliance for algorithmic trading.
+**Full domain background — read first:** [`docs/DOMAIN.md`](docs/DOMAIN.md) — what automated trading is, the overnight bot management problem, market microstructure, strategy types, key entities, compliance frameworks (MiFID II, Dodd-Frank, MAR), competitive landscape, market data integration patterns, and research directions. That document gives a new session everything it needs to start researching and designing without external reading.
 
-### Why FSI Trading
-
-Java dominates financial services infrastructure — trading platforms, risk engines, and market data systems are overwhelmingly Java. The domain demands exactly what CaseHub provides: tamper-evident audit trails for regulatory compliance (MiFID II, Dodd-Frank), trust-weighted agent routing for strategy selection, human oversight gates for high-risk trades, SLA enforcement for market response windows, and CBR for learning from past market events.
-
-The "overnight bot" scenario is particularly compelling: autonomous trading agents operating outside market hours need formal accountability, escalation when anomalies are detected, and the ability to learn from past overnight incidents. This is not a dashboard — it is a multi-agent coordination system where agents have obligations, deadlines, and trust scores.
+This is an **application layer**, not a framework. The foundation provides coordination, accountability, audit, and compliance primitives. casehub-fsitrading provides the trading domain logic on top.
 
 ### Design Philosophy — Be Bold, Be Adventurous
 
