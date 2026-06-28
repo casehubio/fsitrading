@@ -49,6 +49,10 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-scheduler</artifactId>
     </dependency>
 
@@ -81,25 +85,17 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- JPA-backed platform memory store — entities for the default persistence unit -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-memory-jpa</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
     <!-- Layer 5: adaptive case engine -->
     <dependency>
       <groupId>io.casehub</groupId>
       <artifactId>casehub-engine</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-engine-api</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-engine-common</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-engine-schema</artifactId>
       <version>${casehub.version}</version>
     </dependency>
     <dependency>
@@ -143,31 +139,11 @@
       <groupId>io.casehub</groupId>
       <artifactId>casehub-ledger</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-ledger-api</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-ledger-deployment</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
 
     <!-- Layer 2: human task lifecycle (WorkItem, SLA enforcement) -->
     <dependency>
       <groupId>io.casehub</groupId>
       <artifactId>casehub-work</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-work-api</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-work-deployment</artifactId>
-      <version>${casehub.version}</version>
     </dependency>
 
     <!-- Layer 3: typed agent communication (COMMAND/RESPONSE/DONE/DECLINE/FAILURE) -->
@@ -175,18 +151,8 @@
       <groupId>io.casehub</groupId>
       <artifactId>casehub-qhorus</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-qhorus-deployment</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
 
     <!-- Worker framework -->
-    <dependency>
-      <groupId>io.casehub</groupId>
-      <artifactId>casehub-worker-api</artifactId>
-      <version>${casehub.version}</version>
-    </dependency>
     <dependency>
       <groupId>io.casehub</groupId>
       <artifactId>casehub-worker</artifactId>
