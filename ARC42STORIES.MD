@@ -275,7 +275,7 @@ Inherited from CaseHub Profile:
 
 | Journey | Description | Chapters | Status |
 |---|---|---|---|
-| J1: Automated Strategy Execution | End-to-end MarketEvent → StrategyEvaluation → OrderExecution with audit and trust scoring | 1–6 | 🔲 Pending |
+| J1: Automated Strategy Execution | End-to-end MarketEvent → StrategyEvaluation → OrderExecution with audit and trust scoring | 1–6 | 🔨 In Progress (C1–C3 done) |
 | J2: Risk Management & Oversight | High-risk trade gates, SLA escalation, real-time risk metrics | 7–9 | 🔲 Pending |
 | J3: Market Intelligence & CBR | Incident memory, anomaly detection, learned response | 10–12 | 🔲 Pending |
 
@@ -301,9 +301,9 @@ flowchart LR
     C11 --> C12["C12: Learned Response\n+ L5 adaptive"]
   end
   
-  style C1 fill:#D3D3D3,color:#000
-  style C2 fill:#D3D3D3,color:#000
-  style C3 fill:#D3D3D3,color:#000
+  style C1 fill:#4CAF50,color:#fff
+  style C2 fill:#4CAF50,color:#fff
+  style C3 fill:#4CAF50,color:#fff
   style C4 fill:#D3D3D3,color:#000
   style C5 fill:#D3D3D3,color:#000
   style C6 fill:#D3D3D3,color:#000
@@ -321,9 +321,9 @@ flowchart LR
 
 | # | Chapter | Journey | Layers touched | Delta summary | Status |
 |---|---|---|---|---|---|
-| 1 | Domain Baseline + Synthetic Execution | J1 | L1, L5 | High, High | 🔲 |
-| 2 | Immutable Audit Trail | J1 | + L4 | High | 🔲 |
-| 3 | Trust Scoring from P&L Attestations | J1 | L4 | Medium | 🔲 |
+| 1 | Domain Baseline + Synthetic Execution | J1 | L1, L5 | High, High | ✅ Done |
+| 2 | Immutable Audit Trail | J1 | + L4 | High | ✅ Done |
+| 3 | Trust Scoring from P&L Attestations | J1 | L4 | Medium | ✅ Done |
 | 4 | Trust-Weighted Strategy Selection | J1 | + L6 | High | 🔲 |
 | 5 | Market Data Stream Ingestion | J1 | + L7 | High | 🔲 |
 | 6 | Real Broker API Integration | J1 | L1 | Medium | 🔲 |
@@ -375,12 +375,19 @@ flowchart LR
 
 #### Chapter 1 — Domain Baseline + Synthetic Execution
 
-**Journey:** J1 Automated Strategy Execution | **Sequence:** 1 of 12 | **Status:** 🔲 Pending  
-**Delivered:** TBD | **Issues:** TBD | **Blog:** TBD
+**Journey:** J1 Automated Strategy Execution | **Sequence:** 1 of 12 | **Status:** ✅ Done  
+**Delivered:** 2026-06-29 | **Issues:** #7 | **Commit:** `834faae`
 
 **What this delivers**
 
-System executes a complete strategy evaluation workflow end-to-end with synthetic market data. A MarketEvent (generated via scheduled job) triggers a StrategyEvaluationCase → strategy agent evaluates conditions → creates Order entity → marks order FILLED (simulated). No ledger, no trust scoring, no real feeds yet — purely domain logic + orchestration skeleton.
+Domain model, SPI layer, REST endpoints, and synthetic execution pipeline. MarketEvent → StrategyEvaluator SPI → TradeDecision → Order fill → Position update. Synthetic market data provider generates price ticks for testing.
+
+**What was built**
+
+- **api/ module:** `Instrument`, `TradeDecision`, `OrderSide`, `OrderType`, `AssetClass`, `StrategyType` records/enums; `StrategyEvaluator` SPI interface; `FsiCapabilities` capability tags
+- **app/ module:** `OrderEntity`, `PositionEntity`, `StrategyEntity`, `MarketEventEntity` JPA entities; `OrderService`, `PositionService`, `StrategyService` domain services; `SimulatedOrderExecutor` execution pipeline; `SyntheticMarketDataProvider` price tick generator; REST resources for orders, positions, strategies, market events
+- **Flyway:** V100 migration for fsitrading domain tables on default datasource
+- **Tests:** 33 tests (14 api + 19 app) covering domain model, services, and REST endpoints
 
 **Accountability gaps closed**
 
@@ -400,45 +407,79 @@ System executes a complete strategy evaluation workflow end-to-end with syntheti
 
 #### Chapter 2 — Immutable Audit Trail
 
-**Journey:** J1 Automated Strategy Execution | **Sequence:** 2 of 12 | **Status:** 🔲 Pending  
-**Delivered:** TBD | **Issues:** TBD | **Blog:** TBD
+**Journey:** J1 Automated Strategy Execution | **Sequence:** 2 of 12 | **Status:** ✅ Done  
+**Delivered:** 2026-06-29 | **Issues:** #7 | **Commit:** `df38d9a`
 
 **What this delivers**
 
-Every order execution writes an immutable `OrderExecutionLedgerEntry` with Merkle proof. Causality chain: `MarketEvent → StrategyEvaluationLedgerEntry → OrderExecutionLedgerEntry` via `causedByEntryId`. Regulators can verify tamper-evidence via inclusion proof. MiFID II Art.17 audit requirement satisfied.
+Every order execution writes an immutable ledger entry with Merkle proof (RFC 9162). Full causality chain: `StrategyEvaluationLedgerEntry → OrderExecutionLedgerEntry` via `causedByEntryId`. REST audit endpoint exposes decision chain with digests for regulator verification. MiFID II Art.17 audit requirement satisfied.
+
+**What was built**
+
+- **`OrderExecutionLedgerEntry`** — JOINED inheritance subclass of `LedgerEntry` (`@DiscriminatorValue("ORDER_EXECUTION")`); fields: orderId, instrument, side, quantity, fillPrice, strategyId; `domainContentBytes()` pipe-delimited for Merkle hash
+- **`StrategyEvaluationLedgerEntry`** — JOINED inheritance subclass (`@DiscriminatorValue("STRATEGY_EVALUATION")`); fields: strategyId, strategyName, instrument, signal, rationale
+- **`TradingLedgerService`** — domain service: `recordStrategyEvaluation()` (seq=1, causedByEntryId=null), `recordOrderExecution()` (seq=2, causedByEntryId=evalEntry.id), `findByOrderId()` via `LedgerEntryRepository.findBySubjectId()`
+- **`AuditResource`** — `GET /api/audit/orders/{orderId}` returns ledger entries with digests
+- **Integration:** `SimulatedOrderExecutor` writes eval+execution entries after every fill
+- **Flyway:** V2100 `order_execution_ledger_entry`, V2101 `strategy_evaluation_ledger_entry` on qhorus datasource (V2100+ range avoids collision with engine-ledger V2000–V2001)
+- **Config:** `casehub.ledger.datasource=qhorus`; fsitrading ledger entities added to qhorus Hibernate packages and Flyway locations
+- **Tests:** 18 new tests (51 total) — `OrderExecutionLedgerEntryTest` (5), `StrategyEvaluationLedgerEntryTest` (5), `TradingLedgerServiceTest` (5), `AuditResourceTest` (3)
+
+**Design decisions**
+
+- **`orderId` as `subjectId`** — groups the full evaluation→execution sequence under a single subject with contiguous sequence numbers
+- **V2100+ migration range** — leaves V2000–V2099 for engine-ledger migrations activated in Chapter 4
+- **Excluded `io.casehub.ledger.model` from Hibernate packages** — JOINED inheritance generates LEFT JOINs to ALL scanned subclass tables; engine-ledger entity classes (CaseLedgerEntry, WorkerDecisionEntry) would require tables that don't exist until Chapter 4
 
 **Accountability gaps closed**
 
-- **MiFID II Art.17 audit trail** → L4 casehub-ledger (`OrderExecutionLedgerEntry` with causality chain)
+- ✅ **MiFID II Art.17 audit trail** → L4 casehub-ledger (`OrderExecutionLedgerEntry` with causality chain and Merkle proofs)
 
 **Layer Impact**
 
 | Layer | Delta |
 |---|---|
-| L4 casehub-ledger | High — OrderExecutionLedgerEntry, StrategyEvaluationLedgerEntry, V2000 migration |
-| L5 casehub-engine | Low — StrategyEvaluationCase writes ledger entries at dispatch/completion |
+| L4 casehub-ledger | High — OrderExecutionLedgerEntry, StrategyEvaluationLedgerEntry, V2100–V2101 migrations |
+| L5 casehub-engine | Low — SimulatedOrderExecutor writes ledger entries after fill |
 
 ---
 
 #### Chapter 3 — Trust Scoring from P&L Attestations
 
-**Journey:** J1 Automated Strategy Execution | **Sequence:** 3 of 12 | **Status:** 🔲 Pending  
-**Delivered:** TBD | **Issues:** TBD | **Blog:** TBD
+**Journey:** J1 Automated Strategy Execution | **Sequence:** 3 of 12 | **Status:** ✅ Done  
+**Delivered:** 2026-06-30 | **Issues:** #8 | **Commit:** TBD
 
 **What this delivers**
 
-After each order fills, system writes an `OutcomeAttestationEntry` linking P&L to the strategy agent's decision. Nightly `TrustScoreJob` computes Bayesian Beta scores per strategy. Traders see which strategies perform well in which market conditions. Foundation for trust-weighted routing (C4).
+When a position closes with realized P&L, system writes a `LedgerAttestation` (not a new LedgerEntry subclass — uses the foundation's existing attestation primitive) recording whether the strategy's decision was profitable (SOUND) or unprofitable (FLAGGED), weighted by P&L magnitude via confidence. The foundation's trust scoring machinery (Bayesian Beta via `TrustScoreJob` + incremental `IncrementalTrustUpdateObserver`) computes per-strategy trust scores automatically. REST endpoint exposes scores to traders.
+
+**What was built**
+
+- **`FsiActorIdentity`** (api/) — derives per-strategy actor identity (`"rule:momentum@v1"`) from `StrategyType` enum; follows ledger ADR 0004 convention; auto-resolves to `ActorType.AGENT` via `ActorTypeResolver`
+- **`PnlAttestationService`** (app/) — writes `LedgerAttestation` on position close: verdict = SOUND/FLAGGED, confidence = `min(1.0, max(0.1, 10.0 * |pnl| / closedNotional))`, capabilityTag = FsiCapabilities constant, evidence = JSON P&L data
+- **`FillResult`** record — returned by `PositionService.applyFill()`, carries `realizedPnl` and `closedNotional` for attestation service
+- **`TrustScoreResource`** — `GET /api/trust/strategies` (all) and `GET /api/trust/strategies/{type}` (single); reads from `TrustExportService`; returns CAPABILITY-scoped scores, phase (BOOTSTRAP/ACTIVE at threshold=10), attestation summary
+- **Breaking change**: `TradingLedgerService.recordStrategyEvaluation()` now takes `StrategyType` and derives per-strategy `actorId` instead of hardcoded `"fsi-trading-executor"`
+- **Config**: `casehub.ledger.trust-score.enabled=true`, incremental + materialization enabled
+- **Tests**: 51 new tests (102 total) — FsiActorIdentity (29), FillResult (4), PnlAttestationService (12), TrustScoreResource (6)
+
+**Design decisions**
+
+- **No new LedgerEntry subclass** — `LedgerAttestation` covers P&L outcomes; avoids redundant schema and follows consumer pattern
+- **Per-strategy-type trust** (not per-instance) — all momentum strategies share `"rule:momentum@v1"` identity; answers "does momentum work?" not "does this parameter set work?"
+- **Zero P&L excluded** — break-even closes produce no attestation; prevents volume-of-neutral-activity from inflating trust
+- **`fillPrice * closedQty` as denominator** (not avgCost) — normalizes confidence across price levels, avoids penny-stock inflation
 
 **Accountability gaps closed**
 
-- **Trust-based strategy selection** (partial) → L4 trust scores computed; routing not yet active (C4)
+- ✅ **Trust-based strategy selection** (partial) → L4 trust scores computed; routing not yet active (C4)
 
 **Layer Impact**
 
 | Layer | Delta |
 |---|---|
-| L4 casehub-ledger | Medium — OutcomeAttestationEntry, nightly job integration |
-| L5 casehub-engine | Low — StrategyEvaluationCase writes attestation after order fills |
+| L4 casehub-ledger | Medium — LedgerAttestation writes, trust scoring config enabled, TrustExportService consumed |
+| L1 Domain Baseline | Low — PositionService returns FillResult, TradingLedgerService uses per-strategy actorId |
 
 ---
 

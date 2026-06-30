@@ -1,0 +1,111 @@
+dsl: "0.1"
+version: "1.0.0"
+name: "strategy-evaluation"
+namespace: "fsitrading"
+title: "Strategy Evaluation — automated trade decision cycle"
+summary: |
+  Evaluates market conditions against a trading strategy, produces a trade
+  decision, assesses risk, gates high-risk trades for human approval, and
+  executes the order.  Each case instance represents one evaluation cycle
+  for one strategy reacting to a market event.
+
+semanticData:
+  riskThresholds:
+    highRiskQuantity: 10000
+    highRiskNotional: 500000
+  supportedStrategies:
+    - MOMENTUM
+    - MEAN_REVERSION
+    - STATISTICAL_ARBITRAGE
+
+spec:
+  capabilities:
+    - name: "strategy-evaluation"
+      description: "Evaluates market data against a strategy and produces a TradeDecision or no-action"
+      inputSchema: "{ strategyId: .strategyId, instrument: .instrument, marketEvent: .marketEvent }"
+      outputSchema: "{ evaluation: . }"
+
+    - name: "risk-assessment"
+      description: "Classifies trade risk as LOW, MEDIUM, or HIGH based on position size, notional value, and market conditions"
+      inputSchema: "{ decision: .evaluation.decision, currentPositions: .currentPositions }"
+      outputSchema: "{ riskAssessment: . }"
+
+    - name: "order-execution"
+      description: "Executes the trade decision and returns the filled order"
+      inputSchema: "{ decision: .evaluation.decision, marketEvent: .marketEvent }"
+      outputSchema: "{ execution: . }"
+
+  goals:
+    - name: "trade-executed"
+      kind: success
+      condition: ".execution.status == \"FILLED\""
+
+    - name: "no-trade-needed"
+      kind: success
+      condition: ".evaluation.action == \"HOLD\""
+
+    - name: "trade-rejected"
+      kind: failure
+      condition: ".riskAssessment.level == \"HIGH\" and .humanApproval.outcome == \"REJECTED\""
+
+    - name: "execution-failed"
+      kind: failure
+      condition: ".execution.status == \"REJECTED\" or .execution.status == \"CANCELLED\""
+
+  completion:
+    success:
+      anyOf: [trade-executed, no-trade-needed]
+    failure:
+      anyOf: [trade-rejected, execution-failed]
+
+  milestones:
+    - name: "strategy-evaluated"
+      completionCriteria: ".evaluation != null"
+
+    - name: "risk-assessed"
+      completionCriteria: ".riskAssessment != null"
+
+  bindings:
+    - name: "evaluate-strategy"
+      on:
+        contextChange:
+          filter: ".marketEvent != null and .evaluation == null"
+      when: ".marketEvent != null and .evaluation == null"
+      capability: "strategy-evaluation"
+      outcomePolicy:
+        onDecline: REROUTE
+        onFailure: REROUTE
+        maxRerouteAttempts: 2
+
+    - name: "assess-risk"
+      on:
+        contextChange:
+          filter: ".evaluation.action == \"TRADE\" and .riskAssessment == null"
+      when: ".evaluation.action == \"TRADE\" and .riskAssessment == null"
+      capability: "risk-assessment"
+
+    - name: "human-approval-gate"
+      on:
+        contextChange:
+          filter: ".riskAssessment.level == \"HIGH\" and .humanApproval == null"
+      when: ".riskAssessment.level == \"HIGH\" and .humanApproval == null"
+      humanTask:
+        title: "High-risk trade approval required"
+        expiresIn: PT1H
+        candidateGroups: [senior-traders]
+        inputMapping: "{ decision: .evaluation.decision, risk: .riskAssessment, instrument: .instrument }"
+        outputMapping: "{ humanApproval: . }"
+        outcomes: [APPROVED, REJECTED]
+
+    - name: "execute-trade"
+      on:
+        contextChange:
+          filter: >-
+            .evaluation.action == "TRADE" and .execution == null and
+            (.riskAssessment.level != "HIGH" or .humanApproval.outcome == "APPROVED")
+      when: >-
+        .evaluation.action == "TRADE" and .execution == null and
+        (.riskAssessment.level != "HIGH" or .humanApproval.outcome == "APPROVED")
+      capability: "order-execution"
+      outcomePolicy:
+        onFailure: FAULT
