@@ -146,7 +146,7 @@ This is an **application layer**, not a framework. The foundation provides coord
 
 4. **Propose new platform capabilities.** If trading needs something the platform doesn't have, file it as a parent issue. Examples: real-time market data streaming (casehub-ras for situation detection), temporal pattern detection (Drools CEP for market patterns), time-series analysis SPIs. Push the platform forward.
 
-5. **Pages dashboard** — design a rich trading dashboard using casehub-pages. Position overview, P&L timeline, agent trust scores, strategy performance, overnight incident log, market heat maps. Pages is embedded via iframe — design the data contracts (datasets) that the dashboard will consume.
+5. **Pages UI** — design the trading application UI using casehub-pages. Position overview, P&L timeline, agent trust scores, strategy performance, overnight incident log, market heat maps. Use `hostPanel()` for custom trading-specific components; use the DSL for data-bound visualizations. Pages is embedded via iframe — design the data contracts (datasets) and panel layout that the application will consume. Drive requirements upstream if trading needs primitives casehub-pages doesn't have yet.
 
 6. **casehub-iot for market data** — the IoT layer's `StateChangeEvent` / `CloudEvent` pattern maps to market data feeds. Price ticks, order book changes, and market status events are structurally identical to IoT state changes. Explore using the stream modules (kafka, webhook, poll) for market data ingestion.
 
