@@ -16,6 +16,18 @@
   <description>FSI Trading Quarkus application — REST resources, JPA entities, Flyway migrations, foundation wiring</description>
 
   <dependencies>
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-memory-api</artifactId>
+            <version>0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.casehub</groupId>
+            <artifactId>casehub-memory</artifactId>
+            <version>0.2-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
 
     <!-- FSI Trading domain model -->
     <dependency>
@@ -88,7 +100,7 @@
     <!-- JPA-backed platform memory store — entities for the default persistence unit -->
     <dependency>
       <groupId>io.casehub</groupId>
-      <artifactId>casehub-platform-memory-jpa</artifactId>
+      <artifactId>casehub-memory-jpa</artifactId>
       <version>${casehub.version}</version>
     </dependency>
 
