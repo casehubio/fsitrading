@@ -74,38 +74,10 @@ This repo is one component of the casehubio multi-repo platform. **Before implem
 
 The protocol asks: Does this already exist elsewhere? Is this the right repo for it? Does this create a consolidation opportunity? Is this consistent with how the platform handles the same concern in other repos?
 
-**Platform architecture (read BEFORE any implementation decision):**
-```
-../parent/docs/PLATFORM.md
-../parent/docs/APPLICATIONS.md
-../parent/docs/AGENTIC-HARNESS-GUIDE.md
-../parent/docs/LIFECYCLE.md
-../parent/docs/CHANNELS.md
-../parent/docs/CBR-CAPABILITY.md
-../parent/docs/ARCHITECTURE.md
-```
-
-**Foundation repo deep-dives (read ALL of these during initial research — understand what the platform provides):**
-- casehub-engine: `../parent/docs/repos/casehub-engine.md`
-- casehub-ledger: `../parent/docs/repos/casehub-ledger.md`
-- casehub-work: `../parent/docs/repos/casehub-work.md`
-- casehub-qhorus: `../parent/docs/repos/casehub-qhorus.md`
-- casehub-platform: `../parent/docs/repos/casehub-platform.md`
-- casehub-eidos: `../parent/docs/repos/casehub-eidos.md`
-- casehub-connectors: `../parent/docs/repos/casehub-connectors.md`
-- casehub-iot: `../parent/docs/repos/casehub-iot.md`
-- casehub-ops: `../parent/docs/repos/casehub-ops.md`
-- casehub-neural-text: `../parent/docs/repos/casehub-neural-text.md`
-- casehub-worker: `../parent/docs/repos/casehub-worker.md`
-- casehub-openclaw: `../parent/docs/repos/casehub-openclaw.md`
-- claudony: `../parent/docs/repos/claudony.md`
-- casehub-drafthouse: `../parent/docs/repos/casehub-drafthouse.md`
-
-**Application repo deep-dives (learn from how other apps use the platform):**
-- casehub-aml: `../parent/docs/repos/casehub-aml.md`
-- casehub-clinical: `../parent/docs/repos/casehub-clinical.md`
-- casehub-life: `../parent/docs/repos/casehub-life.md`
-- casehub-devtown: `../parent/docs/repos/casehub-devtown.md`
+## Platform Docs
+- [Platform Index](https://raw.githubusercontent.com/casehubio/parent/main/docs/INDEX.md) — discovery index (start here)
+- [Building Apps](https://raw.githubusercontent.com/casehubio/parent/main/docs/guides/building-apps.md) — app developer guide with cross-app patterns
+- [This repo's deep-dive](https://raw.githubusercontent.com/casehubio/parent/main/docs/repos/casehub-fsitrading.md)
 
 **Use IntelliJ MCP to browse peer repo source code directly.** When designing SPIs, domain model, or integration patterns, use `mcp__intellij-index__ide_find_class`, `ide_find_references`, `ide_type_hierarchy` etc. to see exactly how other repos (especially casehub-aml, casehub-clinical, casehub-life) implement the same foundation patterns. Copy proven patterns — don't invent parallel approaches.
 
