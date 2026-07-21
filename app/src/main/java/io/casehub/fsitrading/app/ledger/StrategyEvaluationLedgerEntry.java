@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.ledger;
 
-import io.casehub.ledger.runtime.model.LedgerEntry;
+import io.casehub.ledger.runtime.model.jpa.JpaLedgerEntry;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "strategy_evaluation_ledger_entry")
 @DiscriminatorValue("STRATEGY_EVALUATION")
-public class StrategyEvaluationLedgerEntry extends LedgerEntry {
+public class StrategyEvaluationLedgerEntry extends JpaLedgerEntry {
 
     @Column(name = "strategy_id", nullable = false)
     public UUID strategyId;

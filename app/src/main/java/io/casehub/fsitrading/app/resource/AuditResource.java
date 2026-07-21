@@ -3,7 +3,7 @@ package io.casehub.fsitrading.app.resource;
 import io.casehub.fsitrading.app.ledger.OrderExecutionLedgerEntry;
 import io.casehub.fsitrading.app.ledger.StrategyEvaluationLedgerEntry;
 import io.casehub.fsitrading.app.ledger.TradingLedgerService;
-import io.casehub.ledger.runtime.model.LedgerEntry;
+import io.casehub.ledger.api.model.LedgerEntry;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

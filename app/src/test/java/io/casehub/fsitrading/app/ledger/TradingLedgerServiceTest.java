@@ -10,7 +10,7 @@ import io.casehub.fsitrading.model.OrderSide;
 import io.casehub.fsitrading.model.OrderType;
 import io.casehub.fsitrading.model.TradeDecision;
 import io.casehub.fsitrading.model.StrategyType;
-import io.casehub.ledger.runtime.model.LedgerEntry;
+import io.casehub.ledger.api.model.LedgerEntry;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
