@@ -76,8 +76,17 @@ The protocol asks: Does this already exist elsewhere? Is this the right repo for
 
 ## Platform Docs
 - [Platform Index](https://raw.githubusercontent.com/casehubio/parent/main/docs/INDEX.md) — discovery index (start here)
-- [Building Apps](https://raw.githubusercontent.com/casehubio/parent/main/docs/guides/building-apps.md) — app developer guide with cross-app patterns
-- [This repo's deep-dive](https://raw.githubusercontent.com/casehubio/parent/main/docs/repos/casehub-fsitrading.md)
+- [Building Platform](https://raw.githubusercontent.com/casehubio/parent/main/docs/guides/building-platform.md) — platform contributor guide
+
+## Repo Guide
+
+This repo owns its own documentation, synced to parent via CI:
+- `docs/consumer-guide.md` — for app builders: modules, APIs, quick start
+- `docs/contributor-guide.md` — for platform builders: architecture, SPIs, internals
+
+Update the relevant guide in the same session when implementation changes modules, SPIs, or public APIs. Do not defer — drift compounds.
+
+Read `consumer-guide.md` for app-level work. Only read `contributor-guide.md` when modifying this repo's internals or extension points.
 
 **Use IntelliJ MCP to browse peer repo source code directly.** When designing SPIs, domain model, or integration patterns, use `mcp__intellij-index__ide_find_class`, `ide_find_references`, `ide_type_hierarchy` etc. to see exactly how other repos (especially casehub-aml, casehub-clinical, casehub-life) implement the same foundation patterns. Copy proven patterns — don't invent parallel approaches.
 
