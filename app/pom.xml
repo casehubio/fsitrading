@@ -171,6 +171,13 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- Agentic orchestration patterns, conversation protocol, summarisation, AI routing -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-blocks</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
     <!-- ================================================================ -->
     <!-- Test                                                              -->
     <!-- ================================================================ -->

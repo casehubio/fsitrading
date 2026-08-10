@@ -1,7 +1,14 @@
 package io.casehub.fsitrading.app.service;
 
 import io.casehub.fsitrading.app.model.MarketEventEntity;
-import io.casehub.fsitrading.model.*;
+import io.casehub.fsitrading.model.AssetClass;
+import io.casehub.fsitrading.model.Instrument;
+import io.casehub.fsitrading.model.MarketEventType;
+import io.casehub.fsitrading.model.OrderSide;
+import io.casehub.fsitrading.model.OrderStatus;
+import io.casehub.fsitrading.model.OrderType;
+import io.casehub.fsitrading.model.StrategyType;
+import io.casehub.fsitrading.model.TradeDecision;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -9,7 +16,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @QuarkusTest
 class SimulatedOrderExecutorTest {
@@ -80,4 +88,14 @@ class SimulatedOrderExecutorTest {
         assertFalse(positions.isEmpty());
         assertEquals(0, BigDecimal.valueOf(100).compareTo(positions.get(0).getQuantity()));
     }
+
+    @Test
+    void executeDecision_shouldBeTransactional() throws NoSuchMethodException {
+        var method = SimulatedOrderExecutor.class.getDeclaredMethod(
+                "executeDecision", TradeDecision.class, MarketEventEntity.class);
+        org.assertj.core.api.Assertions.assertThat(method.isAnnotationPresent(jakarta.transaction.Transactional.class))
+                                       .as("executeDecision must be @Transactional for dual-datasource atomicity")
+                                       .isTrue();
+    }
+
 }

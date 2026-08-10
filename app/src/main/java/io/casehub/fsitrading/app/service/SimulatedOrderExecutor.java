@@ -4,7 +4,6 @@ import io.casehub.fsitrading.app.ledger.PnlAttestationService;
 import io.casehub.fsitrading.app.ledger.TradingLedgerService;
 import io.casehub.fsitrading.app.model.MarketEventEntity;
 import io.casehub.fsitrading.app.model.OrderEntity;
-import io.casehub.fsitrading.model.StrategyType;
 import io.casehub.fsitrading.model.TradeDecision;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -32,8 +31,9 @@ public class SimulatedOrderExecutor {
     @Inject
     PnlAttestationService pnlAttestationService;
 
+    @jakarta.transaction.Transactional
     public OrderEntity executeDecision(TradeDecision decision, MarketEventEntity triggeringEvent) {
-        var order = orderService.createFromDecision(decision);
+        var order     = orderService.createFromDecision(decision);
         var fillPrice = determineFillPrice(decision, triggeringEvent);
         order = orderService.fill(order.getId(), fillPrice);
         var fillResult = positionService.applyFill(order, decision.instrument().assetClass());
@@ -52,13 +52,13 @@ public class SimulatedOrderExecutor {
 
         if (fillResult.hasRealizedPnl()) {
             pnlAttestationService.recordOutcome(evalEntryId, order.getId(),
-                    strategyType, fillResult);
+                                                strategyType, fillResult);
         }
 
         log.infof("Simulated fill: %s %s %s @ %s (strategy: %s, ledger: eval=%s, pnl=%s)",
-                decision.side(), decision.quantity(), decision.instrument().symbol(),
-                fillPrice, decision.strategyId(), evalEntryId,
-                fillResult.hasRealizedPnl() ? fillResult.realizedPnl() : "none");
+                  decision.side(), decision.quantity(), decision.instrument().symbol(),
+                  fillPrice, decision.strategyId(), evalEntryId,
+                  fillResult.hasRealizedPnl() ? fillResult.realizedPnl() : "none");
         return order;
     }
 

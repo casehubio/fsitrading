@@ -128,49 +128,58 @@ C4Context
 
 ### Core Architectural Decisions
 
-**Multi-agent trading harness:** Each strategy is an agent (`AgentDescriptor`) with capability tags (e.g. `momentum`, `mean-reversion`, `arbitrage`). casehub-engine routes MarketEvent → best-performing strategy via trust-weighted selection. Bayesian Beta scores update nightly from P&L outcome attestations.
+**Multi-agent trading harness:** Each strategy is an agent (`AgentDescriptor`) with capability tags and disposition profiles. blocks' orchestration framework (Supervisor, Parallel, Voting, Debate, HTN, Conditional, Sequence, Loop) coordinates multi-agent decision-making. All 6 AI routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination) select the best agent for each situation.
 
-**Case-based reasoning for market incidents:** Flash crashes, liquidity events, overnight gaps → stored in `CaseMemoryStore` (graph backend for temporal queries). Future anomalies retrieve similar past incidents via `CaseRetriever` SPI. Agents learn from history automatically.
+**Multi-level market analysis via summarisation:** blocks' temporal summarisation framework IS the market analysis — 5 levels from raw ticks through 1-minute bars, 5-minute trends, hourly regime detection, to session narrative. Each strategy agent observes at the temporal granularity matching its time horizon.
 
-**Human oversight gates for high-risk trades:** Large positions (> $1M notional) or high-volatility conditions (> 2σ) trigger a WorkItem with SLA. Trader must approve before order submission. MiFID II Art.17 compliance out of the box.
+**Structured agent deliberation:** When significant market events occur, specialist agents deliberate on qhorus channels using blocks' conversation protocol with epistemic common ground tracking and convergence detection. Automated post-mortems generated from conversation state.
 
-**Immutable audit trail:** Every order execution → `OrderExecutionLedgerEntry extends LedgerEntry` with Merkle proof. Causality chain: `MarketEvent → StrategyEvaluationLedgerEntry → OrderExecutionLedgerEntry` via `causedByEntryId`. Tamper-evident for regulatory inspection.
+**Case-based reasoning for market events:** CBR with typed feature-vector similarity — `TimeSeries` with DTW for price pattern matching, `DiscreteSequence` with edit distance for event sequence comparison. Plan adaptation transforms retrieved incident response plans to current conditions.
 
-**Reactive market data ingestion:** `casehub-platform-streams-webhook` adapter receives price ticks as CloudEvents → `casehub-ras` (future) detects anomaly patterns → triggers case creation when threshold crossed.
+**Human oversight gates for high-risk trades:** `ActionRiskClassifier` gates consequential actions through WorkItems with SLA enforcement and escalation tiers.
 
-### Layer Taxonomy
+**Immutable audit trail:** `LedgerExecutionListener` provides EU AI Act Art.12 compliance-grade audit of every orchestration decision. Full causality chain via `causedByEntryId`.
 
-Follows CaseHub Application Tier natural integration sequence:
+**Professional trading workspaces:** Two dock-workbench pages (Trading Desk + Ops Centre) composed from 25 blocks-ui components with drag-and-drop panel rearrangement, floating/popout windows, and persistent layout state.
 
-| Layer | Foundation module | What it adds |
+### Plan Structure — Vertical Slices
+
+**Supersedes:** The original 3-journey / 12-chapter / 9-layer model (June 2026). Chapters 1-3 from the old plan are implemented and retained as "Legacy C1-C3" history below.
+
+The new plan uses **vertical slices** — each chapter delivers a working end-to-end trading scenario with backend orchestration + UI panels. Priority: showcase platform → domain fidelity → layer parity.
+
+| Chapter | Name | Orchestration patterns |
 |---|---|---|
-| L1 Domain Baseline | *(pure Java)* | Position, Order, Strategy, MarketEvent entities; `@DefaultBean` StrategyEvaluator stub |
-| L2 casehub-work | `casehub-work` | Human task lifecycle — WorkItem for trade approval, SLA breach escalation |
-| L3 casehub-qhorus | `casehub-qhorus` | Agent mesh — strategy consensus, overnight incident handoff to on-call trader |
-| L4 casehub-ledger | `casehub-ledger` | Tamper-evident audit — OrderExecutionLedgerEntry, trust scoring per strategy |
-| L5 casehub-engine | `casehub-engine` | Orchestration — StrategyEvaluationCase, trust-weighted strategy selection |
-| L6 Trust Routing | `casehub-engine-ledger` | Trust-weighted agent selection from P&L attestations |
-| L7 Market Data Streams | `casehub-platform-streams-*` | CloudEvent ingestion from market data feeds |
-| L8 Case Memory (CBR) | `casehub-platform-memory-*` | Graph-backed incident memory for CBR retrieval |
-| L9 Pages Dashboard | `casehub-pages` | Real-time position/P&L/strategy performance view |
+| C0 | Foundation Fixes | — |
+| C1 | Strategy Arena | Supervisor, Parallel, Voting |
+| C2 | Market Pulse | Sequence, Loop |
+| C3 | Trade Deliberation | Debate |
+| C4 | Overnight Ops | HTN, Conditional |
+| C5 | The Trading Desk | (all accessible from UI) |
+| C6 | Knowledge & Compliance | — |
 
-### Journey and Chapter Sequencing Rationale
+### Sequencing Rationale
 
-Three Journeys:
+```mermaid
+flowchart LR
+  C0["C0: Foundation\nFixes"] --> C1["C1: Strategy\nArena"]
+  C1 --> C2["C2: Market\nPulse"]
+  C1 --> C3["C3: Trade\nDeliberation"]
+  C2 --> C4["C4: Overnight\nOps"]
+  C3 --> C4
+  C4 --> C5["C5: Trading\nDesk"]
+  C5 --> C6["C6: Knowledge\n& Compliance"]
 
-**Journey 1: Automated Strategy Execution** — end-to-end from MarketEvent → StrategyEvaluation → OrderExecution with audit and trust scoring. Closes core accountability gaps. Chapters 1–6.
+  style C0 fill:#4CAF50,color:#fff
+  style C1 fill:#D3D3D3,color:#000
+  style C2 fill:#D3D3D3,color:#000
+  style C3 fill:#D3D3D3,color:#000
+  style C4 fill:#D3D3D3,color:#000
+  style C5 fill:#D3D3D3,color:#000
+  style C6 fill:#D3D3D3,color:#000
+```
 
-**Journey 2: Risk Management & Oversight** — high-risk trade gates, SLA-driven escalation, real-time risk metrics. Chapters 7–9.
-
-**Journey 3: Market Intelligence & CBR** — incident memory, anomaly detection, learned response from past events. Chapters 10–12.
-
-**Sequencing logic:**
-- **C1 before C2:** C1 establishes domain model; C2 adds audit on top of it.
-- **C2 before C3:** C2 creates ledger entries; C3 reads them for trust scores.
-- **C3 before C4:** C4 (trust routing) requires C3 (trust scores) at runtime.
-- **C4 before C7:** Risk gates (C7) need trust-weighted routing (C4) to select the best-performing risk classifier agent.
-- **C5–C6 independent of C7–C9:** Market data and broker integration can proceed in parallel with risk management layers.
-- **C10–C12 (CBR):** Deferred until core execution (C1–C6) and risk (C7–C9) are complete. CBR adds intelligence, not foundation.
+C2 and C3 are independent of each other (both depend on C1). C4 depends on both. C5 composes C1-C4 into the UI. C6 adds CBR and compliance on top.
 
 ---
 
@@ -269,109 +278,64 @@ Inherited from CaseHub Profile:
 
 ---
 
-## §9 Journeys and Chapters
+## §9 Chapters
 
-### §9.1 Journey Overview
+### §9.1 Chapter Index (Current Plan)
 
-| Journey | Description | Chapters | Status |
-|---|---|---|---|
-| J1: Automated Strategy Execution | End-to-end MarketEvent → StrategyEvaluation → OrderExecution with audit and trust scoring | 1–6 | 🔨 In Progress (C1–C3 done) |
-| J2: Risk Management & Oversight | High-risk trade gates, SLA escalation, real-time risk metrics | 7–9 | 🔲 Pending |
-| J3: Market Intelligence & CBR | Incident memory, anomaly detection, learned response | 10–12 | 🔲 Pending |
-
-```mermaid
-flowchart LR
-  subgraph J1["Journey 1: Automated Strategy Execution"]
-    C1["C1: Domain Baseline\nL1"] --> C2["C2: Audit Trail\n+ L4 Ledger"]
-    C2 --> C3["C3: Trust Scoring\n+ L4"]
-    C3 --> C4["C4: Trust Routing\n+ L6"]
-    C4 --> C5["C5: Market Data\n+ L7 Streams"]
-    C5 --> C6["C6: Broker Integration\n+ L1 real exec"]
-  end
-  
-  subgraph J2["Journey 2: Risk Management"]
-    C6 --> C7["C7: Risk Gates\n+ L2 Work"]
-    C7 --> C8["C8: SLA Escalation\n+ L3 Qhorus"]
-    C8 --> C9["C9: Risk Dashboard\n+ L9 Pages"]
-  end
-  
-  subgraph J3["Journey 3: Market Intelligence"]
-    C9 --> C10["C10: Incident Memory\n+ L8 CBR"]
-    C10 --> C11["C11: Anomaly Detection\n+ L7 RAS"]
-    C11 --> C12["C12: Learned Response\n+ L5 adaptive"]
-  end
-  
-  style C1 fill:#4CAF50,color:#fff
-  style C2 fill:#4CAF50,color:#fff
-  style C3 fill:#4CAF50,color:#fff
-  style C4 fill:#D3D3D3,color:#000
-  style C5 fill:#D3D3D3,color:#000
-  style C6 fill:#D3D3D3,color:#000
-  style C7 fill:#D3D3D3,color:#000
-  style C8 fill:#D3D3D3,color:#000
-  style C9 fill:#D3D3D3,color:#000
-  style C10 fill:#D3D3D3,color:#000
-  style C11 fill:#D3D3D3,color:#000
-  style C12 fill:#D3D3D3,color:#000
-```
+| # | Chapter | Primary showcase | Orchestration | Status |
+|---|---|---|---|---|
+| C0 | Foundation Fixes | Prerequisites | — | 🔨 In Progress |
+| C1 | Strategy Arena | blocks orchestration, routing, eidos | Supervisor, Parallel, Voting | 🔲 |
+| C2 | Market Pulse | blocks summarisation, pages-push | Sequence, Loop | 🔲 |
+| C3 | Trade Deliberation | blocks conversation, convergence | Debate | 🔲 |
+| C4 | Overnight Ops | engine cases, oversight, SLA | HTN, Conditional | 🔲 |
+| C5 | The Trading Desk | dock-workbench, floating panels | (all) | 🔲 |
+| C6 | Knowledge & Compliance | neocortex CBR, GDPR | — | 🔲 |
 
 ---
 
-### §9.2 Chapter Index
+### §9.2 Chapter Summaries (New Plan)
 
-| # | Chapter | Journey | Layers touched | Delta summary | Status |
-|---|---|---|---|---|---|
-| 1 | Domain Baseline + Synthetic Execution | J1 | L1, L5 | High, High | ✅ Done |
-| 2 | Immutable Audit Trail | J1 | + L4 | High | ✅ Done |
-| 3 | Trust Scoring from P&L Attestations | J1 | L4 | Medium | ✅ Done |
-| 4 | Trust-Weighted Strategy Selection | J1 | + L6 | High | 🔲 |
-| 5 | Market Data Stream Ingestion | J1 | + L7 | High | 🔲 |
-| 6 | Real Broker API Integration | J1 | L1 | Medium | 🔲 |
-| 7 | High-Risk Trade Approval Gates | J2 | + L2 | High | 🔲 |
-| 8 | SLA-Driven Overnight Escalation | J2 | + L3 | Medium | 🔲 |
-| 9 | Real-Time Risk Dashboard | J2 | + L9 | Medium | 🔲 |
-| 10 | Market Incident Memory (CBR Retain) | J3 | + L8 | High | 🔲 |
-| 11 | Anomaly Detection & Situation Triggers | J3 | L7 | Medium | 🔲 |
-| 12 | Learned Incident Response (CBR Reuse) | J3 | L5, L8 | Medium | 🔲 |
+Each chapter gets its own design spec before implementation. Full spec: `specs/main/2026-08-10-fsitrading-replan-design.md`.
 
----
+#### C0 — Foundation Fixes
+**Status:** 🔨 In Progress | **Issue:** #17
 
-### Layer × Chapter Matrix
+Close prerequisite debt: fix #14 (@Transactional), add blocks dependency, triage infrastructure issues, rewrite ARC42STORIES.MD. No new domain features.
 
-| Layer | C1 | C2 | C3 | C4 | C5 | C6 | C7 | C8 | C9 | C10 | C11 | C12 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| L1 Domain Baseline | High | — | — | — | — | Medium | Low | — | — | — | — | — |
-| L2 casehub-work | — | — | — | — | — | — | High | Low | — | — | — | — |
-| L3 casehub-qhorus | — | — | — | — | — | — | — | High | — | — | — | — |
-| L4 casehub-ledger | — | High | Medium | Low | — | — | Low | — | — | — | — | — |
-| L5 casehub-engine | High | Low | Low | Low | — | — | Low | — | — | — | — | Medium |
-| L6 Trust Routing | — | — | — | High | — | — | — | — | — | — | — | — |
-| L7 Market Data Streams | — | — | — | — | High | — | — | — | — | — | Medium | — |
-| L8 Case Memory (CBR) | — | — | — | — | — | — | — | — | — | High | Low | Medium |
-| L9 Pages Dashboard | — | — | — | — | — | — | — | — | Medium | — | — | — |
+#### C1 — Strategy Arena
+**Status:** 🔲 | **Issue:** TBD
 
----
+Multiple strategies evaluate a market signal, get trust-routed via all 6 AI routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination), results aggregated via Voting. Eidos agent registration (#12), quality dimensions (#13), all 3 accountability listeners. AffordanceRenderer for structured agent context. UI: trust-score-panel, trust-workbench, routing-rationale, kpi-metric-row, preferences-editor.
 
-### Sequencing Rationale
+#### C2 — Market Pulse
+**Status:** 🔲 | **Issue:** TBD
 
-**Hard dependencies (blocking):**
-- **C1 before C2:** C2 creates `OrderExecutionLedgerEntry extends LedgerEntry` — requires C1 domain model (`Order` entity).
-- **C2 before C3:** C3 reads ledger attestations to compute trust scores — requires C2 ledger integration.
-- **C3 before C4:** C4 `TrustWeightedAgentStrategy` queries `TrustExportService` — requires C3 trust scores populated.
-- **C4 before C7:** C7 risk gates use trust-weighted routing to select best risk classifier — requires C4.
-- **C7 before C8:** C8 SLA escalation sends Qhorus HANDOFF message when WorkItem breaches — requires C7 WorkItems exist.
-- **C8 before C9:** C9 dashboard displays WorkItem backlog + SLA breach history — requires C8 escalation data.
-- **C9 before C10:** C10 adds incident memory; dashboard (C9) visualizes incident timeline — soft ordering for UX coherence.
-- **C10 before C11:** C11 anomaly detection writes incidents to memory (C10) for CBR retrieval.
-- **C11 before C12:** C12 retrieves similar incidents (C11 writes them) to inform response.
+5-level summarisation pipeline (tick → 1-min bar → 5-min trend → hourly regime → session narrative) via blocks' SummarisationRunner chains. KeyedSummarisationRunner per instrument. PartitionedObservationService per strategy. TieredContentSummariser (verbatim/grouped/LLM). Channel bridges (ChannelEventAdapter/Publisher). Pages-push WebSocket for real-time dashboard updates.
 
-**Independent (minimal delta sequencing):**
-- **C5 and C6:** C5 (market data) and C6 (broker API) are independent external integrations. C5 first (smaller delta — one stream adapter vs full broker client).
-- **C1 and C5:** C1 uses synthetic market data; C5 replaces it with real feed. No runtime dependency.
+#### C3 — Trade Deliberation
+**Status:** 🔲 | **Issue:** TBD
+
+Specialist agents deliberate on qhorus channels using ConversationProtocol. CommonGroundAnalyser tracks established/pending/disputed facts. ConvergenceAnalyser detects consensus/deadlock. ChannelAgentDispatcher routes sub-tasks. ContextTracker manages LLM context. Trade commitments via 7-state model. UI: channel-activity, commitment-viz, blocks-timeline, context-gauge.
+
+#### C4 — Overnight Ops
+**Status:** 🔲 | **Issue:** TBD
+
+OvernightIncidentCaseDefinition via engine. HTN decomposes response by severity. Conditional routes by event type. FsiActionRiskClassifier gates high-risk actions. FsiSlaBreachPolicy with 3 escalation tiers. WorkItems for on-call trader. Notifications via NotificationDispatcher. UI: work-item-inbox, approval-gate, sla-indicator, case-explorer, notification-inbox.
+
+#### C5 — The Trading Desk
+**Status:** 🔲 | **Issue:** TBD
+
+Two dock-workbench pages: Trading Desk (12 panels: positions, P&L heatmap, strategies, market data, trust, routing, deliberation, commitments, audit, preferences) and Ops Centre (13 panels: incidents, cases, approvals, response channel, timeline, SLA, alerts). Quinoa integration, floating/popout panels, layout persistence via SQLite, full WebSocket push.
+
+#### C6 — Knowledge & Compliance
+**Status:** 🔲 | **Issue:** TBD
+
+Full CBR cycle: feature schema with TimeSeries+DTW and DiscreteSequence+EditDistance, trust-weighted retrieval, temporal decay. FsiPlanAdapter with PlanEnsembleAnalyzer. Automated post-mortem via ConversationRenderer. Compliance grid (MiFID II, Dodd-Frank, MAR). GDPR erasure. UI: similarity-panel, compliance-summary, gdpr-erasure-action.
 
 ---
 
-### §9.3 Chapter Entries
+### §9.3 Legacy Chapter Entries (Original Plan, C1-C3 Delivered)
 
 #### Chapter 1 — Domain Baseline + Synthetic Execution
 
@@ -483,7 +447,10 @@ When a position closes with realized P&L, system writes a `LedgerAttestation` (n
 
 ---
 
-#### Chapter 4 — Trust-Weighted Strategy Selection
+**Note:** Old chapters 4-12 (pending) have been superseded by the vertical-slice replan (C0-C6 above). See `specs/main/2026-08-10-fsitrading-replan-design.md` for the full design.
+
+<!--
+#### Chapter 4 — Trust-Weighted Strategy Selection (SUPERSEDED)
 
 **Journey:** J1 Automated Strategy Execution | **Sequence:** 4 of 12 | **Status:** 🔲 Pending  
 **Delivered:** TBD | **Issues:** TBD | **Blog:** TBD
@@ -693,7 +660,7 @@ Template structure per layer:
 - **L6 Trust Routing** — participates in C4
 - **L7 Market Data Streams** — participates in C5, C11
 - **L8 Case Memory (CBR)** — participates in C10, C11, C12
-- **L9 Pages Dashboard** — participates in C9
+-->
 
 ---
 
