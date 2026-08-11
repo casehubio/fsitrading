@@ -43,6 +43,9 @@ public class PositionEntity {
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+    @Column(name = "opened_at")
+    private Instant openedAt;
+
 
     protected PositionEntity() {}
 
@@ -72,4 +75,9 @@ public class PositionEntity {
     public void setRealizedPnl(BigDecimal realizedPnl) { this.realizedPnl = realizedPnl; }
     public Instant getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+
+    public Instant getOpenedAt()                {return openedAt;}
+
+    public void setOpenedAt(Instant openedAt)   {this.openedAt = openedAt;}
+
 }
