@@ -39,4 +39,13 @@ public class StrategyService {
                         StrategyEntity.class)
                 .getResultList();
     }
+
+    public boolean isActive(StrategyType type) {
+        return em.createQuery(
+                         "SELECT COUNT(s) FROM StrategyEntity s WHERE s.strategyType = :type AND s.active = true",
+                         Long.class)
+                 .setParameter("type", type)
+                 .getSingleResult() > 0;
+    }
+
 }
