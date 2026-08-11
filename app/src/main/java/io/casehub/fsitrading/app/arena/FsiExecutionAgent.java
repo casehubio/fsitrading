@@ -64,6 +64,12 @@ public class FsiExecutionAgent {
                 continue;
             }
 
+            if (!instrument.equals(signal.instrument())) {
+                log.warnf("Skipping instrument %s — fill price only available for signal instrument %s",
+                        instrument, signal.instrument());
+                continue;
+            }
+
             TradeDecision decision = buildConsensusDecision(instrument, ic, ctx);
             var order = orderService.createFromDecision(decision);
             order = orderService.fill(order.getId(), fillPrice);

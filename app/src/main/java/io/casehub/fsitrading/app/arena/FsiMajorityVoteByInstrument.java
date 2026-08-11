@@ -79,16 +79,17 @@ public class FsiMajorityVoteByInstrument {
     }
 
     private BigDecimal computeWeightedQuantity(List<VotedDecision> winningVotes) {
-        double weightedSum = 0;
-        double scoreSum = 0;
+        BigDecimal weightedSum = BigDecimal.ZERO;
+        BigDecimal scoreSum = BigDecimal.ZERO;
         for (var vote : winningVotes) {
-            weightedSum += vote.decision.quantity().doubleValue() * vote.score;
-            scoreSum += vote.score;
+            BigDecimal score = BigDecimal.valueOf(vote.score);
+            weightedSum = weightedSum.add(vote.decision.quantity().multiply(score));
+            scoreSum = scoreSum.add(score);
         }
-        if (scoreSum == 0) {
+        if (scoreSum.signum() == 0) {
             return winningVotes.getFirst().decision().quantity();
         }
-        return BigDecimal.valueOf(weightedSum / scoreSum).setScale(0, RoundingMode.HALF_UP);
+        return weightedSum.divide(scoreSum, 0, RoundingMode.HALF_UP);
     }
 
     private record VotedDecision(TradeDecision decision, double score) {}

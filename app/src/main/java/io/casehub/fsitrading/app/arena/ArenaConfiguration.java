@@ -140,7 +140,7 @@ public class ArenaConfiguration {
             return CompletableFuture.completedFuture(AgentResult.success(null, Map.of()));
         }
 
-        Map<StrategyType, StrategyResponse> evaluations = new HashMap<>();
+        Map<StrategyType, StrategyResponse> evaluations = new java.util.concurrent.ConcurrentHashMap<>();
         List<CompletableFuture<Void>> futures = selected.stream()
                 .map(candidate -> {
                     if (candidate.ref() instanceof AgentRef.ExternalAgent ext) {
@@ -151,9 +151,7 @@ public class ArenaConfiguration {
                                         String name = candidate.ref().name();
                                         StrategyType type = resolveStrategyType(name);
                                         if (type != null) {
-                                            synchronized (evaluations) {
-                                                evaluations.put(type, response);
-                                            }
+                                            evaluations.put(type, response);
                                         }
                                     }
                                 }).toCompletableFuture();
