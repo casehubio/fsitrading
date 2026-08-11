@@ -22,7 +22,7 @@
 | `casehub-platform-api` | L1: Identity | `ActorType`, `TenancyConstants` -- actor identity for ledger entries |
 | `casehub-platform-expression` | L1: Expression | JQ evaluator for case definition bindings |
 | `casehub-platform-config` | L1: Config | YAML-backed `PreferenceProvider` displacing `MockPreferenceProvider` |
-| `casehub-engine` | L5: Case engine | `CaseDefinition`, `Binding`, `Goal`, `Milestone` -- strategy evaluation case lifecycle |
+| `casehub-blocks` | Orchestration | `Patterns`, `ExecutionModel`, `AgentRef`, `RoutingStrategy` -- arena pipeline composition |
 | `casehub-engine-planning` | L5: Planning | Plan item store for case execution |
 | `casehub-engine-ledger` | L6: Trust routing | Trust-weighted routing with `WorkerDecisionEntry` per worker execution |
 | `casehub-ledger` | L4: Ledger | `LedgerEntryRepository`, `LedgerAttestation`, `AttestationVerdict` -- tamper-evident audit with Merkle chain |
@@ -35,32 +35,20 @@
 
 ## Architecture
 
-### Execution Flow
+### Strategy Arena Pipeline
 
-1. `SyntheticMarketDataProvider` generates price ticks (dev/test) or real market data arrives (future)
-2. Strategy evaluators produce `TradeDecision` via the `StrategyEvaluator` SPI
-3. `SimulatedOrderExecutor.executeDecision()` orchestrates the full cycle:
-   - Creates order via `OrderService`
-   - Determines fill price and fills the order
-   - Updates position via `PositionService.applyFill()` -- tracks quantity, average cost, realized P&L
-   - Records `StrategyEvaluationLedgerEntry` to tamper-evident ledger with actor identity derived from strategy type
-   - Records `OrderExecutionLedgerEntry` chained to the evaluation via `causedByEntryId`
-   - If the fill closes a position (realized P&L), generates a trust attestation via `PnlAttestationService`
-4. Trust attestations feed back into Bayesian Beta scoring per strategy agent, visible via `TrustScoreResource`
+The arena is an `ExecutionModel<ArenaContext>` built at startup by `ArenaConfiguration` (CDI producer). Triggered via `POST /api/evaluations/trigger`.
 
-### Case Definition
+Pipeline: Sequence[Routing → Evaluation → Voting → Risk → Gate → Execute]
 
-`StrategyEvaluationCaseDefinition` defines a full case lifecycle:
+1. **Routing** -- `FsiArenaRouting` selects strategy agents above a blended score threshold (default 0.3) using all 6 platform routing strategies via `RoutingSignalAssembler`
+2. **Evaluation** -- selected strategy agents evaluate the market signal concurrently, each returning `StrategyResponse` (Trade or Hold)
+3. **Voting** -- `FsiMajorityVoteByInstrument` aggregates per instrument with routing-score-weighted quantities. Deadlocks recorded as data inside `ConsensusResult`, not as pipeline failures
+4. **Risk Assessment** -- `FsiRiskAssessor` classifies per-instrument risk (deadlock→HIGH, full liquidation→CRITICAL, portfolio percentage thresholds)
+5. **Risk Gate** -- `FsiRiskGateRouting` routes HIGH/CRITICAL to `AgentRef.human(WorkItemCreateRequest)` for trader approval; LOW/MEDIUM passes through
+6. **Execution** -- `FsiExecutionAgent` creates orders, fills, positions, ledger entries, and P&L attestations with quality dimension scoring
 
-**Capabilities:** strategy-evaluation, risk-assessment, order-execution
-
-**Goals:**
-- Success: trade-executed (FILLED) or no-trade-needed (HOLD)
-- Failure: trade-rejected (HIGH risk + human REJECTED) or execution-failed (REJECTED/CANCELLED)
-
-**Human approval gate:** Trades where quantity >= 10,000 or notional >= $500,000 are gated by a `HumanTaskTarget` requiring `senior-traders` group approval within a 1-hour SLA.
-
-**Milestones:** strategy-evaluated, risk-assessed
+Each step is an `AgentRef.external()` in the Sequence -- reads from and writes to the mutable `ArenaContext`. See `docs/adr/` for architectural decisions (ADR-001 through ADR-006).
 
 ### Ledger Integration
 
@@ -98,13 +86,21 @@ Flyway migrations: `db/fsitrading/migration`, `db/work/migration`, `db/memory/mi
 
 ---
 
-## SPI Extension Points
+## Strategy Agents
 
-| SPI | Package | Purpose |
+7 strategy agents registered via `FsiStrategyAgentRegistrar` (eidos `AgentDescriptorRegistrar` SPI):
+
+| Agent | StrategyType | Actor ID |
 |---|---|---|
-| `StrategyEvaluator` | `io.casehub.fsitrading.spi` | Pluggable strategy implementations -- receives instrument + price + market context, returns `Optional<TradeDecision>` |
+| `MomentumAgent` | MOMENTUM | `rule:momentum@v1` |
+| `MeanReversionAgent` | MEAN_REVERSION | `rule:mean-reversion@v1` |
+| `StatisticalArbitrageAgent` | STATISTICAL_ARBITRAGE | `rule:statistical-arbitrage@v1` |
+| `MarketMakingAgent` | MARKET_MAKING | `rule:market-making@v1` |
+| `EventDrivenAgent` | EVENT_DRIVEN | `rule:event-driven@v1` |
+| `PortfolioRebalanceAgent` | PORTFOLIO_REBALANCE | `rule:portfolio-rebalance@v1` |
+| `OvernightRiskAgent` | OVERNIGHT_RISK_MANAGEMENT | `rule:overnight-risk-management@v1` |
 
-No concrete `StrategyEvaluator` implementations exist yet. The current flow uses `SimulatedOrderExecutor` with decisions constructed externally.
+Each agent extends `AbstractStrategyAgent` and implements `evaluate(MarketSignal) → StrategyResponse`.
 
 ---
 
@@ -116,6 +112,7 @@ No concrete `StrategyEvaluator` implementations exist yet. The current flow uses
 | `PositionEntity` | `position` | instrument, assetClass, strategyId, quantity, avgCost, unrealizedPnl, realizedPnl |
 | `StrategyEntity` | `trading_strategy` | name, strategyType, instruments (text), parameters (text), active |
 | `MarketEventEntity` | `market_event` | instrument, eventType, price, volume, data (text) |
+| `ArenaRunEntity` | `arena_run` | instrument, status (IN_FLIGHT/COMPLETED/FAILED), idempotencyKey, resultJson |
 
 ---
 
@@ -123,23 +120,19 @@ No concrete `StrategyEvaluator` implementations exist yet. The current flow uses
 
 | # | Title | Status |
 |---|---|---|
-| [#14](https://github.com/casehubio/fsitrading/issues/14) | `SimulatedOrderExecutor.executeDecision()` lacks `@Transactional` -- dual-datasource atomicity | Open |
-| [#13](https://github.com/casehubio/fsitrading/issues/13) | Add quality dimension scores to P&L attestations | Open |
-| [#12](https://github.com/casehubio/fsitrading/issues/12) | Register strategy agents as `AgentDescriptor`s in eidos | Open |
+| [#24](https://github.com/casehubio/fsitrading/issues/24) | Sync consumer/contributor guides for Strategy Arena | Closed |
 
 ---
 
 ## What's Next
 
-The implemented vertical slice covers Chapters 1--3 of the roadmap. Remaining work includes:
+C1 (Strategy Arena) is complete. Remaining roadmap:
 
-- Concrete `StrategyEvaluator` implementations (momentum, mean-reversion, etc.)
-- CBR integration for market event knowledge retention
-- Real market data ingestion via stream modules (casehub-iot CloudEvent pattern)
-- SLA enforcement with `SlaBreachPolicy` and escalation to on-call trader
-- Multi-agent strategy debate and consensus
-- Pages UI for position overview, P&L timeline, agent trust scores
-- eidos agent registration
+- C2: Event-driven arena triggering, multi-instrument expansion
+- C3: Multi-agent strategy debate
+- C4: SLA enforcement with escalation tiers (`FsiSlaBreachPolicy`)
+- C5: Pages UI -- trading desk dock-workbench
+- C6: Full CBR pipeline, advanced quality dimensions
 
 ---
 
@@ -147,3 +140,4 @@ The implemented vertical slice covers Chapters 1--3 of the roadmap. Remaining wo
 
 - `docs/DOMAIN.md` -- full domain background (automated trading, market microstructure, compliance frameworks)
 - `docs/specs/2026-06-30-chapter3-trust-scoring-design.md` -- trust scoring design spec
+- `docs/adr/INDEX.md` -- 6 architecture decision records (ADR-001 through ADR-006)

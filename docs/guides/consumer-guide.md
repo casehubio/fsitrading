@@ -28,26 +28,26 @@ Not a framework -- this is a domain application. Trading-specific logic lives he
 
 Chapters 1--3 implemented (June 2026). Working vertical slice: domain model, order lifecycle, position tracking, ledger integration, and trust scoring.
 
-**Implemented:**
-- Domain model -- `TradeDecision`, `Instrument`, 7 strategy types, 7 market event types, order lifecycle enums
-- `StrategyEvaluator` SPI for pluggable strategy implementations
-- Order lifecycle -- create from decision, fill with price, status tracking
-- Position management -- quantity tracking, average cost, realized P&L calculation
-- Tamper-evident audit trail -- `StrategyEvaluationLedgerEntry` and `OrderExecutionLedgerEntry` with Merkle chain integrity via `JpaLedgerEntry`
-- Trust scoring -- `PnlAttestationService` generates SOUND/FLAGGED attestations from P&L outcomes with confidence scaling
-- Case engine integration -- `StrategyEvaluationCaseDefinition` with capabilities (strategy-evaluation, risk-assessment, order-execution), goals, milestones, and human approval gate for high-risk trades
+**Implemented (C1 Strategy Arena):**
+- Domain model -- `TradeDecision`, `Instrument`, `MarketSignal`, `StrategyResponse`, `ConsensusResult`, `RiskAssessment`, 7 strategy types
+- Strategy Arena -- multi-agent evaluation pipeline: Sequence[Routing → Evaluation → Voting → Risk → Gate → Execute] built on casehub-blocks orchestration patterns
+- 7 strategy agents (Momentum, MeanReversion, StatArb, MarketMaking, EventDriven, PortfolioRebalance, OvernightRisk) registered via eidos `AgentDescriptorRegistrar`
+- Multi-select routing via `RoutingSignalAssembler` with 6 platform routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination)
+- Per-instrument majority voting with routing-score-weighted quantities
+- Risk classification (LOW/MEDIUM/HIGH/CRITICAL) with human approval gate for HIGH/CRITICAL via `AgentRef.human()`
+- Quality dimension scoring -- 3 trust dimensions (return-magnitude, hold-period-efficiency, risk-adjusted-return) on P&L attestations
+- Order lifecycle, position management, tamper-evident ledger audit trail
+- Trust scoring -- Bayesian Beta from P&L attestations with quality floor filtering
 - Synthetic market data provider for development/testing
-- 6 REST endpoints (see API section below)
+- 17 REST endpoints (see API section below)
 - Dual-datasource configuration (H2 dev, PostgreSQL prod)
 
 **Not yet implemented:**
-- CBR for market event knowledge retention
-- Real market data integration (stream modules)
-- Multi-agent strategy debate
-- SLA enforcement with escalation
-- Pages UI integration
-- Agent registration in eidos (open issue #12)
-- Quality dimension scores in P&L attestations (open issue #13)
+- C2: Event-driven arena triggering, multi-instrument expansion
+- C3: Multi-agent strategy debate
+- C4: SLA enforcement with escalation tiers
+- C5: Pages UI -- trading desk dock-workbench
+- C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
 ---
 
@@ -69,6 +69,12 @@ All endpoints produce `application/json`.
 | `GET` | `/api/audit/orders/{orderId}` | Audit trail for an order -- returns typed ledger entries (STRATEGY_EVALUATION, ORDER_EXECUTION) with causality chain |
 | `GET` | `/api/trust/strategies` | Trust scores for all strategy types -- Bayesian Beta from P&L attestations |
 | `GET` | `/api/trust/strategies/{strategyType}` | Trust score for a specific strategy type |
+| `POST` | `/api/evaluations/trigger` | Trigger an arena run (idempotent with `Idempotency-Key` header) |
+| `GET` | `/api/routing/decisions` | Recent routing decisions (paginated, `?limit=N`) |
+| `GET` | `/api/routing/decisions/latest` | Most recent completed routing decision |
+| `GET` | `/api/kpis` | Aggregated KPIs (totalPnl, winRate, tradeCount, avgReturn) |
+| `GET` | `/api/preferences/trust-routing` | Trust routing threshold configuration |
+| `PUT` | `/api/preferences/trust-routing` | Update trust routing thresholds |
 
 ### Trust Score Response
 
@@ -101,8 +107,13 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 - `OrderStatus` -- PENDING, SUBMITTED, PARTIALLY_FILLED, FILLED, CANCELLED, REJECTED
 - `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT
 
-**SPI:**
-- `StrategyEvaluator` -- `evaluate(strategyId, instrument, currentPrice, marketContext) -> Optional<TradeDecision>`
+**Arena types:**
+- `MarketSignal` -- instrument, eventType, price, volume, timestamp
+- `StrategyResponse` -- sealed: `Trade(List<TradeDecision>, String)` | `Hold(String)`
+- `ConsensusResult` -- per-instrument voting results with deadlock detection
+- `InstrumentConsensus` -- status (CONSENSUS/DEADLOCKED/NO_VOTERS), winningSide, quantity, votes
+- `RiskAssessment` -- overall and per-instrument risk levels (LOW/MEDIUM/HIGH/CRITICAL)
+- `ApprovalOutcome` -- NOT_REQUIRED, APPROVED, REJECTED, TIMEOUT
 
 **Identity:**
 - `FsiActorIdentity` -- derives actor IDs, roles, and capability tags from `StrategyType` for trust scoring integration
