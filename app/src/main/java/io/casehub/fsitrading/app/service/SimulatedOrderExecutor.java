@@ -52,7 +52,7 @@ public class SimulatedOrderExecutor {
 
         if (fillResult.hasRealizedPnl()) {
             pnlAttestationService.recordOutcome(evalEntryId, order.getId(),
-                                                strategyType, fillResult);
+                                                strategyType, fillResult, 0.02);
         }
 
         log.infof("Simulated fill: %s %s %s @ %s (strategy: %s, ledger: eval=%s, pnl=%s)",

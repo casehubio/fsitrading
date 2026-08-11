@@ -40,6 +40,7 @@ public class PositionService {
         if (sameDirection) {
             if (oldQty.signum() == 0) {
                 position.setAvgCost(fillPrice);
+                position.setOpenedAt(Instant.now());
             } else {
                 var totalCost = position.getAvgCost().multiply(oldQty.abs())
                         .add(fillPrice.multiply(fillQty.abs()));
