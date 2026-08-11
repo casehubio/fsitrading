@@ -137,6 +137,7 @@ public class ArenaConfiguration {
     private CompletionStage<AgentResult> evaluateStrategies(ArenaContext ctx) {
         var selected = ctx.selectedAgents();
         if (selected == null || selected.isEmpty()) {
+            ctx.setEvaluations(Map.of());
             return CompletableFuture.completedFuture(AgentResult.success(null, Map.of()));
         }
 
@@ -168,7 +169,7 @@ public class ArenaConfiguration {
     }
 
     private CompletionStage<AgentResult> voteOnEvaluations(ArenaContext ctx) {
-        var evaluations = ctx.evaluations();
+        var evaluations = ctx.evaluations() != null ? ctx.evaluations() : Map.<StrategyType, StrategyResponse>of();
         Map<StrategyType, Double> routingScores = new HashMap<>();
         if (ctx.routingDecisions() != null) {
             for (RoutingDecisionRecord record : ctx.routingDecisions()) {
