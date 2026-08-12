@@ -2,6 +2,7 @@ package io.casehub.fsitrading.app.resource;
 
 import io.casehub.fsitrading.app.model.MarketEventEntity;
 import io.casehub.fsitrading.app.service.SyntheticMarketDataProvider;
+import io.casehub.fsitrading.model.PriceTick;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -22,7 +23,7 @@ public class MarketDataResource {
 
     @POST
     @Path("/tick")
-    public MarketEventEntity generateTick() {
+    public PriceTick generateTick() {
         return marketDataProvider.generateTick();
     }
 

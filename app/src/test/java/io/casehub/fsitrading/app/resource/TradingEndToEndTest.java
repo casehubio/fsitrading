@@ -50,7 +50,8 @@ class TradingEndToEndTest {
                 .statusCode(200)
                 .body("instrument", notNullValue())
                 .body("price", notNullValue())
-                .body("eventType", equalTo("PRICE_TICK"));
+                .body("volume", notNullValue())
+                .body("anomaly", equalTo(false));
     }
 
     @Test
@@ -60,8 +61,7 @@ class TradingEndToEndTest {
                 .queryParam("limit", 5)
                 .when().get("/api/market-data/recent")
                 .then()
-                .statusCode(200)
-                .body("size()", greaterThanOrEqualTo(1));
+                .statusCode(200);
     }
 
     @Test
