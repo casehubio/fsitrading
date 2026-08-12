@@ -19,6 +19,8 @@ import io.casehub.fsitrading.app.agent.MomentumAgent;
 import io.casehub.fsitrading.app.agent.OvernightRiskAgent;
 import io.casehub.fsitrading.app.agent.PortfolioRebalanceAgent;
 import io.casehub.fsitrading.app.agent.StatisticalArbitrageAgent;
+import io.casehub.fsitrading.app.pipeline.FsiObservationCache;
+import io.casehub.fsitrading.app.pipeline.MarketSnapshot;
 import io.casehub.fsitrading.app.service.PositionService;
 import io.casehub.fsitrading.model.ApprovalOutcome;
 import io.casehub.fsitrading.model.StrategyResponse;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -44,6 +47,7 @@ public class ArenaConfiguration {
     private final FsiExecutionAgent executionAgent;
     private final PositionService positionService;
     private final FsiStrategyAgentRegistrar agentRegistrar;
+    private final FsiObservationCache observationCache;
     private List<RoutingCandidate> overrideCandidates;
 
     @Inject
@@ -53,7 +57,8 @@ public class ArenaConfiguration {
                               FsiRiskGateRouting riskGateRouting,
                               FsiExecutionAgent executionAgent,
                               PositionService positionService,
-                              FsiStrategyAgentRegistrar agentRegistrar) {
+                              FsiStrategyAgentRegistrar agentRegistrar,
+                              FsiObservationCache observationCache) {
         this.arenaRouting = arenaRouting;
         this.votingAggregator = votingAggregator;
         this.riskAssessor = riskAssessor;
@@ -61,6 +66,7 @@ public class ArenaConfiguration {
         this.executionAgent = executionAgent;
         this.positionService = positionService;
         this.agentRegistrar = agentRegistrar;
+        this.observationCache = observationCache;
     }
 
     ArenaConfiguration(FsiArenaRouting arenaRouting,
@@ -77,6 +83,7 @@ public class ArenaConfiguration {
         this.executionAgent = executionAgent;
         this.positionService = positionService;
         this.agentRegistrar = null;
+        this.observationCache = null;
         this.overrideCandidates = strategyCandidates;
     }
 
@@ -118,7 +125,10 @@ public class ArenaConfiguration {
             AbstractStrategyAgent agent = entry.getValue();
             AgentRef ref = AgentRef.external(name, (Object state) -> {
                 ArenaContext c = (ArenaContext) state;
-                StrategyResponse response = agent.evaluate(c.marketSignal());
+                MarketSnapshot snapshot = observationCache != null
+                        ? observationCache.snapshotForStrategy(c.marketSignal().instrument(), entry.getKey())
+                        : new MarketSnapshot(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                StrategyResponse response = agent.evaluate(c.marketSignal(), snapshot);
                 return CompletableFuture.completedFuture(AgentResult.success(null, response));
             });
             candidates.add(new RoutingCandidate(ref, descriptorsByName.get(name)));

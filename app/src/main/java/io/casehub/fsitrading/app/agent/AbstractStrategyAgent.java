@@ -8,6 +8,7 @@ import io.casehub.fsitrading.model.OrderType;
 import io.casehub.fsitrading.model.StrategyResponse;
 import io.casehub.fsitrading.model.StrategyType;
 import io.casehub.fsitrading.model.TradeDecision;
+import io.casehub.fsitrading.app.pipeline.MarketSnapshot;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,6 +26,10 @@ public abstract class AbstractStrategyAgent {
     }
 
     public abstract StrategyResponse evaluate(MarketSignal signal);
+
+    public StrategyResponse evaluate(MarketSignal signal, MarketSnapshot observation) {
+        return evaluate(signal);
+    }
 
     protected StrategyResponse trade(MarketSignal signal, OrderSide side, BigDecimal quantity, String rationale) {
         var instrument = new Instrument(signal.instrument(), AssetClass.EQUITY, null);
