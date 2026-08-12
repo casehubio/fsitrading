@@ -7,6 +7,8 @@ import io.casehub.blocks.summarisation.SummarisationRunner;
 import io.casehub.fsitrading.app.service.SyntheticMarketDataProvider;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.PriceTick;
+import io.casehub.fsitrading.model.RegimeAssessment;
+import io.casehub.fsitrading.model.SessionNarrative;
 import io.casehub.fsitrading.model.TrendSummary;
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.Scheduled;
@@ -32,6 +34,18 @@ public class MarketPulseScheduler {
     @Inject @Named("l2Runner")
     SummarisationRunner<OHLCV, TrendSummary> l2Runner;
 
+    @Inject @Named("l2Bus")
+    EventStreamBus<TrendSummary> l2Bus;
+
+    @Inject @Named("l3Runner")
+    SummarisationRunner<TrendSummary, RegimeAssessment> l3Runner;
+
+    @Inject @Named("l3Bus")
+    EventStreamBus<RegimeAssessment> l3Bus;
+
+    @Inject @Named("l4Runner")
+    SummarisationRunner<RegimeAssessment, SessionNarrative> l4Runner;
+
     @Inject
     SyntheticMarketDataProvider tickProvider;
 
@@ -45,7 +59,7 @@ public class MarketPulseScheduler {
     private volatile boolean wired = false;
 
     void onStart(@Observes StartupEvent event) {
-        configuration.wireL0toL2(l0Bus, l1Runner, l1Bus, l2Runner);
+        configuration.wirePipeline(l0Bus, l1Runner, l1Bus, l2Runner, l2Bus, l3Runner, l3Bus, l4Runner);
         wired = true;
         log.info("Market Pulse scheduler started");
     }
@@ -64,6 +78,8 @@ public class MarketPulseScheduler {
         long now = System.currentTimeMillis();
         l1Runner.tick(now);
         l2Runner.tick(now);
+        l3Runner.tick(now);
+        l4Runner.tick(now);
     }
 
     public void pause() {
