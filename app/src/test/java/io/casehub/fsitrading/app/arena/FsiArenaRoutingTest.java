@@ -75,7 +75,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.unresolvable("insufficient history"));
 
         var context = routingContext(candidates);
-        var decision = routing.route(context).await().indefinitely();
+        var decision = routing.route(context);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -102,7 +102,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.unresolvable("no history"));
 
         var context = routingContext(candidates);
-        var decision = routing.route(context).await().indefinitely();
+        var decision = routing.route(context);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -129,7 +129,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.unresolvable("no history"));
 
         var context = routingContext(candidates);
-        var decision = routing.route(context).await().indefinitely();
+        var decision = routing.route(context);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -165,7 +165,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.unresolvable("no history"));
 
         var context = routingContext(candidates);
-        var decision = routing.route(context).await().indefinitely();
+        var decision = routing.route(context);
 
         assertInstanceOf(RoutingDecision.Unresolvable.class, decision);
     }
@@ -188,7 +188,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.unresolvable("no history"));
 
         var context = routingContext(candidates);
-        routing.route(context).await().indefinitely();
+        routing.route(context);
 
         var records = context.state().routingDecisions();
         assertNotNull(records);
@@ -219,7 +219,7 @@ class FsiArenaRoutingTest {
                 .thenReturn(RoutingResult.assigned("statistical-arbitrage", "historical match"));
 
         var context = routingContext(candidates);
-        var decision = routing.route(context).await().indefinitely();
+        var decision = routing.route(context);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var records = context.state().routingDecisions();

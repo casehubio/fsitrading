@@ -10,7 +10,6 @@ import io.casehub.fsitrading.model.RiskAssessment;
 import io.casehub.work.api.Outcome;
 import io.casehub.work.api.WorkItemCreateRequest;
 import io.casehub.work.api.WorkItemPriority;
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -34,8 +33,8 @@ public class FsiRiskGateRouting implements RoutingStrategy<ArenaContext> {
     }
 
     @Override
-    public Uni<RoutingDecision> route(RoutingContext<ArenaContext> context) {
-        return Uni.createFrom().item(() -> doRoute(context));
+    public RoutingDecision route(RoutingContext<ArenaContext> context) {
+        return doRoute(context);
     }
 
     private RoutingDecision doRoute(RoutingContext<ArenaContext> context) {

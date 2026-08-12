@@ -129,9 +129,8 @@ public class ArenaConfiguration {
     private CompletionStage<AgentResult> routeStrategies(ArenaContext ctx) {
         var candidates = buildStrategyCandidates();
         var routingCtx = new RoutingContext<>("strategy-evaluation", candidates, ctx);
-        return arenaRouting.route(routingCtx)
-                .map(decision -> AgentResult.success(null, decision))
-                .convert().toCompletionStage();
+        var decision = arenaRouting.route(routingCtx);
+        return CompletableFuture.completedFuture(AgentResult.success(null, decision));
     }
 
     private CompletionStage<AgentResult> evaluateStrategies(ArenaContext ctx) {
@@ -200,24 +199,20 @@ public class ArenaConfiguration {
                                     AgentResult.success(null, ApprovalOutcome.NOT_REQUIRED));
                         }), null)),
                 ctx);
-        return riskGateRouting.route(routingCtx)
-                .chain(decision -> {
-                    if (decision instanceof RoutingDecision.Selected selected) {
-                        var agent = selected.agents().get(0);
-                        if (agent instanceof AgentRef.ExternalAgent ext) {
-                            return io.smallrye.mutiny.Uni.createFrom()
-                                    .completionStage(ext.fn().apply(ctx));
-                        }
-                        if (agent instanceof AgentRef.HumanAgent) {
-                            ctx.setApprovalOutcome(ApprovalOutcome.APPROVED);
-                            return io.smallrye.mutiny.Uni.createFrom()
-                                    .item(AgentResult.success(null, ApprovalOutcome.APPROVED));
-                        }
-                    }
-                    return io.smallrye.mutiny.Uni.createFrom()
-                            .item(AgentResult.success(null, ApprovalOutcome.NOT_REQUIRED));
-                })
-                .convert().toCompletionStage();
+        var decision = riskGateRouting.route(routingCtx);
+        if (decision instanceof RoutingDecision.Selected selected) {
+            var agent = selected.agents().get(0);
+            if (agent instanceof AgentRef.ExternalAgent ext) {
+                return ext.fn().apply(ctx);
+            }
+            if (agent instanceof AgentRef.HumanAgent) {
+                ctx.setApprovalOutcome(ApprovalOutcome.APPROVED);
+                return CompletableFuture.completedFuture(
+                        AgentResult.success(null, ApprovalOutcome.APPROVED));
+            }
+        }
+        return CompletableFuture.completedFuture(
+                AgentResult.success(null, ApprovalOutcome.NOT_REQUIRED));
     }
 
     private CompletionStage<AgentResult> executeTrades(ArenaContext ctx) {

@@ -42,7 +42,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.HIGH, consensusClean());
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -55,7 +55,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.CRITICAL, consensusClean());
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -67,7 +67,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.LOW, consensusClean());
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -80,7 +80,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.MEDIUM, consensusClean());
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -92,7 +92,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.LOW, consensusClean());
         var routingCtx = routingContext(context);
 
-        routing.route(routingCtx).await().indefinitely();
+        routing.route(routingCtx);
 
         assertEquals(ApprovalOutcome.NOT_REQUIRED, context.approvalOutcome());
     }
@@ -106,7 +106,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.HIGH, deadlocked);
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         assertInstanceOf(RoutingDecision.Selected.class, decision);
         var selected = (RoutingDecision.Selected) decision;
@@ -123,7 +123,7 @@ class FsiRiskGateRoutingTest {
         var context = arenaWithRisk(RiskAssessment.Level.HIGH, consensus);
         var routingCtx = routingContext(context);
 
-        var decision = routing.route(routingCtx).await().indefinitely();
+        var decision = routing.route(routingCtx);
 
         var humanAgent = (AgentRef.HumanAgent) ((RoutingDecision.Selected) decision).agents().get(0);
         var template = humanAgent.template();

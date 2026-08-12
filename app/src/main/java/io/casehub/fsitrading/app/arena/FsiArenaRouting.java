@@ -21,7 +21,6 @@ import io.casehub.eidos.api.MatchDegree;
 import io.casehub.fsitrading.FsiActorIdentity;
 import io.casehub.fsitrading.app.service.StrategyService;
 import io.casehub.fsitrading.model.StrategyType;
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -87,8 +86,8 @@ public class FsiArenaRouting implements RoutingStrategy<ArenaContext> {
     }
 
     @Override
-    public Uni<RoutingDecision> route(RoutingContext<ArenaContext> context) {
-        return Uni.createFrom().item(() -> doRoute(context));
+    public RoutingDecision route(RoutingContext<ArenaContext> context) {
+        return doRoute(context);
     }
 
     private RoutingDecision doRoute(RoutingContext<ArenaContext> context) {
