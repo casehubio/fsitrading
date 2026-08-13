@@ -1,5 +1,9 @@
 package io.casehub.fsitrading.app.pipeline;
 
+import io.casehub.blocks.agentic.AgentRef;
+import io.casehub.blocks.agentic.AgentResult;
+import io.casehub.blocks.agentic.model.ExecutionModel;
+import io.casehub.blocks.agentic.pattern.Patterns;
 import io.casehub.blocks.summarisation.EventStreamBus;
 import io.casehub.blocks.summarisation.KeyedSummarisationRunner;
 import io.casehub.blocks.summarisation.Summariser;
@@ -16,6 +20,8 @@ import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.jboss.logging.Logger;
 
+import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
@@ -139,5 +145,35 @@ public class MarketPulseConfiguration {
         l3Bus.subscribe(e -> true, l4Runner::collect);
 
         log.info("Market Pulse pipeline wired: L0 -> L1 -> L2 -> L3 -> L4");
+    }
+
+    @Produces @Singleton @Named("marketPulseModel")
+    public ExecutionModel<MarketPulseState> marketPulseModel() {
+        AgentRef setupStep = AgentRef.external("pipeline-setup", (Object state) ->
+                CompletableFuture.completedFuture(AgentResult.success(null, "pipeline wired")));
+
+        AgentRef monitorStep = AgentRef.external("market-monitor", (Object state) -> {
+            MarketPulseState pulseState = (MarketPulseState) state;
+            if (pulseState.getSessionEnd() != null
+                    && Instant.now().isAfter(pulseState.getSessionEnd())) {
+                pulseState.setMarketClosed(true);
+            }
+            return CompletableFuture.completedFuture(AgentResult.success(null, "monitored"));
+        });
+
+        return Patterns.<MarketPulseState>sequence()
+                .agents(
+                        setupStep,
+                        AgentRef.external("monitor-loop", (Object state) -> {
+                            var loopModel = Patterns.<MarketPulseState>loop()
+                                    .exitCondition(MarketPulseState::shouldExit)
+                                    .agents(monitorStep)
+                                    .task("market-pulse-monitor")
+                                    .build();
+                            return CompletableFuture.completedFuture(
+                                    AgentResult.success(null, "monitoring lifecycle ready"));
+                        }))
+                .task("market-pulse-lifecycle")
+                .build();
     }
 }
