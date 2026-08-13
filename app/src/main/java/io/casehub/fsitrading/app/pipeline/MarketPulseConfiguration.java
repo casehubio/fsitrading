@@ -79,6 +79,16 @@ public class MarketPulseConfiguration {
         return new EventStreamBus<>();
     }
 
+    @Produces @Singleton
+    public io.casehub.pages.push.JsonWriter pushJsonWriter(com.fasterxml.jackson.databind.ObjectMapper mapper) {
+        return mapper::writeValueAsString;
+    }
+
+    @Produces @Singleton
+    public FsiMarketPushService pushService(io.casehub.pages.push.EventBroadcaster broadcaster) {
+        return new FsiMarketPushService((topic, event) -> broadcaster.broadcast(topic, event));
+    }
+
     @Produces @Singleton @Named("regimeSummariser")
     public FsiRegimeSummariser regimeSummariser(@Named("llmProvider") Function<String, CompletionStage<String>> llmProvider) {
         return new FsiRegimeSummariser(llmProvider);

@@ -5,5 +5,7 @@ target/
 .idea/
 .claude
 package-lock.json
+node_modules/
+app/src/main/webui/dist/
 proj
 .build/

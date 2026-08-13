@@ -55,11 +55,18 @@ public class MarketPulseScheduler {
     @Inject @Named("l1Bus")
     EventStreamBus<OHLCV> l1Bus;
 
+    @Inject @Named("l4Bus")
+    EventStreamBus<SessionNarrative> l4Bus;
+
+    @Inject
+    FsiMarketPushService pushService;
+
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private volatile boolean wired = false;
 
     void onStart(@Observes StartupEvent event) {
         configuration.wirePipeline(l0Bus, l1Runner, l1Bus, l2Runner, l2Bus, l3Runner, l3Bus, l4Runner);
+        pushService.subscribe(l0Bus, l1Bus, l2Bus, l3Bus, l4Bus);
         wired = true;
         log.info("Market Pulse scheduler started");
     }

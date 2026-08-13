@@ -178,6 +178,33 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- Pages push: WebSocket EventBroadcaster, TopicRegistry -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-push</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- Pages push runtime: CDI producers for EventBroadcaster, TopicRegistry, EventStore -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-push-runtime</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
+    <!-- WebSocket endpoint for push -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-websockets-next</artifactId>
+    </dependency>
+
+    <!-- Quinoa: web UI build integration -->
+    <dependency>
+      <groupId>io.quarkiverse.quinoa</groupId>
+      <artifactId>quarkus-quinoa</artifactId>
+      <version>2.8.3</version>
+    </dependency>
+
     <!-- ================================================================ -->
     <!-- Test                                                              -->
     <!-- ================================================================ -->
