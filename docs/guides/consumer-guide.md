@@ -26,27 +26,33 @@ Not a framework -- this is a domain application. Trading-specific logic lives he
 
 ## Current State
 
-Chapters 1--3 implemented (June 2026). Working vertical slice: domain model, order lifecycle, position tracking, ledger integration, and trust scoring.
+Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, order lifecycle, position tracking, ledger integration, trust scoring, multi-agent arena, and 5-level market data pipeline with WebSocket push.
 
 **Implemented (C1 Strategy Arena):**
-- Domain model -- `TradeDecision`, `Instrument`, `MarketSignal`, `StrategyResponse`, `ConsensusResult`, `RiskAssessment`, 7 strategy types
-- Strategy Arena -- multi-agent evaluation pipeline: Sequence[Routing → Evaluation → Voting → Risk → Gate → Execute] built on casehub-blocks orchestration patterns
-- 7 strategy agents (Momentum, MeanReversion, StatArb, MarketMaking, EventDriven, PortfolioRebalance, OvernightRisk) registered via eidos `AgentDescriptorRegistrar`
-- Multi-select routing via `RoutingSignalAssembler` with 6 platform routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination)
-- Per-instrument majority voting with routing-score-weighted quantities
-- Risk classification (LOW/MEDIUM/HIGH/CRITICAL) with human approval gate for HIGH/CRITICAL via `AgentRef.human()`
-- Quality dimension scoring -- 3 trust dimensions (return-magnitude, hold-period-efficiency, risk-adjusted-return) on P&L attestations
+- Strategy Arena -- multi-agent evaluation pipeline: Sequence[Routing → Evaluation → Voting → Risk → Gate → Execute]
+- 7 strategy agents registered via eidos `AgentDescriptorRegistrar`
+- Multi-select routing, per-instrument majority voting, risk classification with human approval gate
 - Order lifecycle, position management, tamper-evident ledger audit trail
 - Trust scoring -- Bayesian Beta from P&L attestations with quality floor filtering
-- Synthetic market data provider for development/testing
-- 17 REST endpoints (see API section below)
+
+**Implemented (C2 Market Pulse):**
+- 5-level temporal summarisation pipeline: PriceTick → OHLCV → TrendSummary → RegimeAssessment → SessionNarrative
+- Synthetic market data with U-shaped volume profiles and 5 injectable scenarios (flash crash, liquidity drop, gap open, volume spike, mean reversion)
+- Computational summarisers (L0-L2) and LLM-powered summarisers (L3-L4) with structured output and graceful degradation
+- Observation cache with strategy-level visibility policy for arena agent context
+- Market event detection (trend reversal, regime change) via CDI domain events
+- Channel bridge to qhorus for L2+ events
+- Arena integration -- observation context injected into strategy agent evaluations
+- WebSocket push via pages-push EventBroadcaster -- live ticks, bars, trends, regime to browser
+- Minimal fsi-market-panel web component (Quinoa + esbuild) proving end-to-end push path
+- Sequence + Loop orchestration model via casehub-blocks patterns
+- 24 REST endpoints (see API section below)
 - Dual-datasource configuration (H2 dev, PostgreSQL prod)
 
 **Not yet implemented:**
-- C2: Event-driven arena triggering, multi-instrument expansion
 - C3: Multi-agent strategy debate
 - C4: SLA enforcement with escalation tiers
-- C5: Pages UI -- trading desk dock-workbench
+- C5: Pages UI -- trading desk dock-workbench (replaces minimal panel with full composition)
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
 ---
@@ -75,6 +81,29 @@ All endpoints produce `application/json`.
 | `GET` | `/api/kpis` | Aggregated KPIs (totalPnl, winRate, tradeCount, avgReturn) |
 | `GET` | `/api/preferences/trust-routing` | Trust routing threshold configuration |
 | `PUT` | `/api/preferences/trust-routing` | Update trust routing thresholds |
+| `GET` | `/api/market-data/bars/{instrument}` | Historical 1-min OHLCV bars |
+| `GET` | `/api/market-data/trends/{instrument}` | Recent 5-min trend summaries |
+| `GET` | `/api/market-data/regime/{instrument}` | Latest regime assessment |
+| `GET` | `/api/market-data/narrative` | Latest session narrative |
+| `POST` | `/api/market-data/scenario` | Inject scenario event (flash crash, gap open, etc.) |
+| `POST` | `/api/market-data/scheduler/pause` | Pause tick generation |
+| `POST` | `/api/market-data/scheduler/resume` | Resume tick generation |
+
+### WebSocket Push
+
+Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
+
+```json
+{"op": "listen", "id": "1", "topics": ["market:ticks:*", "market:regime:*"]}
+```
+
+| Topic pattern | Level | Payload | Rate |
+|---|---|---|---|
+| `market:ticks:{instrument}` | 0 | PriceTick | Every tick (~500ms) |
+| `market:bars:{instrument}` | 1 | OHLCV | ~1/min per instrument |
+| `market:trends:{instrument}` | 2 | TrendSummary | ~1/5min per instrument |
+| `market:regime:{instrument}` | 3 | RegimeAssessment | ~1/hour per instrument |
+| `market:narrative` | 4 | SessionNarrative | ~1/session |
 
 ### Trust Score Response
 
@@ -106,6 +135,13 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 - `OrderType` -- MARKET, LIMIT, STOP, STOP_LIMIT
 - `OrderStatus` -- PENDING, SUBMITTED, PARTIALLY_FILLED, FILLED, CANCELLED, REJECTED
 - `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT
+
+**Market data types (C2):**
+- `PriceTick` -- instrument, price, volume, timestamp, anomaly flag
+- `OHLCV` -- 1-minute bar: open, high, low, close, volume, windowStart, windowEnd
+- `TrendSummary` -- 5-min trend: direction (UP/DOWN/FLAT), momentum, volatility, priorRegime
+- `RegimeAssessment` -- LLM-synthesised: instrument, regime (TRENDING/VOLATILE/RANGE_BOUND/MEAN_REVERTING), confidence, rationale
+- `SessionNarrative` -- LLM-synthesised: instruments covered, narrative text, timestamp
 
 **Arena types:**
 - `MarketSignal` -- instrument, eventType, price, volume, timestamp
