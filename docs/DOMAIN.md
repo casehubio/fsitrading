@@ -76,7 +76,7 @@ Without formal accountability:
 With CaseHub:
 - Every trade decision is a `Commitment` on the `work` channel with a `causedByEntryId` chain
 - Anomaly detection fires on the `observe` channel via `casehub-ras` situation awareness
-- High-severity events create a `WorkItem` for the on-call trader with an SLA breach policy
+- High-severity events create a `WorkItemEntity` for the on-call trader with an SLA breach policy
 - The `ActionRiskClassifier` gates high-risk actions (large liquidations) through the `oversight` channel
 - The full decision chain is in the tamper-evident ledger — regulators can reconstruct every step
 - CBR: last month's flash crash response informs tonight's triage
@@ -94,7 +94,7 @@ With CaseHub:
 | `TradeDecision` | Agent's decision with rationale | `WorkerResult` + `PlannedAction` if high-risk |
 | `RiskLimit` | Threshold that gates agent authority | `ActionRiskClassifier` input |
 | `OvernightIncident` | Detected situation requiring response outside hours | `CaseInstance` via `casehub-engine` |
-| `EscalationWorkItem` | Human trader review/approval of agent action | `WorkItem` with SLA |
+| `EscalationWorkItem` | Human trader review/approval of agent action | `WorkItemEntity` with SLA |
 | `StrategyPerformance` | Track record per strategy agent | Feeds `ActorTrustScore` (Bayesian Beta) |
 
 ---
