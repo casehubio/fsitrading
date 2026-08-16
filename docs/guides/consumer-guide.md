@@ -125,7 +125,7 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 ## Domain Model (API Module)
 
 **Records:**
-- `TradeDecision` -- strategy output: strategyId, instrument, side, quantity, orderType, limitPrice, rationale
+- `TradeDecision` -- strategy output: strategyId, instrument, side, quantity, orderType, limitPrice, rationale, provenance (nullable TradeProvenance)
 - `Instrument` -- symbol + asset class + exchange
 
 **Enums:**
@@ -151,9 +151,49 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 - `RiskAssessment` -- overall and per-instrument risk levels (LOW/MEDIUM/HIGH/CRITICAL)
 - `ApprovalOutcome` -- NOT_REQUIRED, APPROVED, REJECTED, TIMEOUT
 
+**Deliberation types (C3):**
+- `TradeProvenance` -- deliberation provenance: deliberationChannelId, commitmentId, convergenceState, confidence
+- `DeliberationRecord` -- JPA entity: channel_id, instrument, status, trigger_type, convergence_state, confidence, established/disputed/pending counts, rounds, participants, commitment_id, trade_decision_id, timestamps, conversation/common-ground snapshots
+- `DeliberationDecisionLedgerEntry` -- JOINED ledger entry: deliberationId, channelId, instrument, convergenceState, confidence, established/disputed counts, participants
+
 **Identity:**
 - `FsiActorIdentity` -- derives actor IDs, roles, and capability tags from `StrategyType` for trust scoring integration
+- `FsiActorIdentity.HUMAN_TRADER` -- constant `"human:trader@v1"` for escalation commitments
 - `FsiCapabilities` -- string constants for capability-based routing (momentum, mean-reversion, etc.)
+
+---
+
+## C3 — Trade Deliberation
+
+Multi-agent strategy debate over qhorus channels with epistemic convergence detection, producing commitments and trade decisions.
+
+### REST Endpoints
+
+| Method | Path | Purpose | Response |
+|--------|------|---------|----------|
+| `GET` | `/api/deliberations` | List deliberations | Paginated list, filterable by instrument, convergenceState, triggerType |
+| `GET` | `/api/deliberations/{id}` | Single record | `DeliberationRecord`, 404 for unknown |
+| `POST` | `/api/deliberations/trigger?instrument=AAPL` | Manual trigger | 202 Accepted with record ID, 409 if in-flight |
+
+### Convergence Paths
+
+| State | Action |
+|-------|--------|
+| CONSENSUS | Execute trade via C1 pipeline with full confidence |
+| DEADLOCK | Escalate to human trader |
+| PROGRESSING | Escalate (debate active at round cap) |
+| DIMINISHING_RETURNS | Execute if established ratio >= 0.5, escalate otherwise |
+| CONVERGING | Execute if established ratio >= 0.7, escalate otherwise |
+
+### Configuration Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `fsi.deliberation.max-rounds` | 10 | Maximum debate rounds |
+| `fsi.deliberation.wall-clock-timeout-seconds` | 900 | Wall-clock timeout for debate |
+| `fsi.deliberation.trend-reversal-threshold` | 0.5 | Minimum momentum for trend reversal trigger |
+| `fsi.deliberation.diminishing-returns-min-established` | 0.5 | Minimum established ratio for DR execution |
+| `fsi.deliberation.converging-consensus-threshold` | 0.7 | Minimum established ratio for converging execution |
 
 ---
 

@@ -287,7 +287,7 @@ Inherited from CaseHub Profile:
 | C0 | Foundation Fixes | Prerequisites | — | 🔨 In Progress |
 | C1 | Strategy Arena | blocks orchestration, routing, eidos | Supervisor, Parallel, Voting | 🔲 |
 | C2 | Market Pulse | blocks summarisation, pages-push | Sequence, Loop | 🔲 |
-| C3 | Trade Deliberation | blocks conversation, convergence | Debate | 🔲 |
+| C3 | Trade Deliberation | blocks conversation, convergence | Debate | 🟢 |
 | C4 | Overnight Ops | engine cases, oversight, SLA | HTN, Conditional | 🔲 |
 | C5 | The Trading Desk | dock-workbench, floating panels | (all) | 🔲 |
 | C6 | Knowledge & Compliance | neocortex CBR, GDPR | — | 🔲 |
@@ -314,9 +314,9 @@ Multiple strategies evaluate a market signal, get trust-routed via all 6 AI rout
 5-level summarisation pipeline (tick → 1-min bar → 5-min trend → hourly regime → session narrative) via blocks' SummarisationRunner chains. KeyedSummarisationRunner per instrument. PartitionedObservationService per strategy. TieredContentSummariser (verbatim/grouped/LLM). Channel bridges (ChannelEventAdapter/Publisher). Pages-push WebSocket for real-time dashboard updates.
 
 #### C3 — Trade Deliberation
-**Status:** 🔲 | **Issue:** TBD
+**Status:** 🟢 | **Issue:** #20
 
-Specialist agents deliberate on qhorus channels using ConversationProtocol. CommonGroundAnalyser tracks established/pending/disputed facts. ConvergenceAnalyser detects consensus/deadlock. ChannelAgentDispatcher routes sub-tasks. ContextTracker manages LLM context. Trade commitments via 7-state model. UI: channel-activity, commitment-viz, blocks-timeline, context-gauge.
+Multi-agent strategy debate over qhorus channels with epistemic convergence detection. FsiConversationProjection (##FSI## sentinel, 5 entry types, 5 status transitions). FsiDeliberationStateObserver bridges MessageObserver + EventSource for ChoreographedDriver. FsiDebateHandler maps LLM output to entry types and MessageTypes. FsiDeliberationOutcomeHandler routes 5 convergence paths (CONSENSUS → execute, DEADLOCK/PROGRESSING → escalate, DIMINISHING_RETURNS/CONVERGING → threshold gate). FsiDeliberationTrigger with significance filter and crash recovery. DeliberationRecord with concurrency guard. DeliberationDecisionLedgerEntry for audit trail. 3 sub-task handlers (correlation, volume, news). REST endpoints (list, get, trigger). TradeProvenance on TradeDecision. WebSocket push deferred (#26).
 
 #### C4 — Overnight Ops
 **Status:** 🔲 | **Issue:** TBD
@@ -349,7 +349,7 @@ Domain model, SPI layer, REST endpoints, and synthetic execution pipeline. Marke
 **What was built**
 
 - **api/ module:** `Instrument`, `TradeDecision`, `OrderSide`, `OrderType`, `AssetClass`, `StrategyType` records/enums; `StrategyEvaluator` SPI interface; `FsiCapabilities` capability tags
-- **app/ module:** `OrderEntity`, `PositionEntity`, `StrategyEntity`, `MarketEventEntity` JPA entities; `OrderService`, `PositionService`, `StrategyService` domain services; `SimulatedOrderExecutor` execution pipeline; `SyntheticMarketDataProvider` price tick generator; REST resources for orders, positions, strategies, market events
+- **app/ module:** `OrderEntity`, `PositionEntity`, `StrategyEntity`, `MarketEventEntity`, `DeliberationRecord` JPA entities; `OrderService`, `PositionService`, `StrategyService` domain services; `SimulatedOrderExecutor` execution pipeline; `SyntheticMarketDataProvider` price tick generator; `FsiDeliberationOrchestrator`, `FsiDeliberationTrigger`, `FsiDeliberationOutcomeHandler`, `FsiDebateHandler`, `FsiConversationProjection`, `FsiDeliberationStateObserver`, `FsiChannelAgentDispatcher` deliberation pipeline; REST resources for orders, positions, strategies, market events, deliberations
 - **Flyway:** V100 migration for fsitrading domain tables on default datasource
 - **Tests:** 33 tests (14 api + 19 app) covering domain model, services, and REST endpoints
 
