@@ -102,7 +102,7 @@ class FsiMajorityVoteByInstrumentTest {
         var inst = new Instrument(instrument, AssetClass.EQUITY, "NASDAQ");
         var decision = new TradeDecision(
                 "test", inst, side, BigDecimal.valueOf(quantity),
-                OrderType.MARKET, null, "test");
+                OrderType.MARKET, null, "test", null);
         return new StrategyResponse.Trade(List.of(decision), "test");
     }
 }

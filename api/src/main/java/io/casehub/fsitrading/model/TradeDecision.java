@@ -10,7 +10,8 @@ public record TradeDecision(
         BigDecimal quantity,
         OrderType orderType,
         BigDecimal limitPrice,
-        String rationale) {
+        String rationale,
+        TradeProvenance provenance) {
 
     public TradeDecision {
         Objects.requireNonNull(strategyId, "strategyId");

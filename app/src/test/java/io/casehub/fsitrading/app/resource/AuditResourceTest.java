@@ -38,7 +38,7 @@ class AuditResourceTest {
         var decision = new TradeDecision(
                 strategy.getId().toString(),
                 new Instrument("AAPL", AssetClass.EQUITY, "NASDAQ"),
-                OrderSide.BUY, new BigDecimal("50"), OrderType.MARKET, null, "momentum signal");
+                OrderSide.BUY, new BigDecimal("50"), OrderType.MARKET, null, "momentum signal", null);
         var order = orderService.createFromDecision(decision);
         order = orderService.fill(order.getId(), new BigDecimal("190.50"));
 
@@ -62,7 +62,7 @@ class AuditResourceTest {
         var decision = new TradeDecision(
                 strategy.getId().toString(),
                 new Instrument("MSFT", AssetClass.EQUITY, "NASDAQ"),
-                OrderSide.SELL, new BigDecimal("25"), OrderType.LIMIT, new BigDecimal("420"), "RSI > 70");
+                OrderSide.SELL, new BigDecimal("25"), OrderType.LIMIT, new BigDecimal("420"), "RSI > 70", null);
         var order = orderService.createFromDecision(decision);
         order = orderService.fill(order.getId(), new BigDecimal("420.00"));
 

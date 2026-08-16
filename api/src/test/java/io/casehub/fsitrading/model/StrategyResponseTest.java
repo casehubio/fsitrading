@@ -14,7 +14,7 @@ class StrategyResponseTest {
     @Test
     void tradeResponseContainsDecisions() {
         var decision = new TradeDecision("strat-1", AAPL,
-                                         OrderSide.BUY, BigDecimal.valueOf(50), OrderType.MARKET, null, "momentum signal");
+                                         OrderSide.BUY, BigDecimal.valueOf(50), OrderType.MARKET, null, "momentum signal", null);
         var response = new StrategyResponse.Trade(List.of(decision), "momentum signal detected");
         assertEquals(1, response.decisions().size());
         assertEquals("momentum signal detected", response.rationale());

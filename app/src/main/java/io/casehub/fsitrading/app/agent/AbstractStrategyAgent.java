@@ -35,7 +35,7 @@ public abstract class AbstractStrategyAgent {
         var instrument = new Instrument(signal.instrument(), AssetClass.EQUITY, null);
         var decision = new TradeDecision(
                 strategyType.name(), instrument, side, quantity,
-                OrderType.MARKET, null, rationale);
+                OrderType.MARKET, null, rationale, null);
         return new StrategyResponse.Trade(List.of(decision), rationale);
     }
 

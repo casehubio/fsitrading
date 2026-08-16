@@ -109,7 +109,7 @@ public class FsiExecutionAgent {
                             return new TradeDecision(
                                     d.strategyId(), d.instrument(), ic.winningSide(),
                                     ic.quantity(), OrderType.MARKET, null,
-                                    "Arena consensus: " + trade.rationale());
+                                    "Arena consensus: " + trade.rationale(), null);
                         }
                     }
                 }

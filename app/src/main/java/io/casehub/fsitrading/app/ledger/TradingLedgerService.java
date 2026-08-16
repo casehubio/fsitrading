@@ -68,6 +68,33 @@ public class TradingLedgerService {
         return entry.id;
     }
 
+    public UUID recordDeliberationDecision(UUID deliberationId, UUID channelId,
+                                             String instrument, String convergenceState,
+                                             double confidence, int establishedCount,
+                                             int disputedCount, String participants,
+                                             UUID causedByEntryId) {
+        final var entry = new DeliberationDecisionLedgerEntry();
+        entry.id = UUID.randomUUID();
+        entry.subjectId = deliberationId;
+        entry.sequenceNumber = 1;
+        entry.entryType = LedgerEntryType.EVENT;
+        entry.actorId = EXECUTOR_ACTOR_ID;
+        entry.actorType = ActorType.AGENT;
+        entry.actorRole = EXECUTOR_ACTOR_ROLE;
+        entry.occurredAt = Instant.now();
+        entry.causedByEntryId = causedByEntryId;
+        entry.deliberationId = deliberationId;
+        entry.channelId = channelId;
+        entry.instrument = instrument;
+        entry.convergenceState = convergenceState;
+        entry.confidence = confidence;
+        entry.establishedCount = establishedCount;
+        entry.disputedCount = disputedCount;
+        entry.participants = participants;
+        repository.save(entry, TenancyConstants.DEFAULT_TENANT_ID);
+        return entry.id;
+    }
+
     public List<LedgerEntry> findByOrderId(UUID orderId) {
         return repository.findBySubjectId(orderId, TenancyConstants.DEFAULT_TENANT_ID);
     }

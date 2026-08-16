@@ -129,7 +129,7 @@ class PositionServiceTest {
         var decision = new TradeDecision(
                 strategyId.toString(),
                 new Instrument(symbol, AssetClass.EQUITY, "NASDAQ"),
-                side, qty, OrderType.MARKET, null, "test");
+                side, qty, OrderType.MARKET, null, "test", null);
         var order = orderService.createFromDecision(decision);
         return orderService.fill(order.getId(), fillPrice);
     }

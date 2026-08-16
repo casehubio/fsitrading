@@ -33,7 +33,8 @@ class OrderServiceTest {
                 BigDecimal.TEN,
                 OrderType.MARKET,
                 null,
-                "momentum signal");
+                "momentum signal",
+                null);
 
         var order = orderService.createFromDecision(decision);
 
@@ -57,7 +58,8 @@ class OrderServiceTest {
                 BigDecimal.valueOf(5),
                 OrderType.MARKET,
                 null,
-                "test fill");
+                "test fill",
+                null);
         var order = orderService.createFromDecision(decision);
 
         var filled = orderService.fill(order.getId(), BigDecimal.valueOf(420));
@@ -83,7 +85,8 @@ class OrderServiceTest {
                 BigDecimal.ONE,
                 OrderType.LIMIT,
                 BigDecimal.valueOf(175),
-                "take profit");
+                "take profit",
+                null);
         orderService.createFromDecision(decision);
 
         var orders = orderService.findByStrategy(strategyId);

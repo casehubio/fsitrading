@@ -59,7 +59,7 @@ class TradingLedgerServiceTest {
         var decision = new TradeDecision(
                 strategy.getId().toString(),
                 new Instrument("MSFT", AssetClass.EQUITY, "NASDAQ"),
-                OrderSide.BUY, new BigDecimal("100"), OrderType.MARKET, null, "test");
+                OrderSide.BUY, new BigDecimal("100"), OrderType.MARKET, null, "test", null);
         var order = orderService.createFromDecision(decision);
         order = orderService.fill(order.getId(), new BigDecimal("420.50"));
 
@@ -85,7 +85,7 @@ class TradingLedgerServiceTest {
         var decision = new TradeDecision(
                 strategy.getId().toString(),
                 new Instrument("GOOGL", AssetClass.EQUITY, "NASDAQ"),
-                OrderSide.SELL, new BigDecimal("50"), OrderType.LIMIT, new BigDecimal("175.00"), "RSI high");
+                OrderSide.SELL, new BigDecimal("50"), OrderType.LIMIT, new BigDecimal("175.00"), "RSI high", null);
         var order = orderService.createFromDecision(decision);
         order = orderService.fill(order.getId(), new BigDecimal("175.00"));
 
@@ -127,7 +127,7 @@ class TradingLedgerServiceTest {
         var decision = new TradeDecision(
                 strategy.getId().toString(),
                 new Instrument("AMZN", AssetClass.EQUITY, "NASDAQ"),
-                OrderSide.BUY, new BigDecimal("10"), OrderType.MARKET, null, "momentum");
+                OrderSide.BUY, new BigDecimal("10"), OrderType.MARKET, null, "momentum", null);
         var order = orderService.createFromDecision(decision);
         order = orderService.fill(order.getId(), new BigDecimal("185.00"));
 

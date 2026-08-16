@@ -75,6 +75,13 @@ class FsiActorIdentityTest {
     }
 
     @Test
+    void humanTraderConstant() {
+        assertEquals("human:trader@v1", FsiActorIdentity.HUMAN_TRADER);
+        assertTrue(FsiActorIdentity.HUMAN_TRADER.matches("[\\w-]+:[\\w-]+@[\\w.]+"),
+                "HUMAN_TRADER must match ActorTypeResolver AGENT regex");
+    }
+
+    @Test
     void nullStrategyTypeThrows() {
         assertThrows(NullPointerException.class, () -> FsiActorIdentity.forStrategy(null));
         assertThrows(NullPointerException.class, () -> FsiActorIdentity.actorRole(null));

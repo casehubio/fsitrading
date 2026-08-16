@@ -130,7 +130,7 @@ class FsiExecutionAgentTest {
                         List.of(new TradeDecision(
                                 STRATEGY_ID.toString(), AAPL, OrderSide.BUY,
                                 BigDecimal.valueOf(40), OrderType.MARKET, null,
-                                "momentum detected")),
+                                "momentum detected", null)),
                         "momentum signal")));
         return ctx;
     }

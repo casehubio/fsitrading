@@ -6,6 +6,8 @@ import java.util.Objects;
 
 public final class FsiActorIdentity {
 
+    public static final String HUMAN_TRADER = "human:trader@v1";
+
     private FsiActorIdentity() {}
 
     public static String forStrategy(StrategyType type) {
