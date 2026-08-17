@@ -18,6 +18,7 @@ import io.casehub.fsitrading.app.service.OrderService;
 import io.casehub.fsitrading.app.service.StrategyService;
 import io.casehub.fsitrading.model.StrategyType;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -55,6 +56,15 @@ public class FsiDeliberationOrchestrator {
     @Inject
     StrategyService strategyService;
 
+    @Inject
+    Event<DeliberationStartedEvent> startedEvent;
+
+    @Inject
+    Event<DeliberationCompletedEvent> completedEvent;
+
+    @Inject
+    Event<DeliberationFailedEvent> failedEvent;
+
     @ConfigProperty(name = "fsi.deliberation.max-rounds", defaultValue = "10")
     int maxRounds;
 
@@ -75,6 +85,10 @@ public class FsiDeliberationOrchestrator {
 
         log.infof("Started deliberation %s for %s (channel=%s, agents=%s)",
                 recordId, instrument, channelName, participants);
+
+        startedEvent.fire(new DeliberationStartedEvent(
+                recordId, channelId, instrument, triggerType,
+                participants, record.getStartedAt()));
 
         return recordId;
     }
@@ -136,6 +150,17 @@ public class FsiDeliberationOrchestrator {
             }
         }
 
+        completedEvent.fire(new DeliberationCompletedEvent(
+                record.getId(), record.getChannelId(), record.getInstrument(),
+                signal.state().name(), signal.confidence(),
+                commonGround.establishedFacts().size(),
+                commonGround.disputedPoints().size(),
+                commonGround.pendingClaims().size(),
+                record.getRounds(), record.getCommitmentId(),
+                record.getTradeDecisionId(),
+                outcome instanceof FsiDeliberationOutcomeHandler.OutcomeAction.Execute ? "EXECUTE" : "ESCALATE",
+                record.getEndedAt()));
+
         recordRepository.merge(record);
     }
 
@@ -147,6 +172,10 @@ public class FsiDeliberationOrchestrator {
             record.setEndedAt(Instant.now());
             record.setSummary(reason);
             recordRepository.merge(record);
+
+            failedEvent.fire(new DeliberationFailedEvent(
+                    recordId, record.getChannelId(), record.getInstrument(),
+                    reason, record.getEndedAt()));
         }
         log.warnf("Deliberation %s failed: %s", recordId, reason);
     }

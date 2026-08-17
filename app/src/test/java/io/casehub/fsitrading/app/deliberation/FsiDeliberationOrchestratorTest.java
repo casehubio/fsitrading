@@ -10,6 +10,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -31,6 +32,14 @@ class FsiDeliberationOrchestratorTest {
 
     @Inject
     EntityManager em;
+
+    @Inject
+    DeliberationEventCaptor eventCaptor;
+
+    @BeforeEach
+    void setUp() {
+        eventCaptor.clear();
+    }
 
     @Test
     @Transactional
@@ -146,5 +155,73 @@ class FsiDeliberationOrchestratorTest {
         assertEquals("FAILED", record.getStatus());
         assertEquals("Wall-clock timeout", record.getSummary());
         assertNotNull(record.getEndedAt());
+    }
+
+    @Test
+    @Transactional
+    void startDeliberation_firesStartedEvent() {
+        var id = orchestrator.startDeliberation("AAPL", "REGIME_CHANGED",
+                List.of("agent-1", "agent-2"));
+
+        var started = eventCaptor.getEvents().stream()
+                .filter(e -> e instanceof DeliberationStartedEvent)
+                .map(e -> (DeliberationStartedEvent) e)
+                .findFirst().orElseThrow();
+        assertEquals(id, started.deliberationId());
+        assertEquals("AAPL", started.instrument());
+        assertEquals("REGIME_CHANGED", started.triggerType());
+        assertEquals("agent-1,agent-2", started.participants());
+        assertNotNull(started.channelId());
+        assertNotNull(started.startedAt());
+    }
+
+    @Test
+    @Transactional
+    void completeDeliberation_firesCompletedEvent() {
+        var recordId = orchestrator.startDeliberation("GOOG", "MANUAL",
+                List.of("rule:momentum@v1"));
+        em.flush();
+        eventCaptor.clear();
+
+        var signal = new ConvergenceSignal(ConvergenceState.CONSENSUS, 0.88, "agreed");
+        var cg = new CommonGroundState(
+                Map.of("p1", new GroundedFact("p1", "debate",
+                        EpistemicStatus.ESTABLISHED, "BUY 50 GOOG at market",
+                        Set.of("agent1"), Set.of(), 1)),
+                Map.of(), Map.of());
+        var cs = new ConversationState(Map.of(), List.of(), List.of(), Map.of());
+
+        orchestrator.completeDeliberation(recordId, signal, cg, cs);
+
+        var completed = eventCaptor.getEvents().stream()
+                .filter(e -> e instanceof DeliberationCompletedEvent)
+                .map(e -> (DeliberationCompletedEvent) e)
+                .findFirst().orElseThrow();
+        assertEquals(recordId, completed.deliberationId());
+        assertEquals("GOOG", completed.instrument());
+        assertEquals("CONSENSUS", completed.convergenceState());
+        assertEquals(0.88, completed.confidence(), 0.001);
+        assertEquals("EXECUTE", completed.outcomeType());
+    }
+
+    @Test
+    @Transactional
+    void failDeliberation_firesFailedEventWithChannelId() {
+        var recordId = orchestrator.startDeliberation("META", "TREND_REVERSAL",
+                List.of("agent-1"));
+        em.flush();
+        eventCaptor.clear();
+
+        orchestrator.failDeliberation(recordId, "timeout");
+
+        var failed = eventCaptor.getEvents().stream()
+                .filter(e -> e instanceof DeliberationFailedEvent)
+                .map(e -> (DeliberationFailedEvent) e)
+                .findFirst().orElseThrow();
+        assertEquals(recordId, failed.deliberationId());
+        assertEquals("META", failed.instrument());
+        assertEquals("timeout", failed.reason());
+        assertNotNull(failed.channelId());
+        assertNotNull(failed.endedAt());
     }
 }
