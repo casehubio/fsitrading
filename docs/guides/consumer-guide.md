@@ -104,6 +104,10 @@ Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
 | `market:trends:{instrument}` | 2 | TrendSummary | ~1/5min per instrument |
 | `market:regime:{instrument}` | 3 | RegimeAssessment | ~1/hour per instrument |
 | `market:narrative` | 4 | SessionNarrative | ~1/session |
+| `deliberation:active` | — | DeliberationPushPayload (Started/Completed/Failed) | Per deliberation lifecycle |
+| `deliberation:{channelId}` | — | DeliberationPushPayload (all types + ConvergenceUpdate) | Per message during debate |
+
+Deliberation payloads include a `type` field for client dispatch: `DELIBERATION_STARTED`, `DELIBERATION_COMPLETED`, `DELIBERATION_FAILED`, `CONVERGENCE_UPDATE`.
 
 ### Trust Score Response
 
