@@ -49,6 +49,8 @@ public class ArenaConfiguration {
     private final FsiStrategyAgentRegistrar agentRegistrar;
     private final FsiObservationCache observationCache;
     private List<RoutingCandidate> overrideCandidates;
+    private jakarta.enterprise.event.Event<RoutingDecisionEvent> routingEvent;
+
 
     @Inject
     public ArenaConfiguration(FsiArenaRouting arenaRouting,
@@ -58,15 +60,17 @@ public class ArenaConfiguration {
                               FsiExecutionAgent executionAgent,
                               PositionService positionService,
                               FsiStrategyAgentRegistrar agentRegistrar,
-                              FsiObservationCache observationCache) {
-        this.arenaRouting = arenaRouting;
+                              FsiObservationCache observationCache,
+                              jakarta.enterprise.event.Event<RoutingDecisionEvent> routingEvent) {
+        this.arenaRouting     = arenaRouting;
         this.votingAggregator = votingAggregator;
-        this.riskAssessor = riskAssessor;
-        this.riskGateRouting = riskGateRouting;
-        this.executionAgent = executionAgent;
-        this.positionService = positionService;
-        this.agentRegistrar = agentRegistrar;
+        this.riskAssessor     = riskAssessor;
+        this.riskGateRouting  = riskGateRouting;
+        this.executionAgent   = executionAgent;
+        this.positionService  = positionService;
+        this.agentRegistrar   = agentRegistrar;
         this.observationCache = observationCache;
+        this.routingEvent     = routingEvent;
     }
 
     ArenaConfiguration(FsiArenaRouting arenaRouting,
@@ -139,7 +143,19 @@ public class ArenaConfiguration {
     private CompletionStage<AgentResult> routeStrategies(ArenaContext ctx) {
         var candidates = buildStrategyCandidates();
         var routingCtx = new RoutingContext<>("strategy-evaluation", candidates, ctx);
-        var decision = arenaRouting.route(routingCtx);
+        var decision   = arenaRouting.route(routingCtx);
+
+        var selected = ctx.selectedAgents();
+        if (selected != null && !selected.isEmpty() && routingEvent != null) {
+            var selectedNames = selected.stream()
+                                        .map(c -> c.ref().name())
+                                        .toList();
+            routingEvent.fire(new RoutingDecisionEvent(
+                    ctx.runId(), ctx.marketSignal().instrument(),
+                    selectedNames, "BLENDED",
+                    java.time.Instant.now()));
+        }
+
         return CompletableFuture.completedFuture(AgentResult.success(null, decision));
     }
 

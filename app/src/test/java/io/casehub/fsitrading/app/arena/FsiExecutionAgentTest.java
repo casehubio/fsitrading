@@ -28,7 +28,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class FsiExecutionAgentTest {
 
@@ -43,18 +46,25 @@ class FsiExecutionAgentTest {
     private TradingLedgerService tradingLedgerService;
     private PnlAttestationService pnlAttestationService;
     private StrategyService strategyService;
+    private io.casehub.ledger.runtime.service.federation.TrustExportService trustExportService;
+    private jakarta.enterprise.event.Event<TrustScoreChangedEvent> trustEvent;
+
     private FsiExecutionAgent executionAgent;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
-        orderService = mock(OrderService.class);
-        positionService = mock(PositionService.class);
-        tradingLedgerService = mock(TradingLedgerService.class);
+        orderService          = mock(OrderService.class);
+        positionService       = mock(PositionService.class);
+        tradingLedgerService  = mock(TradingLedgerService.class);
         pnlAttestationService = mock(PnlAttestationService.class);
-        strategyService = mock(StrategyService.class);
-        executionAgent = new FsiExecutionAgent(
+        strategyService       = mock(StrategyService.class);
+        trustExportService    = mock(io.casehub.ledger.runtime.service.federation.TrustExportService.class);
+        trustEvent            = mock(jakarta.enterprise.event.Event.class);
+        executionAgent        = new FsiExecutionAgent(
                 orderService, positionService, strategyService,
-                tradingLedgerService, pnlAttestationService);
+                tradingLedgerService, pnlAttestationService,
+                trustExportService, trustEvent);
 
         var order = mock(OrderEntity.class);
         when(order.getId()).thenReturn(UUID.randomUUID());
@@ -63,10 +73,11 @@ class FsiExecutionAgentTest {
         when(orderService.fill(any(), any())).thenReturn(order);
         when(positionService.applyFill(any(), any())).thenReturn(
                 new FillResult(null, BigDecimal.ZERO, BigDecimal.ZERO,
-                        new BigDecimal("185.50"), BigDecimal.ZERO));
+                               new BigDecimal("185.50"), BigDecimal.ZERO));
         when(tradingLedgerService.recordStrategyEvaluation(
                 any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(UUID.randomUUID());
+        when(trustExportService.exportActor(any())).thenReturn(java.util.Optional.empty());
     }
 
     @Test
@@ -117,6 +128,35 @@ class FsiExecutionAgentTest {
 
         verify(orderService, never()).createFromDecision(any());
     }
+
+    @Test
+    void executesWithPnl_firesTrustScoreChangedEvent() {
+        when(positionService.applyFill(any(), any())).thenReturn(
+                new FillResult(null, BigDecimal.valueOf(100), BigDecimal.valueOf(1850),
+                               new BigDecimal("185.50"), BigDecimal.TEN));
+        var strategy = mock(io.casehub.fsitrading.app.model.StrategyEntity.class);
+        when(strategy.getName()).thenReturn("momentum-test");
+        when(strategy.getStrategyType()).thenReturn(StrategyType.MOMENTUM);
+        when(strategyService.findById(any())).thenReturn(strategy);
+
+        var context = arenaContextWithConsensus(
+                buy("AAPL", 40), ApprovalOutcome.NOT_REQUIRED);
+
+        executionAgent.execute(context);
+
+        verify(trustEvent).fire(any(TrustScoreChangedEvent.class));
+    }
+
+    @Test
+    void executesWithoutPnl_doesNotFireTrustEvent() {
+        var context = arenaContextWithConsensus(
+                buy("AAPL", 40), ApprovalOutcome.NOT_REQUIRED);
+
+        executionAgent.execute(context);
+
+        verify(trustEvent, never()).fire(any());
+    }
+
 
     // --- helpers ---
 
