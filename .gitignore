@@ -7,5 +7,6 @@ target/
 package-lock.json
 node_modules/
 app/src/main/webui/dist/
+app/.quinoa/
 proj
 .build/

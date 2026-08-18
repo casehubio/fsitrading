@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --format=esm --target=es2020 && cp market-pulse.html dist/market-pulse.html",
-    "dev": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --format=esm --target=es2020 --watch"
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@casehubio/pages-runtime": "file:../../../../../pages/packages/pages-runtime",
+    "@casehubio/pages-ui": "file:../../../../../pages/packages/pages-ui",
+    "@casehubio/pages-data": "file:../../../../../pages/packages/pages-data"
   },
   "devDependencies": {
     "esbuild": "0.21.5",
