@@ -3,17 +3,30 @@ import {
   hostPanel, split, lookup,
 } from "@casehubio/pages-ui";
 import { heatmapChart, eventTimeline, badge } from "@casehubio/pages-ui/dist/dsl/builders.js";
-import { fetchSource, dataSetId } from "@casehubio/pages-data";
+import { fetchSource, composite, dataSetId } from "@casehubio/pages-data";
 import { createRestLayoutStore } from "@casehubio/pages-runtime";
 import type { DataSourceBinding } from "@casehubio/pages-data";
 import type { DockPanelConfig } from "@casehubio/pages-ui";
+import { topicSource } from "./topic-source";
 
-const positionsSource = fetchSource("/api/positions");
+const positionsSource = composite(
+  fetchSource("/api/positions"),
+  topicSource(["position:*"], { keyField: "instrument" }),
+);
 const kpisSource = fetchSource("/api/kpis");
 const heatmapSource = fetchSource("/api/kpis/heatmap");
-const trustSource = fetchSource("/api/trust/strategies");
-const routingSource = fetchSource("/api/routing/decisions?limit=20");
-const deliberationsSource = fetchSource("/api/deliberations");
+const trustSource = composite(
+  fetchSource("/api/trust/strategies"),
+  topicSource(["trust:*"], { keyField: "strategyType" }),
+);
+const routingSource = composite(
+  fetchSource("/api/routing/decisions?limit=20"),
+  topicSource(["routing:latest"], { accumulate: false }),
+);
+const deliberationsSource = composite(
+  fetchSource("/api/deliberations"),
+  topicSource(["deliberation:active"], { accumulate: false }),
+);
 const strategiesSource = fetchSource("/api/strategies");
 const ordersSource = fetchSource("/api/orders");
 
@@ -124,15 +137,15 @@ const regimeBadge = badge({
 const layoutStore = createRestLayoutStore("/api/layout");
 
 const datasets: DataSourceBinding[] = [
-  { id: dataSetId("positions"), source: positionsSource, refreshTime: "5s" },
+  { id: dataSetId("positions"), source: positionsSource },
   { id: dataSetId("kpis"), source: kpisSource, refreshTime: "30s" },
   { id: dataSetId("heatmap"), source: heatmapSource, refreshTime: "30s" },
-  { id: dataSetId("trust"), source: trustSource, refreshTime: "10s" },
-  { id: dataSetId("routing"), source: routingSource, refreshTime: "10s" },
-  { id: dataSetId("deliberations"), source: deliberationsSource, refreshTime: "10s" },
+  { id: dataSetId("trust"), source: trustSource },
+  { id: dataSetId("routing"), source: routingSource },
+  { id: dataSetId("deliberations"), source: deliberationsSource },
   { id: dataSetId("strategies"), source: strategiesSource },
   { id: dataSetId("orders"), source: ordersSource, refreshTime: "10s" },
-  { id: dataSetId("regime"), source: fetchSource("/api/regime"), refreshTime: "60s" },
+  { id: dataSetId("regime"), source: topicSource(["market:regime:*"], { keyField: "instrument" }) },
 ];
 
 export const tradingDesk = page("Trading Desk",
