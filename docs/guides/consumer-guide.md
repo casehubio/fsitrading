@@ -52,7 +52,7 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 **Not yet implemented:**
 - C3: Multi-agent strategy debate
 - C4: SLA enforcement with escalation tiers
-- C5: Pages UI -- trading desk dock-workbench (replaces minimal panel with full composition)
+- C5a: Pages UI -- trading desk dock-workbench with 9 panels via pages DSL, layout persistence, composite REST+WS data binding
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
 ---
@@ -79,6 +79,9 @@ All endpoints produce `application/json`.
 | `GET` | `/api/routing/decisions` | Recent routing decisions (paginated, `?limit=N`) |
 | `GET` | `/api/routing/decisions/latest` | Most recent completed routing decision |
 | `GET` | `/api/kpis` | Aggregated KPIs (totalPnl, winRate, tradeCount, avgReturn) |
+| `GET` | `/api/kpis/heatmap` | P&L cross-tabulated by instrument × strategy name |
+| `GET` | `/api/layout/{key}` | Load saved dock-workbench layout |
+| `PUT` | `/api/layout/{key}` | Save dock-workbench layout (JSON body) |
 | `GET` | `/api/preferences/trust-routing` | Trust routing threshold configuration |
 | `PUT` | `/api/preferences/trust-routing` | Update trust routing thresholds |
 | `GET` | `/api/market-data/bars/{instrument}` | Historical 1-min OHLCV bars |
@@ -106,8 +109,14 @@ Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
 | `market:narrative` | 4 | SessionNarrative | ~1/session |
 | `deliberation:active` | — | DeliberationPushPayload (Started/Completed/Failed) | Per deliberation lifecycle |
 | `deliberation:{channelId}` | — | DeliberationPushPayload (all types + ConvergenceUpdate) | Per message during debate |
+| `position:{instrument}` | — | TradingPushPayload.PositionUpdate | Per fill |
+| `pnl:{strategyId}` | — | TradingPushPayload.PnlUpdate | Per position close |
+| `trust:{strategyType}` | — | TradingPushPayload.TrustUpdate | Per arena attestation |
+| `routing:latest` | — | TradingPushPayload.RoutingUpdate | Per routing decision |
 
 Deliberation payloads include a `type` field for client dispatch: `DELIBERATION_STARTED`, `DELIBERATION_COMPLETED`, `DELIBERATION_FAILED`, `CONVERGENCE_UPDATE`.
+
+Trading payloads include a `type` field: `POSITION_UPDATE`, `PNL_UPDATE`, `TRUST_UPDATE`, `ROUTING_UPDATE`.
 
 ### Trust Score Response
 
