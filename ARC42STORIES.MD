@@ -285,8 +285,8 @@ Inherited from CaseHub Profile:
 | # | Chapter | Primary showcase | Orchestration | Status |
 |---|---|---|---|---|
 | C0 | Foundation Fixes | Prerequisites | — | 🔨 In Progress |
-| C1 | Strategy Arena | blocks orchestration, routing, eidos | Supervisor, Parallel, Voting | 🔲 |
-| C2 | Market Pulse | blocks summarisation, pages-push | Sequence, Loop | 🔲 |
+| C1 | Strategy Arena | blocks orchestration, routing, eidos | Supervisor, Parallel, Voting | 🟢 |
+| C2 | Market Pulse | blocks summarisation, pages-push | Sequence, Loop | 🟢 |
 | C3 | Trade Deliberation | blocks conversation, convergence | Debate | 🟢 |
 | C4 | Overnight Ops | engine cases, oversight, SLA | HTN, Conditional | 🔲 |
 | C5 | The Trading Desk | dock-workbench, floating panels | (all) | 🔲 |
