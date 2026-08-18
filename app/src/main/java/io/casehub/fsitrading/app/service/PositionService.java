@@ -20,21 +20,24 @@ public class PositionService {
 
     @Inject
     EntityManager em;
+    @Inject
+    jakarta.enterprise.event.Event<PositionUpdatedEvent> positionUpdatedEvent;
+
 
     @Transactional
     public FillResult applyFill(OrderEntity order, AssetClass assetClass) {
         var position = findOrCreate(order.getInstrument(), assetClass, order.getStrategyId());
         var fillQty = order.getSide() == OrderSide.BUY
-                ? order.getQuantity()
-                : order.getQuantity().negate();
+                      ? order.getQuantity()
+                      : order.getQuantity().negate();
         var fillPrice = order.getFillPrice();
 
-        var oldQty = position.getQuantity();
-        var newQty = oldQty.add(fillQty);
+        var     oldQty        = position.getQuantity();
+        var     newQty        = oldQty.add(fillQty);
         boolean sameDirection = oldQty.signum() == 0 || oldQty.signum() == fillQty.signum();
 
-        BigDecimal realizedPnl = null;
-        BigDecimal closedNotional = null;
+        BigDecimal realizedPnl     = null;
+        BigDecimal closedNotional  = null;
         BigDecimal closedQtyResult = null;
 
         if (sameDirection) {
@@ -43,12 +46,12 @@ public class PositionService {
                 position.setOpenedAt(Instant.now());
             } else {
                 var totalCost = position.getAvgCost().multiply(oldQty.abs())
-                        .add(fillPrice.multiply(fillQty.abs()));
+                                        .add(fillPrice.multiply(fillQty.abs()));
                 position.setAvgCost(totalCost.divide(newQty.abs(), 8, RoundingMode.HALF_UP));
             }
         } else {
             var closedQty = oldQty.abs().min(fillQty.abs());
-            var pnl = fillPrice.subtract(position.getAvgCost()).multiply(closedQty);
+            var pnl       = fillPrice.subtract(position.getAvgCost()).multiply(closedQty);
             if (oldQty.signum() < 0) {
                 pnl = pnl.negate();
             }
@@ -56,13 +59,21 @@ public class PositionService {
             if (newQty.signum() != 0 && oldQty.signum() != newQty.signum()) {
                 position.setAvgCost(fillPrice);
             }
-            realizedPnl = pnl;
-            closedNotional = fillPrice.multiply(closedQty).abs();
+            realizedPnl     = pnl;
+            closedNotional  = fillPrice.multiply(closedQty).abs();
             closedQtyResult = closedQty;
         }
 
         position.setQuantity(newQty);
         position.setUpdatedAt(Instant.now());
+
+        positionUpdatedEvent.fire(new PositionUpdatedEvent(
+                position.getId(), position.getInstrument(),
+                assetClass.name(), order.getStrategyId(),
+                position.getQuantity(), position.getAvgCost(),
+                realizedPnl, fillPrice, closedQtyResult,
+                position.getUpdatedAt()));
+
         return new FillResult(position, realizedPnl, closedNotional, fillPrice, closedQtyResult);
     }
 

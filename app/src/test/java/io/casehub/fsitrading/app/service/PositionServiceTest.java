@@ -1,7 +1,12 @@
 package io.casehub.fsitrading.app.service;
 
 import io.casehub.fsitrading.app.model.OrderEntity;
-import io.casehub.fsitrading.model.*;
+import io.casehub.fsitrading.model.AssetClass;
+import io.casehub.fsitrading.model.Instrument;
+import io.casehub.fsitrading.model.OrderSide;
+import io.casehub.fsitrading.model.OrderType;
+import io.casehub.fsitrading.model.StrategyType;
+import io.casehub.fsitrading.model.TradeDecision;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -19,6 +24,7 @@ class PositionServiceTest {
 
     @Inject
     PositionService positionService;
+
 
     @Inject
     StrategyService strategyService;
@@ -133,4 +139,7 @@ class PositionServiceTest {
         var order = orderService.createFromDecision(decision);
         return orderService.fill(order.getId(), fillPrice);
     }
+
+
+
 }
