@@ -10,7 +10,6 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 @Path("/api/kpis")
 @Produces(MediaType.APPLICATION_JSON)
@@ -18,6 +17,9 @@ public class KpiResource {
 
     @Inject
     PositionService positionService;
+    @jakarta.inject.Inject
+    io.casehub.fsitrading.app.service.StrategyService strategyService;
+
 
     @GET
     public KpiSummary getKpis() {
@@ -38,6 +40,23 @@ public class KpiResource {
 
         return new KpiSummary(totalPnl, winRate, tradeCount, avgReturn);
     }
+
+    @GET
+    @Path("/heatmap")
+    public java.util.List<HeatmapCell> getHeatmap() {
+        var positions = positionService.findAll();
+        return positions.stream()
+                        .filter(p -> p.getRealizedPnl().signum() != 0)
+                        .map(p -> {
+                            var    strategy     = strategyService.findById(p.getStrategyId());
+                            String strategyName = strategy != null ? strategy.getName() : p.getStrategyId().toString();
+                            return new HeatmapCell(p.getInstrument(), strategyName, p.getRealizedPnl());
+                        })
+                        .toList();
+    }
+
+    public record HeatmapCell(String instrument, String strategy, java.math.BigDecimal pnl) {}
+
 
     public record KpiSummary(BigDecimal totalPnl, double winRate, long tradeCount, BigDecimal avgReturn) {}
 }

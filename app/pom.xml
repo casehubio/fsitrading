@@ -192,6 +192,13 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- Pages layout persistence: SQLite-backed layout store for dock-workbench -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-layout-sqlite</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
     <!-- WebSocket endpoint for push -->
     <dependency>
       <groupId>io.quarkus</groupId>
