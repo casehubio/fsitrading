@@ -101,6 +101,7 @@ public class FsiDeliberationStateObserver implements MessageObserver, EventSourc
                 event.senderId(),
                 event.messageType(),
                 event.content(),
+                null,
                 event.correlationId(),
                 null,
                 event.target(),
@@ -109,6 +110,5 @@ public class FsiDeliberationStateObserver implements MessageObserver, EventSourc
                 event.actorType(),
                 event.occurredAt(),
                 null,
-                0);
-    }
+                0);}
 }

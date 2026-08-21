@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FsiConversationProjectionTest {
 
@@ -67,44 +71,42 @@ class FsiConversationProjectionTest {
 
     @Test
     void applyRaiseCreatesPoint() {
-        var state = projection.identity();
+        var state   = projection.identity();
         var pointId = UUID.randomUUID().toString();
         var content = ChannelMessageMeta.encode("##FSI##",
-                Map.of("entryType", "RAISE", "role", "momentum-strategy", "round", "1"),
-                "AAPL showing momentum exhaustion");
+                                                Map.of("entryType", "RAISE", "role", "momentum-strategy", "round", "1"),
+                                                "AAPL showing momentum exhaustion");
         var message = new MessageView(1L, UUID.randomUUID(), "rule:momentum@v1",
-                MessageType.COMMAND, content, pointId, null, null,
-                "debate", List.of(), null, Instant.now(), null, 0);
+                                      MessageType.COMMAND, content, null, pointId, null, null,
+                                      "debate", List.of(), null, Instant.now(), null, 0);
 
         var next = projection.apply(state, message);
 
         assertEquals(1, next.points().size());
         var point = next.points().get(pointId);
         assertNotNull(point);
-        assertEquals("OPEN", point.status());
-    }
+        assertEquals("OPEN", point.status());}
 
     @Test
     void applyAgreeChangesStatusToAgreed() {
-        var state = projection.identity();
+        var state   = projection.identity();
         var pointId = UUID.randomUUID().toString();
 
         var raiseContent = ChannelMessageMeta.encode("##FSI##",
-                Map.of("entryType", "RAISE", "role", "momentum-strategy", "round", "1"),
-                "AAPL thesis");
+                                                     Map.of("entryType", "RAISE", "role", "momentum-strategy", "round", "1"),
+                                                     "AAPL thesis");
         var raiseMsg = new MessageView(1L, UUID.randomUUID(), "rule:momentum@v1",
-                MessageType.COMMAND, raiseContent, pointId, null, null,
-                "debate", List.of(), null, Instant.now(), null, 0);
+                                       MessageType.COMMAND, raiseContent, null, pointId, null, null,
+                                       "debate", List.of(), null, Instant.now(), null, 0);
         state = projection.apply(state, raiseMsg);
 
         var agreeContent = ChannelMessageMeta.encode("##FSI##",
-                Map.of("entryType", "AGREE", "role", "mean-reversion-strategy", "round", "1"),
-                "I concur");
+                                                     Map.of("entryType", "AGREE", "role", "mean-reversion-strategy", "round", "1"),
+                                                     "I concur");
         var agreeMsg = new MessageView(2L, UUID.randomUUID(), "rule:mean-reversion@v1",
-                MessageType.RESPONSE, agreeContent, pointId, null, null,
-                "debate", List.of(), null, Instant.now(), null, 0);
+                                       MessageType.RESPONSE, agreeContent, null, pointId, null, null,
+                                       "debate", List.of(), null, Instant.now(), null, 0);
         state = projection.apply(state, agreeMsg);
 
-        assertEquals("AGREED", state.points().get(pointId).status());
-    }
+        assertEquals("AGREED", state.points().get(pointId).status());}
 }

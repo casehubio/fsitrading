@@ -1,7 +1,6 @@
 package io.casehub.fsitrading.app.deliberation;
 
 import io.casehub.blocks.agentic.model.DriverEvent;
-import io.casehub.blocks.agentic.model.EventSource;
 import io.casehub.blocks.channel.ChannelMessageMeta;
 import io.casehub.blocks.conversation.ConvergenceSignal;
 import io.casehub.blocks.conversation.ConvergenceState;
@@ -19,7 +18,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FsiDeliberationStateObserverTest {
 
@@ -169,12 +172,11 @@ class FsiDeliberationStateObserverTest {
 
     private MessageReceivedEvent raiseEvent(String correlationId, String role, String body) {
         var content = ChannelMessageMeta.encode("##FSI##",
-                Map.of("entryType", "RAISE", "role", role, "round", "1"),
-                body);
+                                                Map.of("entryType", "RAISE", "role", role, "round", "1"),
+                                                body);
         return new MessageReceivedEvent(1L, CHANNEL, CHANNEL_ID, null,
-                MessageType.COMMAND, "rule:momentum@v1", null, null,
-                correlationId, Instant.now(), content, "debate");
-    }
+                                        MessageType.COMMAND, "rule:momentum@v1", null, null,
+                                        correlationId, Instant.now(), content, null, "debate");}
 
     record BroadcastCapture(String topic, Object event) {}
 }
