@@ -7,5 +7,7 @@ public enum MarketEventType {
     LIQUIDITY_DROP,
     GAP_OPEN,
     CIRCUIT_BREAKER,
-    NEWS_EVENT
+    NEWS_EVENT,
+    COUNTERPARTY_FAILURE,
+    MARGIN_CALL
 }
