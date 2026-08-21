@@ -6,8 +6,8 @@ import io.casehub.blocks.agentic.model.ExecutionModel;
 import io.casehub.blocks.agentic.pattern.Patterns;
 import io.casehub.blocks.summarisation.EventStreamBus;
 import io.casehub.blocks.summarisation.KeyedSummarisationRunner;
-import io.casehub.blocks.summarisation.Summariser;
 import io.casehub.blocks.summarisation.SummarisationRunner;
+import io.casehub.blocks.summarisation.Summariser;
 import io.casehub.blocks.summarisation.WindowPolicy;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.PriceTick;
@@ -94,6 +94,15 @@ public class MarketPulseConfiguration {
     public FsiMarketPushService pushService(io.casehub.pages.push.EventBroadcaster broadcaster) {
         return new FsiMarketPushService((topic, event) -> broadcaster.broadcast(topic, event));
     }
+
+    @Produces
+    @Singleton
+    public FsiMarketEventDetector marketEventDetector(
+            jakarta.enterprise.event.Event<io.casehub.fsitrading.model.TrendReversalDetected> trendReversalEvent,
+            jakarta.enterprise.event.Event<io.casehub.fsitrading.model.RegimeChanged> regimeChangedEvent) {
+        return new FsiMarketEventDetector(trendReversalEvent::fire, regimeChangedEvent::fire);
+    }
+
 
     @Produces @Singleton @Named("regimeSummariser")
     public FsiRegimeSummariser regimeSummariser(@Named("llmProvider") Function<String, CompletionStage<String>> llmProvider) {

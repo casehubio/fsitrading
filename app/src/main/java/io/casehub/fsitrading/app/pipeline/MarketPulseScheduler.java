@@ -60,6 +60,9 @@ public class MarketPulseScheduler {
 
     @Inject
     FsiMarketPushService pushService;
+    @Inject
+    FsiMarketEventDetector marketEventDetector;
+
 
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private volatile boolean wired = false;
@@ -67,9 +70,9 @@ public class MarketPulseScheduler {
     void onStart(@Observes StartupEvent event) {
         configuration.wirePipeline(l0Bus, l1Runner, l1Bus, l2Runner, l2Bus, l3Runner, l3Bus, l4Runner);
         pushService.subscribe(l0Bus, l1Bus, l2Bus, l3Bus, l4Bus);
+        marketEventDetector.subscribe(l2Bus, l3Bus);
         wired = true;
-        log.info("Market Pulse scheduler started");
-    }
+        log.info("Market Pulse scheduler started");}
 
     @Scheduled(every = "${fsi.market.tick-interval:500ms}", identity = "market-pulse-tick")
     void generateTick() {
