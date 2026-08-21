@@ -14,11 +14,7 @@ public class OvernightIncidentCaseHub extends YamlCaseHub {
     }
 
     @Override
-    protected void augment(CaseDefinition definition) {
-        // Worker functions will be wired by Task 4 (response agents).
-        // The YAML-loaded workers with WorkerFunction.NONE are sufficient
-        // for the case structure — agents replace them at runtime.
-    }
+    protected void augment(CaseDefinition definition) {descriptor.augmentWorkers(definition);}
 
     public OvernightIncidentCaseDescriptor getDescriptor() {
         return descriptor;
