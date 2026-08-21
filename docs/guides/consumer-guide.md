@@ -46,12 +46,23 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - WebSocket push via pages-push EventBroadcaster -- live ticks, bars, trends, regime to browser
 - Minimal fsi-market-panel web component (Quinoa + esbuild) proving end-to-end push path
 - Sequence + Loop orchestration model via casehub-blocks patterns
-- 24 REST endpoints (see API section below)
+- 31 REST endpoints (see API section below)
 - Dual-datasource configuration (H2 dev, PostgreSQL prod)
+
+**Implemented (C4a Overnight Ops Backend):**
+- Incident lifecycle -- severity classification (CRITICAL/HIGH/MEDIUM), off-hours amplification, 2-tier SLA escalation
+- YAML case definitions (overnight-incident, fsi-oversight) with CBR config, milestones, goals, capability bindings
+- 13 response agents -- 7 rule-based (halt, close, alert, adjust, monitor, verify, halt-and-wait), 6 LLM stubs (reduce, hedge, re-evaluate, close-exposure, sentiment, liquidate)
+- Action risk classifier gates high-risk actions (>25% portfolio close, full liquidation, counterparty close) via dedicated oversight CaseHub
+- SLA breach policy with claim/completion tiers, escalation to oncall-escalation group
+- JPA incident store with timeline tracking (Flyway V105-V106)
+- C2 pipeline bridge -- FsiMarketEventDetector fires CDI events for TrendReversalDetected/RegimeChanged
+- EventTypeRegistry registration (4 incident event types) + EventBroadcaster push
+- 7 incident REST endpoints + WorkItem query/resolve
 
 **Not yet implemented:**
 - C3: Multi-agent strategy debate
-- C4: SLA enforcement with escalation tiers
+- C4b: Overnight Ops UI panels (Pages DSL)
 - C5a: Pages UI -- trading desk dock-workbench with 9 panels via pages DSL, layout persistence, composite REST+WS data binding
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
@@ -91,6 +102,13 @@ All endpoints produce `application/json`.
 | `POST` | `/api/market-data/scenario` | Inject scenario event (flash crash, gap open, etc.) |
 | `POST` | `/api/market-data/scheduler/pause` | Pause tick generation |
 | `POST` | `/api/market-data/scheduler/resume` | Resume tick generation |
+| `GET` | `/api/incidents?limit=20` | Recent incidents with status (paginated) |
+| `GET` | `/api/incidents/{caseId}` | Incident detail (404 if not found) |
+| `GET` | `/api/incidents/{caseId}/timeline` | Timeline events for an incident |
+| `POST` | `/api/incidents/simulate` | Inject simulated incident for demo/testing |
+| `POST` | `/api/incidents/external` | Ingest external operational event (requires `fsi-ops` role) |
+| `GET` | `/api/work-items?type=&candidateGroup=&status=` | Work items filtered by type/group/status |
+| `POST` | `/api/work-items/{id}/resolve` | Approve/Reject/Delegate a gated action |
 
 ### WebSocket Push
 
@@ -113,6 +131,9 @@ Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
 | `pnl:{strategyId}` | — | TradingPushPayload.PnlUpdate | Per position close |
 | `trust:{strategyType}` | — | TradingPushPayload.TrustUpdate | Per arena attestation |
 | `routing:latest` | — | TradingPushPayload.RoutingUpdate | Per routing decision |
+| `incidents/{caseId}` | — | IncidentCreatedEvent / SlaBreachEvent / IncidentResolvedEvent | Per incident lifecycle event |
+| `incidents/summary` | — | IncidentCreatedEvent / IncidentResolvedEvent | Per incident create/resolve |
+| `work-items/{caseId}` | — | GateOpenedEvent | Per high-risk action gate |
 
 Deliberation payloads include a `type` field for client dispatch: `DELIBERATION_STARTED`, `DELIBERATION_COMPLETED`, `DELIBERATION_FAILED`, `CONVERGENCE_UPDATE`.
 
@@ -147,7 +168,8 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 - `OrderSide` -- BUY, SELL
 - `OrderType` -- MARKET, LIMIT, STOP, STOP_LIMIT
 - `OrderStatus` -- PENDING, SUBMITTED, PARTIALLY_FILLED, FILLED, CANCELLED, REJECTED
-- `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT
+- `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT, COUNTERPARTY_FAILURE, MARGIN_CALL
+- `IncidentSeverity` -- CRITICAL, HIGH, MEDIUM
 
 **Market data types (C2):**
 - `PriceTick` -- instrument, price, volume, timestamp, anomaly flag
