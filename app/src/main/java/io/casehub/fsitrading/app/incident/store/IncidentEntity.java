@@ -58,10 +58,11 @@ public class IncidentEntity {
     }
 
     public IncidentRecord toRecord() {
+        List<String> instrumentList = instruments.isEmpty()
+                                      ? List.of()
+                                      : Arrays.asList(instruments.split(","));
         return new IncidentRecord(caseId, severity, eventType,
-                Arrays.asList(instruments.split(",")),
-                status, createdAt, resolvedAt);
-    }
+                                  instrumentList, status, createdAt, resolvedAt);}
 
     public UUID getCaseId() { return caseId; }
     public String getStatus() { return status; }
