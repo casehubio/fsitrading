@@ -1,0 +1,37 @@
+dsl: "0.1"
+version: "1.0.0"
+name: "fsi-oversight"
+namespace: "fsitrading"
+title: "FSI Oversight — Action Risk Gate"
+summary: |
+  Dedicated oversight case for high-risk trading actions gated by
+  FsiActionRiskClassifier.  Each instance represents one approval
+  workflow for a gated action.
+
+spec:
+  milestones:
+    - name: "GATE_OPENED"
+      condition: ".gateReason != null"
+
+    - name: "RESOLVED"
+      condition: ".resolution != null"
+
+  goals:
+    - name: "gate-resolved"
+      kind: success
+      condition: ".resolution != null"
+
+  completion:
+    success:
+      anyOf: [gate-resolved]
+
+  bindings:
+    - name: "approve-action"
+      on:
+        contextChange:
+          filter: ".gateReason != null and .resolution == null"
+      humanTask:
+        title: "High-risk action approval"
+        types: ["risk-gate"]
+        candidateGroups: ["fsi-oncall"]
+        outcomes: [APPROVED, REJECTED, DELEGATED]

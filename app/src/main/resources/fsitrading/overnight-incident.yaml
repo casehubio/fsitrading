@@ -1,0 +1,92 @@
+dsl: "0.1"
+version: "1.0.0"
+name: "overnight-incident"
+namespace: "fsitrading"
+title: "Overnight Incident Response"
+summary: |
+  Manages the lifecycle of an overnight trading incident — from detection
+  through classification, response, verification, and closure.  HTN
+  decomposes by severity; Conditional routes by event type.
+
+spec:
+  capabilities:
+    - name: "incident-classify"
+      description: "Classifies incident severity based on market event and context"
+      inputSchema: "{ severity: .severity, eventType: .eventType, instruments: .instruments }"
+      outputSchema: "{ classified: true, classificationDetail: . }"
+
+    - name: "incident-respond"
+      description: "Executes the appropriate response action for the incident"
+      inputSchema: "{ severity: .severity, eventType: .eventType, instruments: .instruments, classified: .classified }"
+      outputSchema: "{ responded: true, responseDetail: . }"
+
+    - name: "incident-verify"
+      description: "Verifies that the response action achieved the desired outcome"
+      inputSchema: "{ severity: .severity, eventType: .eventType, responseDetail: .responseDetail }"
+      outputSchema: "{ verified: true, verificationDetail: . }"
+
+  milestones:
+    - name: "DETECTED"
+      condition: ".severity != null"
+
+    - name: "CLASSIFIED"
+      condition: ".classified == true"
+
+    - name: "RESPONDED"
+      condition: ".responded == true"
+
+    - name: "VERIFIED"
+      condition: ".verified == true"
+
+    - name: "CLOSED"
+      condition: ".closed == true"
+
+  goals:
+    - name: "capital-preserved"
+      kind: success
+      condition: ".portfolioValueRatio >= 0.95"
+
+    - name: "positions-safe"
+      kind: success
+      condition: ".unhedgedExposure == 0"
+
+    - name: "sla-met"
+      kind: success
+      condition: ".slaBreachCount == 0"
+
+  completion:
+    success:
+      allOf: [capital-preserved, positions-safe, sla-met]
+
+  bindings:
+    - name: "classify"
+      on:
+        contextChange:
+          filter: ".severity != null and .classified == null"
+      capability: "incident-classify"
+
+    - name: "respond"
+      on:
+        contextChange:
+          filter: ".classified == true and .responded == null"
+      capability: "incident-respond"
+
+    - name: "verify"
+      on:
+        contextChange:
+          filter: ".responded == true and .verified == null"
+      capability: "incident-verify"
+
+    - name: "review"
+      on:
+        contextChange:
+          filter: ".verified == true and .closed == null"
+      humanTask:
+        title: "Incident Review"
+        types: ["incident-review"]
+        candidateGroups: ["fsi-oncall"]
+
+  cbrConfig:
+    topK: 5
+    minSimilarity: 0.6
+    temporalDecayHalfLifeDays: 90
