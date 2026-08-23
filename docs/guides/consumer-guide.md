@@ -60,10 +60,25 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - EventTypeRegistry registration (4 incident event types) + EventBroadcaster push
 - 7 incident REST endpoints + WorkItem query/resolve
 
+**Implemented (C3 Trade Deliberation):**
+- Multi-agent strategy debate over qhorus channels with epistemic convergence detection
+- Commitment lifecycle, context tracking, sub-task dispatch
+- See C3 section below for full details
+
+**Implemented (C5a Trading Desk Infrastructure):**
+- Dock-workbench page with 10 C1-C3 panels via pages DSL (dataTable, metricGrid, heatmapChart, eventTimeline, hostPanel)
+- Composite data binding (REST initial + WebSocket live) via topicSource
+- Layout persistence via SQLite-backed REST store
+- Quinoa build chain (esbuild, TypeScript)
+
+**Implemented (C4b Overnight Ops Panels):**
+- Typed push payloads: IncidentPushPayload (3 records), WorkItemPushPayload (5 records)
+- FsiWorkItemPushListener observing WorkItemLifecycleEvent (scope-filtered to fsitrading)
+- SLA deadline fields (claimDeadline, completionDeadline) on IncidentRecord + V107 migration
+- 8 blocks-ui panels wired to trading desk dock-workbench (defaultOpen: false, temporary placement for C5b Ops Centre)
+
 **Not yet implemented:**
-- C3: Multi-agent strategy debate
-- C4b: Overnight Ops UI panels (Pages DSL)
-- C5a: Pages UI -- trading desk dock-workbench with 9 panels via pages DSL, layout persistence, composite REST+WS data binding
+- C5b: Ops Centre -- second dock-workbench page composing C4 panels into dedicated ops workspace
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
 ---
@@ -131,13 +146,19 @@ Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
 | `pnl:{strategyId}` | — | TradingPushPayload.PnlUpdate | Per position close |
 | `trust:{strategyType}` | — | TradingPushPayload.TrustUpdate | Per arena attestation |
 | `routing:latest` | — | TradingPushPayload.RoutingUpdate | Per routing decision |
-| `incidents/{caseId}` | — | IncidentCreatedEvent / SlaBreachEvent / IncidentResolvedEvent | Per incident lifecycle event |
-| `incidents/summary` | — | IncidentCreatedEvent / IncidentResolvedEvent | Per incident create/resolve |
-| `work-items/{caseId}` | — | GateOpenedEvent | Per high-risk action gate |
+| `incidents/{caseId}` | — | IncidentPushPayload (INCIDENT_CREATED / SLA_BREACHED / INCIDENT_RESOLVED) | Per incident lifecycle event |
+| `incidents/summary` | — | IncidentPushPayload (INCIDENT_CREATED / INCIDENT_RESOLVED) | Per incident create/resolve |
+| `work-items/{itemId}` | — | WorkItemPushPayload (WORK_ITEM_CREATED / ASSIGNED / ESCALATED / COMPLETED) | Per work item lifecycle |
+| `work-items/{caseId}` | — | WorkItemPushPayload.GateOpened | Per high-risk action gate |
+| `work-items/summary` | — | WorkItemPushPayload (all types + GateOpened) | Aggregate work item events |
 
 Deliberation payloads include a `type` field for client dispatch: `DELIBERATION_STARTED`, `DELIBERATION_COMPLETED`, `DELIBERATION_FAILED`, `CONVERGENCE_UPDATE`.
 
 Trading payloads include a `type` field: `POSITION_UPDATE`, `PNL_UPDATE`, `TRUST_UPDATE`, `ROUTING_UPDATE`.
+
+Incident payloads include a `type` field: `INCIDENT_CREATED`, `SLA_BREACHED`, `INCIDENT_RESOLVED`. `INCIDENT_CREATED` carries `claimDeadline` and `completionDeadline` timestamps for SLA countdown display.
+
+Work item payloads include a `type` field: `WORK_ITEM_CREATED`, `WORK_ITEM_ASSIGNED`, `WORK_ITEM_ESCALATED`, `WORK_ITEM_COMPLETED`, `GATE_OPENED`. `ESCALATED` carries updated deadline timestamps after SLA tier change.
 
 ### Trust Score Response
 

@@ -10,7 +10,16 @@
   "dependencies": {
     "@casehubio/pages-runtime": "file:../../../../../pages/packages/pages-runtime",
     "@casehubio/pages-ui": "file:../../../../../pages/packages/pages-ui",
-    "@casehubio/pages-data": "file:../../../../../pages/packages/pages-data"
+    "@casehubio/pages-data": "file:../../../../../pages/packages/pages-data",
+    "@casehubio/blocks-ui-core": "file:../../../../../blocks-ui/packages/blocks-ui-core",
+    "@casehubio/blocks-ui-work-item-inbox": "file:../../../../../blocks-ui/components/work-item-inbox",
+    "@casehubio/blocks-ui-work-item-detail": "file:../../../../../blocks-ui/components/work-item-detail",
+    "@casehubio/blocks-ui-approval-gate": "file:../../../../../blocks-ui/components/approval-gate",
+    "@casehubio/blocks-ui-sla-indicator": "file:../../../../../blocks-ui/components/sla-indicator",
+    "@casehubio/blocks-ui-sla-breach-policy": "file:../../../../../blocks-ui/components/sla-breach-policy",
+    "@casehubio/blocks-ui-case-explorer": "file:../../../../../blocks-ui/components/case-explorer",
+    "@casehubio/blocks-ui-notification-inbox": "file:../../../../../blocks-ui/components/notification-inbox",
+    "@casehubio/blocks-ui-blocks-timeline": "file:../../../../../blocks-ui/components/blocks-timeline"
   },
   "devDependencies": {
     "esbuild": "0.21.5",

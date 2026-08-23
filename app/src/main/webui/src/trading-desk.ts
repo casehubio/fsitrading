@@ -124,6 +124,70 @@ const commitments: DockPanelConfig = {
   }),
 };
 
+const caseExplorer: DockPanelConfig = {
+  key: "cases",
+  label: "Cases",
+  icon: "folder",
+  defaultOpen: false,
+  content: hostPanel("case-explorer"),
+};
+
+const workItemInbox: DockPanelConfig = {
+  key: "work-items",
+  label: "Work Items",
+  icon: "inbox",
+  defaultOpen: false,
+  content: hostPanel("work-item-inbox"),
+};
+
+const workItemDetail: DockPanelConfig = {
+  key: "work-item-detail",
+  label: "Work Item Detail",
+  icon: "document",
+  defaultOpen: false,
+  content: hostPanel("work-item-detail"),
+};
+
+const approvalGate: DockPanelConfig = {
+  key: "approval-gate",
+  label: "Approval Gate",
+  icon: "shield",
+  defaultOpen: false,
+  content: hostPanel("approval-gate"),
+};
+
+const slaIndicator: DockPanelConfig = {
+  key: "sla",
+  label: "SLA Status",
+  icon: "clock",
+  defaultOpen: false,
+  content: hostPanel("sla-indicator"),
+};
+
+const incidentTimeline: DockPanelConfig = {
+  key: "incident-timeline",
+  label: "Incident Timeline",
+  icon: "timeline",
+  defaultOpen: false,
+  content: hostPanel("blocks-timeline"),
+};
+
+const notificationInbox: DockPanelConfig = {
+  key: "notifications",
+  label: "Notifications",
+  icon: "bell",
+  defaultOpen: false,
+  content: hostPanel("notification-inbox"),
+};
+
+const slaBreachPolicy: DockPanelConfig = {
+  key: "sla-policy",
+  label: "SLA Policy",
+  icon: "settings",
+  defaultOpen: false,
+  content: hostPanel("sla-breach-policy"),
+};
+
 const regimeBadge = badge({
   lookup: lookup("regime"),
   colorMap: {
@@ -158,7 +222,10 @@ export const tradingDesk = page("Trading Desk",
     },
     right: {
       zones: 2,
-      panels: [trust, routing, deliberation, commitments],
+      panels: [trust, routing, deliberation, commitments,
+               caseExplorer, workItemInbox, workItemDetail,
+               approvalGate, slaIndicator, incidentTimeline,
+               notificationInbox, slaBreachPolicy],
     },
     statusBar: regimeBadge,
   }),
