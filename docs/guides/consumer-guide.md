@@ -77,8 +77,16 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - SLA deadline fields (claimDeadline, completionDeadline) on IncidentRecord + V107 migration
 - 8 blocks-ui panels wired to trading desk dock-workbench (defaultOpen: false, temporary placement for C5b Ops Centre)
 
+**Implemented (C5b Ops Centre Composition + Topic Unification):**
+- Multi-page site with tabs() navigation -- Trading Desk + Ops Centre pages
+- Ops Centre: 11 panels (1 DSL incident dashboard + 10 blocks-ui hostPanel)
+- Trading Desk: ops panels moved to Ops Centre, audit + preferences panels added to bottom zone
+- Push topic separators unified to colon-only (TopicRegistry trie requirement)
+- Topic entity names unified to singular (`incident:*`, `work-item:*`)
+- Incident summary endpoints for dashboard metrics
+- 33 REST endpoints (see API section below)
+
 **Not yet implemented:**
-- C5b: Ops Centre -- second dock-workbench page composing C4 panels into dedicated ops workspace
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
 ---
@@ -122,6 +130,8 @@ All endpoints produce `application/json`.
 | `GET` | `/api/incidents/{caseId}/timeline` | Timeline events for an incident |
 | `POST` | `/api/incidents/simulate` | Inject simulated incident for demo/testing |
 | `POST` | `/api/incidents/external` | Ingest external operational event (requires `fsi-ops` role) |
+| `GET` | `/api/incidents/summary/severity` | Severity counts as flat rows `[{severity, count}]` |
+| `GET` | `/api/incidents/summary/status` | Active total + SLA status `[{totalActive, slaStatus}]` |
 | `GET` | `/api/work-items?type=&candidateGroup=&status=` | Work items filtered by type/group/status |
 | `POST` | `/api/work-items/{id}/resolve` | Approve/Reject/Delegate a gated action |
 
@@ -146,11 +156,11 @@ Connect to `ws://{host}/ws/push`. Send `listen` to subscribe to topic patterns:
 | `pnl:{strategyId}` | — | TradingPushPayload.PnlUpdate | Per position close |
 | `trust:{strategyType}` | — | TradingPushPayload.TrustUpdate | Per arena attestation |
 | `routing:latest` | — | TradingPushPayload.RoutingUpdate | Per routing decision |
-| `incidents/{caseId}` | — | IncidentPushPayload (INCIDENT_CREATED / SLA_BREACHED / INCIDENT_RESOLVED) | Per incident lifecycle event |
-| `incidents/summary` | — | IncidentPushPayload (INCIDENT_CREATED / INCIDENT_RESOLVED) | Per incident create/resolve |
-| `work-items/{itemId}` | — | WorkItemPushPayload (WORK_ITEM_CREATED / ASSIGNED / ESCALATED / COMPLETED) | Per work item lifecycle |
-| `work-items/{caseId}` | — | WorkItemPushPayload.GateOpened | Per high-risk action gate |
-| `work-items/summary` | — | WorkItemPushPayload (all types + GateOpened) | Aggregate work item events |
+| `incident:{caseId}` | — | IncidentPushPayload (INCIDENT_CREATED / SLA_BREACHED / INCIDENT_RESOLVED) | Per incident lifecycle event |
+| `incident:summary` | — | IncidentPushPayload (INCIDENT_CREATED / INCIDENT_RESOLVED) | Per incident create/resolve |
+| `work-item:{itemId}` | — | WorkItemPushPayload (WORK_ITEM_CREATED / ASSIGNED / ESCALATED / COMPLETED) | Per work item lifecycle |
+| `work-item:{caseId}` | — | WorkItemPushPayload.GateOpened | Per high-risk action gate |
+| `work-item:summary` | — | WorkItemPushPayload (all types + GateOpened) | Aggregate work item events |
 
 Deliberation payloads include a `type` field for client dispatch: `DELIBERATION_STARTED`, `DELIBERATION_COMPLETED`, `DELIBERATION_FAILED`, `CONVERGENCE_UPDATE`.
 
