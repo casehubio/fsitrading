@@ -6,7 +6,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IncidentModelTest {
 
@@ -26,15 +29,22 @@ class IncidentModelTest {
 
     @Test
     void incidentCreatedEvent_carriesContext() {
-        var caseId = UUID.randomUUID();
+        var caseId             = UUID.randomUUID();
+        var now                = Instant.now();
+        var claimDeadline      = now.plusSeconds(120);
+        var completionDeadline = now.plusSeconds(300);
         var event = new IncidentCreatedEvent(
                 caseId, IncidentSeverity.CRITICAL,
-                MarketEventType.FLASH_CRASH, List.of("AAPL"), "Flash crash detected");
+                MarketEventType.FLASH_CRASH, List.of("AAPL"), "Flash crash detected",
+                now, claimDeadline, completionDeadline);
         assertEquals(caseId, event.caseId());
         assertEquals(IncidentSeverity.CRITICAL, event.severity());
         assertEquals(MarketEventType.FLASH_CRASH, event.eventType());
         assertEquals(List.of("AAPL"), event.instruments());
         assertEquals("Flash crash detected", event.description());
+        assertEquals(now, event.createdAt());
+        assertEquals(claimDeadline, event.claimDeadline());
+        assertEquals(completionDeadline, event.completionDeadline());
     }
 
     @Test
@@ -56,9 +66,11 @@ class IncidentModelTest {
 
     @Test
     void incidentResolvedEvent_carriesResolution() {
+        var now = Instant.now();
         var event = new IncidentResolvedEvent(
-                UUID.randomUUID(), IncidentSeverity.HIGH, "Positions closed successfully");
+                UUID.randomUUID(), IncidentSeverity.HIGH, "Positions closed successfully", now);
         assertEquals("Positions closed successfully", event.resolution());
+        assertEquals(now, event.resolvedAt());
     }
 
     @Test

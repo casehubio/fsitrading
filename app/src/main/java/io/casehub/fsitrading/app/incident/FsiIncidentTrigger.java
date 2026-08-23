@@ -4,6 +4,7 @@ import io.casehub.fsitrading.model.ExternalIncidentRequest;
 import io.casehub.fsitrading.model.IncidentCreatedEvent;
 import io.casehub.fsitrading.model.IncidentRecord;
 import io.casehub.fsitrading.model.IncidentSeverity;
+import io.casehub.fsitrading.model.IncidentSeverityDescriptor;
 import io.casehub.fsitrading.model.MarketEventType;
 import io.casehub.fsitrading.model.MarketRegime;
 import io.casehub.fsitrading.model.RegimeChanged;
@@ -79,12 +80,18 @@ public class FsiIncidentTrigger {
                 "instruments", instruments,
                 "description", description));
 
+        var now                = Instant.now();
+        var descriptor         = IncidentSeverityDescriptor.forSeverity(severity);
+        var claimDeadline      = now.plus(descriptor.claimDeadline());
+        var completionDeadline = now.plus(descriptor.completionDeadline());
+
         final var record = new IncidentRecord(caseId, severity, eventType,
-                instruments, "DETECTED", Instant.now(), null);
+                                              instruments, "DETECTED", now, null);
         store.save(record);
 
         incidentCreatedEvent.fire(new IncidentCreatedEvent(
-                caseId, severity, eventType, instruments, description));
+                caseId, severity, eventType, instruments, description,
+                now, claimDeadline, completionDeadline));
 
         log.infof("Incident triggered: %s %s %s caseId=%s", severity, eventType, instruments, caseId);
         return caseId;

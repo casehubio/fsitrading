@@ -36,7 +36,10 @@ public class FsiEventTypeRegistrar {
                         new EventFieldDescriptor("caseId", "Case ID", "UUID"),
                         new EventFieldDescriptor("severity", "Severity", "IncidentSeverity"),
                         new EventFieldDescriptor("eventType", "Event Type", "MarketEventType"),
-                        new EventFieldDescriptor("instruments", "Instruments", "List<String>"))));
+                        new EventFieldDescriptor("instruments", "Instruments", "List<String>"),
+                        new EventFieldDescriptor("createdAt", "Created At", "Instant"),
+                        new EventFieldDescriptor("claimDeadline", "Claim Deadline", "Instant"),
+                        new EventFieldDescriptor("completionDeadline", "Completion Deadline", "Instant"))));
 
         registry.register(new EventTypeDescriptor(
                 GateOpenedEvent.class.getSimpleName(),
@@ -64,7 +67,8 @@ public class FsiEventTypeRegistrar {
                 List.of(
                         new EventFieldDescriptor("caseId", "Case ID", "UUID"),
                         new EventFieldDescriptor("severity", "Severity", "IncidentSeverity"),
-                        new EventFieldDescriptor("resolution", "Resolution", "String"))));
+                        new EventFieldDescriptor("resolution", "Resolution", "String"),
+                        new EventFieldDescriptor("resolvedAt", "Resolved At", "Instant"))));
 
         log.info("Registered 4 FSI incident event types with EventTypeRegistry");
     }
