@@ -1,6 +1,7 @@
 package io.casehub.fsitrading.spi;
 
 import io.casehub.fsitrading.model.IncidentRecord;
+import io.casehub.fsitrading.model.IncidentSummary;
 import io.casehub.fsitrading.model.IncidentTimelineRecord;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface IncidentStore {
     void addTimelineEntry(UUID caseId, IncidentTimelineRecord entry);
 
     List<IncidentTimelineRecord> getTimeline(UUID caseId);
+
+    IncidentSummary getSummary();
 }

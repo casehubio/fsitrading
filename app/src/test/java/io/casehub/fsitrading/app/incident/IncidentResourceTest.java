@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -109,5 +109,33 @@ class IncidentResourceTest {
         }
 
         verify(trigger).triggerFromExternal(request);
+    }
+
+    @Test
+    void summarySeverity_returnsSeverityCounts() {
+        var summary = new io.casehub.fsitrading.model.IncidentSummary(2, "WARNING",
+                                                                      List.of(new io.casehub.fsitrading.model.IncidentSummary.SeverityCount("CRITICAL", 0),
+                                                                              new io.casehub.fsitrading.model.IncidentSummary.SeverityCount("HIGH", 1),
+                                                                              new io.casehub.fsitrading.model.IncidentSummary.SeverityCount("MEDIUM", 1)));
+        when(store.getSummary()).thenReturn(summary);
+
+        var result = resource.summarySeverity();
+        assertEquals(3, result.size());
+        assertEquals("CRITICAL", result.get(0).severity());
+        assertEquals(0, result.get(0).count());
+        assertEquals("HIGH", result.get(1).severity());
+        assertEquals(1, result.get(1).count());
+    }
+
+    @Test
+    void summaryStatus_returnsTotalActiveAndSlaStatus() {
+        var summary = new io.casehub.fsitrading.model.IncidentSummary(3, "BREACHED",
+                                                                      List.of());
+        when(store.getSummary()).thenReturn(summary);
+
+        var result = resource.summaryStatus();
+        assertEquals(1, result.size());
+        assertEquals(3L, ((Number) result.get(0).get("totalActive")).longValue());
+        assertEquals("BREACHED", result.get(0).get("slaStatus"));
     }
 }

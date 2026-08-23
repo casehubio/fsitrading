@@ -3,6 +3,7 @@ package io.casehub.fsitrading.app.incident;
 import io.casehub.fsitrading.model.ExternalIncidentRequest;
 import io.casehub.fsitrading.model.IncidentRecord;
 import io.casehub.fsitrading.model.IncidentSeverity;
+import io.casehub.fsitrading.model.IncidentSummary;
 import io.casehub.fsitrading.model.IncidentTimelineRecord;
 import io.casehub.fsitrading.model.MarketEventType;
 import io.casehub.fsitrading.spi.IncidentStore;
@@ -44,13 +45,30 @@ public class IncidentResource {
         if (found == null) {
             throw new jakarta.ws.rs.NotFoundException("Incident not found: " + caseId);
         }
-        return found;}
+        return found;
+    }
 
     @GET
     @Path("/{caseId}/timeline")
     public List<IncidentTimelineRecord> timeline(@PathParam("caseId") UUID caseId) {
         return store.getTimeline(caseId);
     }
+
+    @GET
+    @Path("/summary/severity")
+    public List<IncidentSummary.SeverityCount> summarySeverity() {
+        return store.getSummary().bySeverity();
+    }
+
+    @GET
+    @Path("/summary/status")
+    public List<Map<String, Object>> summaryStatus() {
+        var summary = store.getSummary();
+        return List.of(Map.of(
+                "totalActive", summary.totalActive(),
+                "slaStatus", summary.slaStatus()));
+    }
+
 
     @POST
     @Path("/simulate")
@@ -59,8 +77,8 @@ public class IncidentResource {
                 request.severity(), request.eventType(),
                 request.instruments(), request.description());
         return Response.status(Response.Status.CREATED)
-                .entity(Map.of("caseId", caseId))
-                .build();
+                       .entity(Map.of("caseId", caseId))
+                       .build();
     }
 
     @POST
@@ -69,8 +87,8 @@ public class IncidentResource {
     public Response external(ExternalIncidentRequest request) {
         UUID caseId = trigger.triggerFromExternal(request);
         return Response.status(Response.Status.CREATED)
-                .entity(Map.of("caseId", caseId))
-                .build();
+                       .entity(Map.of("caseId", caseId))
+                       .build();
     }
 
     public record SimulateRequest(
