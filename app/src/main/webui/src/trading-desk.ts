@@ -124,68 +124,20 @@ const commitments: DockPanelConfig = {
   }),
 };
 
-const caseExplorer: DockPanelConfig = {
-  key: "cases",
-  label: "Cases",
-  icon: "folder",
-  defaultOpen: false,
-  content: hostPanel("case-explorer"),
-};
-
-const workItemInbox: DockPanelConfig = {
-  key: "work-items",
-  label: "Work Items",
-  icon: "inbox",
-  defaultOpen: false,
-  content: hostPanel("work-item-inbox"),
-};
-
-const workItemDetail: DockPanelConfig = {
-  key: "work-item-detail",
-  label: "Work Item Detail",
+const audit: DockPanelConfig = {
+  key: "audit",
+  label: "Audit Trail",
   icon: "document",
   defaultOpen: false,
-  content: hostPanel("work-item-detail"),
+  content: hostPanel("audit-trail-viewer"),
 };
 
-const approvalGate: DockPanelConfig = {
-  key: "approval-gate",
-  label: "Approval Gate",
-  icon: "shield",
-  defaultOpen: false,
-  content: hostPanel("approval-gate"),
-};
-
-const slaIndicator: DockPanelConfig = {
-  key: "sla",
-  label: "SLA Status",
-  icon: "clock",
-  defaultOpen: false,
-  content: hostPanel("sla-indicator"),
-};
-
-const incidentTimeline: DockPanelConfig = {
-  key: "incident-timeline",
-  label: "Incident Timeline",
-  icon: "timeline",
-  defaultOpen: false,
-  content: hostPanel("blocks-timeline"),
-};
-
-const notificationInbox: DockPanelConfig = {
-  key: "notifications",
-  label: "Notifications",
-  icon: "bell",
-  defaultOpen: false,
-  content: hostPanel("notification-inbox"),
-};
-
-const slaBreachPolicy: DockPanelConfig = {
-  key: "sla-policy",
-  label: "SLA Policy",
+const preferences: DockPanelConfig = {
+  key: "preferences",
+  label: "Preferences",
   icon: "settings",
   defaultOpen: false,
-  content: hostPanel("sla-breach-policy"),
+  content: hostPanel("preferences-editor"),
 };
 
 const regimeBadge = badge({
@@ -212,7 +164,7 @@ const datasets: DataSourceBinding[] = [
   { id: dataSetId("regime"), source: topicSource(["market:regime:*"], { keyField: "instrument" }) },
 ];
 
-export const tradingDesk = page("Trading Desk",
+export const tradingDeskPage = page("Trading Desk",
   dockWorkbench({
     storageKey: "trading-desk",
     centre: [positionOverview.content, pnlHeatmap.content],
@@ -222,10 +174,11 @@ export const tradingDesk = page("Trading Desk",
     },
     right: {
       zones: 2,
-      panels: [trust, routing, deliberation, commitments,
-               caseExplorer, workItemInbox, workItemDetail,
-               approvalGate, slaIndicator, incidentTimeline,
-               notificationInbox, slaBreachPolicy],
+      panels: [trust, routing, deliberation, commitments],
+    },
+    bottom: {
+      zones: 1,
+      panels: [audit, preferences],
     },
     statusBar: regimeBadge,
   }),
