@@ -31,7 +31,7 @@ class JpaIncidentStoreTest {
         var caseId = UUID.randomUUID();
         var record = new IncidentRecord(caseId, IncidentSeverity.CRITICAL,
                 MarketEventType.FLASH_CRASH, List.of("AAPL", "MSFT"),
-                "DETECTED", Instant.now(), null);
+                "DETECTED", Instant.now(), null, null, null);
         store.save(record);
 
         var found = store.findByCaseId(caseId);
@@ -49,7 +49,7 @@ class JpaIncidentStoreTest {
         for (int i = 0; i < 3; i++) {
             store.save(new IncidentRecord(UUID.randomUUID(), IncidentSeverity.HIGH,
                     MarketEventType.LIQUIDITY_DROP, List.of("TSLA"),
-                    "DETECTED", Instant.now(), null));
+                    "DETECTED", Instant.now(), null, null, null));
         }
         var recent = store.findRecent(2);
         assertEquals(2, recent.size());
@@ -62,10 +62,10 @@ class JpaIncidentStoreTest {
         var id2 = UUID.randomUUID();
         store.save(new IncidentRecord(id1, IncidentSeverity.HIGH,
                 MarketEventType.LIQUIDITY_DROP, List.of("AAPL"),
-                "DETECTED", Instant.now(), null));
+                "DETECTED", Instant.now(), null, null, null));
         store.save(new IncidentRecord(id2, IncidentSeverity.MEDIUM,
                 MarketEventType.GAP_OPEN, List.of("MSFT"),
-                "RESOLVED", Instant.now(), Instant.now()));
+                "RESOLVED", Instant.now(), Instant.now(), null, null));
 
         var detected = store.findByStatus("DETECTED");
         assertTrue(detected.stream().anyMatch(r -> r.caseId().equals(id1)));
@@ -78,7 +78,7 @@ class JpaIncidentStoreTest {
         var caseId = UUID.randomUUID();
         store.save(new IncidentRecord(caseId, IncidentSeverity.CRITICAL,
                 MarketEventType.FLASH_CRASH, List.of("AAPL"),
-                "DETECTED", Instant.now(), null));
+                "DETECTED", Instant.now(), null, null, null));
         store.updateStatus(caseId, "RESPONDED");
 
         var found = store.findByCaseId(caseId);
@@ -91,7 +91,7 @@ class JpaIncidentStoreTest {
         var caseId = UUID.randomUUID();
         store.save(new IncidentRecord(caseId, IncidentSeverity.HIGH,
                 MarketEventType.LIQUIDITY_DROP, List.of("MSFT"),
-                "DETECTED", Instant.now(), null));
+                "DETECTED", Instant.now(), null, null, null));
 
         store.addTimelineEntry(caseId,
                 new IncidentTimelineRecord("CLASSIFIED", Instant.now(), "Severity HIGH"));

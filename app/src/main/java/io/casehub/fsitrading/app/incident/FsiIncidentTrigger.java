@@ -86,7 +86,7 @@ public class FsiIncidentTrigger {
         var completionDeadline = now.plus(descriptor.completionDeadline());
 
         final var record = new IncidentRecord(caseId, severity, eventType,
-                                              instruments, "DETECTED", now, null);
+                                              instruments, "DETECTED", now, null, claimDeadline, completionDeadline);
         store.save(record);
 
         incidentCreatedEvent.fire(new IncidentCreatedEvent(

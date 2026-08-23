@@ -42,18 +42,26 @@ public class IncidentEntity {
 
     @Column(name = "resolved_at")
     private Instant resolvedAt;
+    @Column(name = "claim_deadline")
+    private Instant claimDeadline;
+
+    @Column(name = "completion_deadline")
+    private Instant completionDeadline;
+
 
     protected IncidentEntity() {}
 
     public static IncidentEntity from(IncidentRecord record) {
         var entity = new IncidentEntity();
-        entity.caseId = record.caseId();
-        entity.severity = record.severity();
-        entity.eventType = record.eventType();
-        entity.instruments = String.join(",", record.instruments());
-        entity.status = record.status();
-        entity.createdAt = record.createdAt();
-        entity.resolvedAt = record.resolvedAt();
+        entity.caseId             = record.caseId();
+        entity.severity           = record.severity();
+        entity.eventType          = record.eventType();
+        entity.instruments        = String.join(",", record.instruments());
+        entity.status             = record.status();
+        entity.createdAt          = record.createdAt();
+        entity.resolvedAt         = record.resolvedAt();
+        entity.claimDeadline      = record.claimDeadline();
+        entity.completionDeadline = record.completionDeadline();
         return entity;
     }
 
@@ -62,7 +70,9 @@ public class IncidentEntity {
                                       ? List.of()
                                       : Arrays.asList(instruments.split(","));
         return new IncidentRecord(caseId, severity, eventType,
-                                  instrumentList, status, createdAt, resolvedAt);}
+                                  instrumentList, status, createdAt, resolvedAt,
+                                  claimDeadline, completionDeadline);
+    }
 
     public UUID getCaseId() { return caseId; }
     public String getStatus() { return status; }

@@ -40,7 +40,7 @@ class IncidentResourceTest {
     @Test
     void listIncidents_delegatesToStore() {
         var record = new IncidentRecord(UUID.randomUUID(), IncidentSeverity.HIGH,
-                MarketEventType.LIQUIDITY_DROP, List.of("AAPL"), "DETECTED", Instant.now(), null);
+                MarketEventType.LIQUIDITY_DROP, List.of("AAPL"), "DETECTED", Instant.now(), null, null, null);
         when(store.findRecent(anyInt())).thenReturn(List.of(record));
 
         var result = resource.list(10);
@@ -52,7 +52,7 @@ class IncidentResourceTest {
     void getIncident_delegatesToStore() {
         var caseId = UUID.randomUUID();
         var record = new IncidentRecord(caseId, IncidentSeverity.CRITICAL,
-                MarketEventType.FLASH_CRASH, List.of("MSFT"), "DETECTED", Instant.now(), null);
+                MarketEventType.FLASH_CRASH, List.of("MSFT"), "DETECTED", Instant.now(), null, null, null);
         when(store.findByCaseId(caseId)).thenReturn(record);
 
         var result = resource.get(caseId);

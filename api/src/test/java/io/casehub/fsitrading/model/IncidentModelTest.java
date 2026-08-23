@@ -80,7 +80,7 @@ class IncidentModelTest {
         var record = new IncidentRecord(
                 caseId, IncidentSeverity.HIGH,
                 MarketEventType.LIQUIDITY_DROP, List.of("MSFT"),
-                "DETECTED", now, null);
+                "DETECTED", now, null, null, null);
         assertEquals(caseId, record.caseId());
         assertEquals(IncidentSeverity.HIGH, record.severity());
         assertEquals(List.of("MSFT"), record.instruments());

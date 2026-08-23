@@ -11,5 +11,7 @@ public record IncidentRecord(
         List<String> instruments,
         String status,
         Instant createdAt,
-        Instant resolvedAt) {
+        Instant resolvedAt,
+        Instant claimDeadline,
+        Instant completionDeadline) {
 }
