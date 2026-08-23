@@ -44,8 +44,8 @@ public class FsiWorkItemPushListener {
             default -> null;
         };
         if (payload != null) {
-            broadcaster.broadcast("work-items/" + event.workItemId(), payload);
-            broadcaster.broadcast("work-items/summary", payload);
+            broadcaster.broadcast("work-item:" + event.workItemId(), payload);
+            broadcaster.broadcast("work-item:summary", payload);
         }
     }
 
@@ -53,7 +53,7 @@ public class FsiWorkItemPushListener {
         var payload = new WorkItemPushPayload.GateOpened(
                 event.caseId(), event.actionDescription(),
                 event.riskLevel(), event.candidateGroups());
-        broadcaster.broadcast("work-items/" + event.caseId(), payload);
-        broadcaster.broadcast("work-items/summary", payload);
+        broadcaster.broadcast("work-item:" + event.caseId(), payload);
+        broadcaster.broadcast("work-item:summary", payload);
     }
 }

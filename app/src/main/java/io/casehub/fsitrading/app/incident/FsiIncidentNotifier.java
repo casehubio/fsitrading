@@ -34,8 +34,8 @@ public class FsiIncidentNotifier {
                 event.instruments(), event.description(),
                 event.claimDeadline(), event.completionDeadline(),
                 event.createdAt());
-        broadcaster.broadcast("incidents/" + event.caseId(), payload);
-        broadcaster.broadcast("incidents/summary", payload);
+        broadcaster.broadcast("incident:" + event.caseId(), payload);
+        broadcaster.broadcast("incident:summary", payload);
         log.infof("Incident notification: %s %s caseId=%s",
                   event.severity(), event.eventType(), event.caseId());
     }
@@ -49,7 +49,7 @@ public class FsiIncidentNotifier {
         var payload = new IncidentPushPayload.SlaBreached(
                 event.caseId(), event.taskId(), event.breachType(),
                 event.tier(), event.severity().name());
-        broadcaster.broadcast("incidents/" + event.caseId(), payload);
+        broadcaster.broadcast("incident:" + event.caseId(), payload);
         log.infof("SLA breach notification: caseId=%s type=%s tier=%d",
                   event.caseId(), event.breachType(), event.tier());
     }
@@ -57,8 +57,8 @@ public class FsiIncidentNotifier {
     void onIncidentResolved(@Observes IncidentResolvedEvent event) {
         var payload = new IncidentPushPayload.IncidentResolved(
                 event.caseId(), event.resolvedAt());
-        broadcaster.broadcast("incidents/" + event.caseId(), payload);
-        broadcaster.broadcast("incidents/summary", payload);
+        broadcaster.broadcast("incident:" + event.caseId(), payload);
+        broadcaster.broadcast("incident:summary", payload);
         log.infof("Incident resolved notification: caseId=%s", event.caseId());
     }
 }

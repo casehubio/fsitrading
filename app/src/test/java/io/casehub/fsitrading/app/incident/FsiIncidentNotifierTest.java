@@ -40,8 +40,8 @@ class FsiIncidentNotifierTest {
         notifier.onIncidentCreated(event);
 
         assertEquals(2, broadcasts.size());
-        assertEquals("incidents/" + caseId, broadcasts.get(0).topic);
-        assertEquals("incidents/summary", broadcasts.get(1).topic);
+        assertEquals("incident:" + caseId, broadcasts.get(0).topic);
+        assertEquals("incident:summary", broadcasts.get(1).topic);
         var payload = (IncidentPushPayload.IncidentCreated) broadcasts.get(0).event;
         assertEquals("INCIDENT_CREATED", payload.type());
         assertEquals(caseId, payload.caseId());
@@ -59,7 +59,7 @@ class FsiIncidentNotifierTest {
         notifier.onSlaBreach(event);
 
         assertEquals(1, broadcasts.size());
-        assertEquals("incidents/" + caseId, broadcasts.get(0).topic);
+        assertEquals("incident:" + caseId, broadcasts.get(0).topic);
         var payload = (IncidentPushPayload.SlaBreached) broadcasts.get(0).event;
         assertEquals("SLA_BREACHED", payload.type());
         assertEquals(1, payload.tier());
@@ -74,8 +74,8 @@ class FsiIncidentNotifierTest {
         notifier.onIncidentResolved(event);
 
         assertEquals(2, broadcasts.size());
-        assertEquals("incidents/" + caseId, broadcasts.get(0).topic);
-        assertEquals("incidents/summary", broadcasts.get(1).topic);
+        assertEquals("incident:" + caseId, broadcasts.get(0).topic);
+        assertEquals("incident:summary", broadcasts.get(1).topic);
         var payload = (IncidentPushPayload.IncidentResolved) broadcasts.get(0).event;
         assertEquals("INCIDENT_RESOLVED", payload.type());
         assertEquals(now, payload.resolvedAt());

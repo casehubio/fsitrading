@@ -35,8 +35,8 @@ class FsiWorkItemPushListenerTest {
         listener.onGateOpened(event);
 
         assertEquals(2, broadcasts.size());
-        assertEquals("work-items/" + caseId, broadcasts.get(0).topic);
-        assertEquals("work-items/summary", broadcasts.get(1).topic);
+        assertEquals("work-item:" + caseId, broadcasts.get(0).topic);
+        assertEquals("work-item:summary", broadcasts.get(1).topic);
         var payload = (WorkItemPushPayload.GateOpened) broadcasts.get(0).event;
         assertEquals("GATE_OPENED", payload.type());
         assertEquals(caseId, payload.caseId());
@@ -53,8 +53,8 @@ class FsiWorkItemPushListenerTest {
         listener.onWorkItemLifecycle(event);
 
         assertEquals(2, broadcasts.size());
-        assertEquals("work-items/" + itemId, broadcasts.get(0).topic);
-        assertEquals("work-items/summary", broadcasts.get(1).topic);
+        assertEquals("work-item:" + itemId, broadcasts.get(0).topic);
+        assertEquals("work-item:summary", broadcasts.get(1).topic);
         var payload = (WorkItemPushPayload.WorkItemCreated) broadcasts.get(0).event;
         assertEquals("WORK_ITEM_CREATED", payload.type());
         assertEquals(itemId, payload.itemId());
