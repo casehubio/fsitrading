@@ -1,29 +1,34 @@
 package io.casehub.fsitrading.model;
 
-import java.util.Map;
-
 public record MarketEventTypeDescriptor(
         MarketEventType eventType,
         String agentName,
-        String eventSource,
         String fallbackAction) {
 
-    private static final Map<MarketEventType, MarketEventTypeDescriptor> REGISTRY = Map.of(
+    public String eventSource() {
+        Class<? extends MarketEvent> domain = eventType.domain();
+        if (domain == MarketEvent.RawMarketData.class) {return "Raw";}
+        if (domain == MarketEvent.DetectedEvent.class) {return "Market-detected";}
+        if (domain == MarketEvent.OperationalEvent.class) {return "External";}
+        return "Unknown";
+    }
+
+    private static final java.util.Map<MarketEventType, MarketEventTypeDescriptor> REGISTRY = java.util.Map.of(
             MarketEventType.FLASH_CRASH, new MarketEventTypeDescriptor(
-                    MarketEventType.FLASH_CRASH, "emergencyHaltAgent", "Market-detected", "halt"),
+                    MarketEventType.FLASH_CRASH, "emergencyHaltAgent", "halt"),
             MarketEventType.LIQUIDITY_DROP, new MarketEventTypeDescriptor(
-                    MarketEventType.LIQUIDITY_DROP, "positionReducerAgent", "Market-detected", "reduce"),
+                    MarketEventType.LIQUIDITY_DROP, "positionReducerAgent", "reduce"),
             MarketEventType.GAP_OPEN, new MarketEventTypeDescriptor(
-                    MarketEventType.GAP_OPEN, "reEvaluatorAgent", "Market-detected", "monitor"),
+                    MarketEventType.GAP_OPEN, "reEvaluatorAgent", "monitor"),
             MarketEventType.COUNTERPARTY_FAILURE, new MarketEventTypeDescriptor(
-                    MarketEventType.COUNTERPARTY_FAILURE, "exposureCloserAgent", "External", "halt"),
+                    MarketEventType.COUNTERPARTY_FAILURE, "exposureCloserAgent", "halt"),
             MarketEventType.CIRCUIT_BREAKER, new MarketEventTypeDescriptor(
-                    MarketEventType.CIRCUIT_BREAKER, "haltAndWaitAgent", "Market-detected", "halt"),
+                    MarketEventType.CIRCUIT_BREAKER, "haltAndWaitAgent", "halt"),
             MarketEventType.NEWS_EVENT, new MarketEventTypeDescriptor(
-                    MarketEventType.NEWS_EVENT, "sentimentAnalyserAgent", "Market-detected", "monitor"),
+                    MarketEventType.NEWS_EVENT, "sentimentAnalyserAgent", "monitor"),
             MarketEventType.MARGIN_CALL, new MarketEventTypeDescriptor(
-                    MarketEventType.MARGIN_CALL, "liquidationAgent", "External", "reduce")
-    );
+                    MarketEventType.MARGIN_CALL, "liquidationAgent", "reduce")
+                                                                                                              );
 
     public static MarketEventTypeDescriptor forType(MarketEventType type) {
         return REGISTRY.get(type);
