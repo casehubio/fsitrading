@@ -481,22 +481,15 @@ All live data via WebSocket `EventBroadcaster`:
 
 | Topic pattern | Source | Consumer |
 |---|---|---|
-| `market:ticks:{instrument}` | C2 pipeline | fsi-market-panel |
-| `market:bars:{instrument}` | C2 pipeline | fsi-market-panel |
-| `market:trends:{instrument}` | C2 pipeline | fsi-market-panel |
-| `market:regime:{instrument}` | C2 pipeline | fsi-market-panel |
-| `market:narrative` | C2 pipeline | fsi-market-panel |
-| `position:{instrument}` | Fill events | fsi-position-overview |
-| `pnl:{strategyId}` | Fill events | fsi-pnl-heatmap, kpi-metric-row |
-| `trust:{strategyType}` | Attestation events | trust-score-panel |
-| `routing:latest` | Routing decisions | routing-rationale |
-| `deliberation:active` | Deliberation lifecycle | channel-activity |
-| `deliberation:{channelId}` | Deliberation events | channel-activity |
-| `incident:{caseId}` | Incident lifecycle | fsi-incident-dashboard |
-| `incident:summary` | Incident lifecycle | fsi-incident-dashboard |
-| `work-item:{itemId}` | WorkItem changes | work-item-inbox |
-| `work-item:{caseId}` | Gate opened | work-item-inbox |
-| `work-item:summary` | WorkItem changes | work-item-inbox |
+| `market/*` | C2 pipeline | fsi-market-panel |
+| `positions/{instrument}` | Fill events | fsi-position-overview |
+| `pnl/{strategy}` | Fill events | fsi-pnl-heatmap, kpi-metric-row |
+| `trust/{strategy}` | Attestation events | trust-score-panel |
+| `deliberation/{channelId}` | Deliberation events | channel-activity |
+| `incidents/*` | Incident lifecycle | fsi-incident-dashboard |
+| `work-items/*` | WorkItem changes | work-item-inbox |
+| `notifications` | Alerts | notification-inbox |
+| `routing/latest` | Routing decisions | routing-rationale |
 
 `triggerUrl` pattern: paginated datasets re-fetch on WebSocket push notification.
 

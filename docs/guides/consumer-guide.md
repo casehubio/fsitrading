@@ -199,7 +199,8 @@ Phase is `BOOTSTRAP` until 10 decisions, then `ACTIVE`.
 - `OrderSide` -- BUY, SELL
 - `OrderType` -- MARKET, LIMIT, STOP, STOP_LIMIT
 - `OrderStatus` -- PENDING, SUBMITTED, PARTIALLY_FILLED, FILLED, CANCELLED, REJECTED
-- `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT, COUNTERPARTY_FAILURE, MARGIN_CALL
+- `MarketEventType` -- PRICE_TICK, VOLUME_SPIKE, FLASH_CRASH, LIQUIDITY_DROP, GAP_OPEN, CIRCUIT_BREAKER, NEWS_EVENT, COUNTERPARTY_FAILURE, MARGIN_CALL. Enum for JPA/JSON persistence.
+- `MarketEvent` -- sealed interface hierarchy grouping event types by source domain: `RawMarketData` (PRICE_TICK, VOLUME_SPIKE), `DetectedEvent` (FLASH_CRASH through NEWS_EVENT), `OperationalEvent` (COUNTERPARTY_FAILURE, MARGIN_CALL). Use `MarketEventType.domain()` for compile-time grouping, `toEvent()` to construct typed instances.
 - `IncidentSeverity` -- CRITICAL, HIGH, MEDIUM
 
 **Market data types (C2):**
