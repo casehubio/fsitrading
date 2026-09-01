@@ -140,7 +140,7 @@ class FsiWorkItemPushListenerTest {
                 "io.casehub.work.workitem.created", "/workitems/1", "1",
                 UUID.randomUUID(), WorkItemStatus.PENDING, Instant.now(),
                 "system", "Created", null, null, null, null, null,
-                null, null, "fsi-oncall", List.of());
+                null, null, "fsi-oncall", List.of(), null);
 
         listener.onWorkItemLifecycle(event);
 

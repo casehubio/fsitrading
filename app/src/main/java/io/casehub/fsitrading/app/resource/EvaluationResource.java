@@ -114,16 +114,15 @@ public class EvaluationResource {
                     ctx.consensus() != null ? ctx.consensus().instruments().size() + " instruments" : "none",
                     ctx.riskAssessment() != null ? ctx.riskAssessment().level() : "none");
 
-            memoryStore.store(new MemoryInput(
+            memoryStore.store(MemoryInput.of(
                     "arena:" + signal.instrument(),
                     new MemoryDomain("agent"),
                     "fsitrading",
-                    ctx.runId().toString(),
-                    text,
-                    Map.of("instrument", signal.instrument(),
+                    text)
+                    .withCaseId(ctx.runId().toString())
+                    .withAttributes(Map.of("instrument", signal.instrument(),
                             "eventType", signal.eventType(),
-                            "runId", ctx.runId().toString()),
-                    0.7));
+                            "runId", ctx.runId().toString())));
         } catch (Exception e) {
             log.warnf(e, "Memory emission failed for arena run %s", ctx.runId());
         }

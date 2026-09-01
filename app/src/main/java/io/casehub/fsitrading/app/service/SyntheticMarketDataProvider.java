@@ -51,6 +51,27 @@ public class SyntheticMarketDataProvider {
                 .getResultList();
     }
 
+    public List<MarketEventEntity> findRecentByInstrument(String instrument, int limit) {
+        return em.createQuery(
+                         "SELECT e FROM MarketEventEntity e WHERE e.instrument = :instrument ORDER BY e.occurredAt DESC",
+                         MarketEventEntity.class)
+                 .setParameter("instrument", instrument)
+                 .setMaxResults(limit)
+                 .getResultList();
+    }
+
+    public List<MarketEventEntity> findRecentByInstrumentBefore(
+            String instrument, Instant before, int limit) {
+        return em.createQuery(
+                         "SELECT e FROM MarketEventEntity e WHERE e.instrument = :instrument AND e.occurredAt <= :before ORDER BY e.occurredAt DESC",
+                         MarketEventEntity.class)
+                 .setParameter("instrument", instrument)
+                 .setParameter("before", before)
+                 .setMaxResults(limit)
+                 .getResultList();
+    }
+
+
     private double fractionOfTradingDay() {
         var now = LocalTime.now(ZoneId.of("America/New_York"));
         var open = LocalTime.of(9, 30);
