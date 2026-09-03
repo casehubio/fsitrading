@@ -178,6 +178,13 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- Work progress API (required by ConversationRenderer's RenderContext) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-work-progress-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
     <!-- Pages push: WebSocket EventBroadcaster, TopicRegistry -->
     <dependency>
       <groupId>io.casehub</groupId>
