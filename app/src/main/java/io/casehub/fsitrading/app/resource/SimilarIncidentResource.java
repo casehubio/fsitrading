@@ -4,9 +4,6 @@ import io.casehub.neocortex.memory.MemoryDomain;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
 import io.casehub.neocortex.memory.cbr.CbrQuery;
 import io.casehub.neocortex.memory.cbr.PlanCbrCase;
-import io.casehub.neocortex.memory.cbr.ScoredCbrCase;
-import io.casehub.neocortex.memory.cbr.RetrievalMode;
-import io.casehub.neocortex.fusion.FusionStrategy;
 import io.casehub.platform.api.path.Path;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DefaultValue;
@@ -30,12 +27,14 @@ public class SimilarIncidentResource {
     }
 
     @GET
-    public List<ScoredCbrCase<PlanCbrCase>> findSimilar(
+    public List<PrecedentRecord> findSimilar(
             @QueryParam("caseId") String caseId,
             @QueryParam("tenantId") @DefaultValue("default") String tenantId) {
         CbrQuery query = CbrQuery.of(tenantId, new MemoryDomain("fsitrading"),
-                        Path.root(), PlanCbrCase.CBR_TYPE, Map.of(), 5)
-                .withMinSimilarity(0.3);
-        return cbrStore.retrieveSimilar(query, PlanCbrCase.class);
+                                     Path.root(), PlanCbrCase.CBR_TYPE, Map.of(), 5)
+                                 .withMinSimilarity(0.3);
+        return cbrStore.retrieveSimilar(query, PlanCbrCase.class).stream()
+                       .map(PrecedentRecord::from)
+                       .toList();
     }
 }

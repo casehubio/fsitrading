@@ -19,7 +19,11 @@
     "@casehubio/blocks-ui-sla-breach-policy": "file:../../../../../blocks-ui/components/sla-breach-policy",
     "@casehubio/blocks-ui-case-explorer": "file:../../../../../blocks-ui/components/case-explorer",
     "@casehubio/blocks-ui-notification-inbox": "file:../../../../../blocks-ui/components/notification-inbox",
-    "@casehubio/blocks-ui-blocks-timeline": "file:../../../../../blocks-ui/components/blocks-timeline"
+    "@casehubio/blocks-ui-blocks-timeline": "file:../../../../../blocks-ui/components/blocks-timeline",
+    "@casehubio/blocks-ui-similarity-panel": "file:../../../../../blocks-ui/components/similarity-panel",
+    "@casehubio/blocks-ui-compliance-summary": "file:../../../../../blocks-ui/components/compliance-summary",
+    "@casehubio/blocks-ui-gdpr-erasure-action": "file:../../../../../blocks-ui/components/gdpr-erasure-action",
+    "@casehubio/blocks-ui-audit-trail-viewer": "file:../../../../../blocks-ui/components/audit-trail-viewer"
   },
   "devDependencies": {
     "esbuild": "0.21.5",

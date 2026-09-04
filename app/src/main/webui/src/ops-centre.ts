@@ -113,6 +113,38 @@ const notifications: DockPanelConfig = {
   content: hostPanel("notification-inbox"),
 };
 
+const similarIncidents: DockPanelConfig = {
+  key: "similar-incidents",
+  label: "Similar Incidents",
+  icon: "search",
+  defaultOpen: false,
+  content: hostPanel("similarity-panel", { endpoint: "/api/incidents/similar" }),
+};
+
+const compliance: DockPanelConfig = {
+  key: "compliance",
+  label: "Compliance",
+  icon: "shield",
+  defaultOpen: true,
+  content: hostPanel("compliance-summary", { endpoint: "/api/compliance/status" }),
+};
+
+const gdprErasure: DockPanelConfig = {
+  key: "gdpr-erasure",
+  label: "GDPR Erasure",
+  icon: "lock",
+  defaultOpen: false,
+  content: hostPanel("gdpr-erasure-action", { endpoint: "/api/gdpr/erase" }),
+};
+
+const audit: DockPanelConfig = {
+  key: "audit",
+  label: "Audit Trail",
+  icon: "document",
+  defaultOpen: false,
+  content: hostPanel("audit-trail-viewer"),
+};
+
 const incidentCountBadge = badge({
   lookup: lookup("incident-status"),
   field: "totalActive",
@@ -144,11 +176,11 @@ export const opsCentrePage = page("Ops Centre",
     },
     right: {
       zones: 2,
-      panels: [approvals, workItemDetail, slaCountdown, responseChannel],
+      panels: [approvals, workItemDetail, slaCountdown, responseChannel, similarIncidents],
     },
     bottom: {
       zones: 2,
-      panels: [incidentTimeline, slaPolicy, approvalGate, notifications],
+      panels: [incidentTimeline, slaPolicy, approvalGate, notifications, compliance, audit, gdprErasure],
     },
     statusBar: split("horizontal", [incidentCountBadge, slaStatusBadge]),
   }),

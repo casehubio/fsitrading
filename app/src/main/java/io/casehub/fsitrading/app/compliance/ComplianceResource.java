@@ -1,6 +1,5 @@
 package io.casehub.fsitrading.app.compliance;
 
-import io.casehub.api.spi.routing.TrustRoutingRequirement;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -17,7 +16,9 @@ public class ComplianceResource {
 
     @GET
     @Path("/status")
-    public List<TrustRoutingRequirement> status() {
-        return complianceService.evaluateAll();
+    public List<ComplianceStatusRecord> status() {
+        return complianceService.evaluateAll().stream()
+                                .map(ComplianceStatusRecord::from)
+                                .toList();
     }
 }

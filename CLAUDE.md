@@ -2,13 +2,12 @@
 
 **Name:** casehub-fsitrading
 
-**Project repo:** /Users/mdproctor/claude/casehub/fsitrading
-**Workspace:** /Users/mdproctor/claude/public/casehub/fsitrading
+**Project repo:** proj/
+**Workspace:** wksp/
 **Workspace type:** public
 
 ## Session Start
 
-Run `add-dir /Users/mdproctor/claude/casehub/fsitrading` before any other work.
 
 ## Artifact Locations
 
