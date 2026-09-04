@@ -46,7 +46,7 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - WebSocket push via pages-push EventBroadcaster -- live ticks, bars, trends, regime to browser
 - Minimal fsi-market-panel web component (Quinoa + esbuild) proving end-to-end push path
 - Sequence + Loop orchestration model via casehub-blocks patterns
-- 31 REST endpoints (see API section below)
+- 37 REST endpoints (see API section below)
 - Dual-datasource configuration (H2 dev, PostgreSQL prod)
 
 **Implemented (C4a Overnight Ops Backend):**
@@ -84,7 +84,7 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - Push topic separators unified to colon-only (TopicRegistry trie requirement)
 - Topic entity names unified to singular (`incident:*`, `work-item:*`)
 - Incident summary endpoints for dashboard metrics
-- 33 REST endpoints (see API section below)
+- 37 REST endpoints (see API section below)
 
 **Not yet implemented:**
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
@@ -134,6 +134,10 @@ All endpoints produce `application/json`.
 | `GET` | `/api/incidents/summary/status` | Active total + SLA status `[{totalActive, slaStatus}]` |
 | `GET` | `/api/work-items?type=&candidateGroup=&status=` | Work items filtered by type/group/status |
 | `POST` | `/api/work-items/{id}/resolve` | Approve/Reject/Delegate a gated action |
+| `GET` | `/api/incidents/similar?caseId=&tenantId=` | Similar past incidents via CBR retrieval |
+| `GET` | `/api/compliance/status` | Regulatory compliance grid (MiFID II, Dodd-Frank, MAR) |
+| `POST` | `/api/gdpr/erase` | GDPR erasure request (requires `fsi-ops` role) |
+| `GET` | `/api/postmortem/{caseId}` | Generated post-mortem for an incident (stub) |
 
 ### WebSocket Push
 
