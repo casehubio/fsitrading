@@ -80,7 +80,7 @@ class FsiTrendSummariserTest {
             var bar = new OHLCV(instrument, close, high, low, close,
                     BigDecimal.valueOf(10000), 60,
                     baseTime.plusSeconds(i * 60L), baseTime.plusSeconds((i + 1) * 60L));
-            bars.add(new LevelEvent<>(bar, baseTime.plusSeconds(i * 60L).toEpochMilli(), BAR_LEVEL));
+            bars.add(new LevelEvent<>(bar, baseTime.plusSeconds(i * 60L).toEpochMilli(), BAR_LEVEL, null));
         }
         return bars;
     }

@@ -13,8 +13,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 class FsiCaseOutcomeObserverTest {
 
@@ -98,4 +103,18 @@ class FsiCaseOutcomeObserverTest {
 
         verify(cbrStore).recordOutcome(anyString(), eq("tenant-1"), any());
     }
+
+    @Test
+    void skipsWhenDetectedAtMissing() {
+        var event = new CaseOutcomeEvent("overnight-incident", "tenant-1",
+                                         UUID.randomUUID(),
+                                         Map.of("instrument", "AAPL", "eventType", "FLASH_CRASH",
+                                                "sector", "EQUITY", "severity", "CRITICAL"),
+                                         "COMPLETED", Instant.now(), Map.of());
+
+        observer.onOutcome(event);
+
+        verifyNoInteractions(cbrStore);
+    }
+
 }

@@ -72,6 +72,6 @@ class FsiRegimeSummariserTest {
         var now = Instant.now();
         var trend = new TrendSummary(instrument, direction, 0.02, 0.01, "INCREASING",
                 now.minusSeconds(300), now);
-        return List.of(new LevelEvent<>(trend, now.toEpochMilli(), FsiEventLevels.TREND_5M));
+        return List.of(new LevelEvent<>(trend, now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
     }
 }

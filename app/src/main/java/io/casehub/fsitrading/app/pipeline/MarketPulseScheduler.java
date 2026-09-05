@@ -79,7 +79,7 @@ public class MarketPulseScheduler {
         if (paused.get() || !wired) return;
 
         PriceTick tick = tickProvider.generateTick();
-        l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK));
+        l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK, null));
     }
 
     @Scheduled(every = "0.1s", identity = "market-pulse-driver")

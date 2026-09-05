@@ -49,7 +49,7 @@ public class MarketPulseConfiguration {
     public KeyedSummarisationRunner<String, PriceTick, OHLCV> l1Runner(
             @Named("l1Bus") EventStreamBus<OHLCV> l1Bus) {
         return new KeyedSummarisationRunner<>(
-                PriceTick::instrument,
+                event -> event.payload().instrument(),
                 batch -> {
                     if (batch.isEmpty()) return false;
                     long first = batch.get(0).timestamp();

@@ -45,7 +45,7 @@ class FsiMarketPushServiceTest {
     void tick_broadcastsToInstrumentTopic() {
         var now = Instant.now();
         var tick = new PriceTick("AAPL", BigDecimal.valueOf(175), BigDecimal.valueOf(1000), now, false);
-        l0Bus.publish(new LevelEvent<>(tick, now.toEpochMilli(), FsiEventLevels.TICK));
+        l0Bus.publish(new LevelEvent<>(tick, now.toEpochMilli(), FsiEventLevels.TICK, null));
 
         assertEquals(1, broadcasts.size());
         assertEquals("market:ticks:AAPL", broadcasts.get(0).topic);
@@ -57,7 +57,7 @@ class FsiMarketPushServiceTest {
         var bar = new OHLCV("MSFT", BigDecimal.valueOf(420), BigDecimal.valueOf(421),
                 BigDecimal.valueOf(419), BigDecimal.valueOf(420.5),
                 BigDecimal.valueOf(10000), 60, now, now.plusSeconds(60));
-        l1Bus.publish(new LevelEvent<>(bar, now.toEpochMilli(), FsiEventLevels.BAR_1M));
+        l1Bus.publish(new LevelEvent<>(bar, now.toEpochMilli(), FsiEventLevels.BAR_1M, null));
 
         assertEquals(1, broadcasts.size());
         assertEquals("market:bars:MSFT", broadcasts.get(0).topic);
@@ -67,7 +67,7 @@ class FsiMarketPushServiceTest {
     void trend_broadcastsToInstrumentTopic() {
         var now = Instant.now();
         var trend = new TrendSummary("GOOGL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now);
-        l2Bus.publish(new LevelEvent<>(trend, now.toEpochMilli(), FsiEventLevels.TREND_5M));
+        l2Bus.publish(new LevelEvent<>(trend, now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         assertEquals(1, broadcasts.size());
         assertEquals("market:trends:GOOGL", broadcasts.get(0).topic);
@@ -77,7 +77,7 @@ class FsiMarketPushServiceTest {
     void regime_broadcastsToInstrumentTopic() {
         var now = Instant.now();
         var regime = new RegimeAssessment("NVDA", MarketRegime.TRENDING, 0.85, "trending", now);
-        l3Bus.publish(new LevelEvent<>(regime, now.toEpochMilli(), FsiEventLevels.REGIME_1H));
+        l3Bus.publish(new LevelEvent<>(regime, now.toEpochMilli(), FsiEventLevels.REGIME_1H, null));
 
         assertEquals(1, broadcasts.size());
         assertEquals("market:regime:NVDA", broadcasts.get(0).topic);
@@ -87,7 +87,7 @@ class FsiMarketPushServiceTest {
     void narrative_broadcastsToGlobalTopic() {
         var now = Instant.now();
         var narrative = new SessionNarrative(List.of("AAPL", "MSFT"), "Markets up", now);
-        l4Bus.publish(new LevelEvent<>(narrative, now.toEpochMilli(), FsiEventLevels.NARRATIVE));
+        l4Bus.publish(new LevelEvent<>(narrative, now.toEpochMilli(), FsiEventLevels.NARRATIVE, null));
 
         assertEquals(1, broadcasts.size());
         assertEquals("market:narrative", broadcasts.get(0).topic);

@@ -39,12 +39,12 @@ class FsiMarketEventDetectorTest {
 
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         var later = now.plusSeconds(300);
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.DOWN, -0.02, 0.01, "FLAT", later, later),
-                later.toEpochMilli(), FsiEventLevels.TREND_5M));
+                later.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         assertEquals(1, reversals.size());
         assertEquals(TrendDirection.UP, reversals.get(0).oldDirection());
@@ -57,10 +57,10 @@ class FsiMarketEventDetectorTest {
 
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.03, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         assertTrue(reversals.isEmpty(), "Should not fire on same direction");
     }
@@ -71,10 +71,10 @@ class FsiMarketEventDetectorTest {
 
         l3Bus.publish(new LevelEvent<>(
                 new RegimeAssessment("AAPL", MarketRegime.TRENDING, 0.85, "trending", now),
-                now.toEpochMilli(), FsiEventLevels.REGIME_1H));
+                now.toEpochMilli(), FsiEventLevels.REGIME_1H, null));
         l3Bus.publish(new LevelEvent<>(
                 new RegimeAssessment("AAPL", MarketRegime.VOLATILE, 0.90, "volatile", now),
-                now.toEpochMilli(), FsiEventLevels.REGIME_1H));
+                now.toEpochMilli(), FsiEventLevels.REGIME_1H, null));
 
         assertEquals(1, regimeChanges.size());
         assertEquals(MarketRegime.TRENDING, regimeChanges.get(0).oldRegime());
@@ -87,14 +87,14 @@ class FsiMarketEventDetectorTest {
 
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("MSFT", TrendDirection.DOWN, -0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.DOWN, -0.01, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         assertEquals(1, reversals.size());
         assertEquals("AAPL", reversals.get(0).instrument());

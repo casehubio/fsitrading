@@ -32,19 +32,20 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
 
     @Override
     public void onOutcome(CaseOutcomeEvent event) {
-        if (!CASE_TYPE.equals(event.caseType())) return;
-        if (!"COMPLETED".equals(event.outcomeLabel())) return;
+        if (!CASE_TYPE.equals(event.caseType())) {return;}
+        if (!"COMPLETED".equals(event.outcomeLabel())) {return;}
 
-        Map<String, Object> snapshot = event.caseFileSnapshot();
-        String detectedAt = (String) snapshot.get("detectedAt");
+        Map<String, Object> snapshot   = event.caseFileSnapshot();
+        String              detectedAt = (String) snapshot.get("detectedAt");
+        if (detectedAt == null) {return;}
         Instant detection = Instant.parse(detectedAt);
 
         Map<String, Object> rawFeatures =
                 featureExtractor.extractFromSnapshot(snapshot, detection);
         Map<String, FeatureValue> features = FeatureValue.toFeatureMap(rawFeatures);
 
-        String eventType = (String) snapshot.get("eventType");
-        String severity = (String) snapshot.get("severity");
+        String eventType  = (String) snapshot.get("eventType");
+        String severity   = (String) snapshot.get("severity");
         String instrument = (String) snapshot.get("instrument");
 
         PlanCbrCase planCase = new PlanCbrCase(
@@ -59,10 +60,10 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
 
         String caseId = event.caseId().toString();
         String storedId = cbrStore.store(planCase, PlanCbrCase.CBR_TYPE, caseId,
-                new MemoryDomain("fsitrading"), event.tenancyId(),
-                caseId, Path.root());
+                                         new MemoryDomain("fsitrading"), event.tenancyId(),
+                                         caseId, Path.root());
 
         cbrStore.recordOutcome(storedId, event.tenancyId(),
-                CbrOutcome.of(1.0, event.outcomeLabel(), Instant.now()));
+                               CbrOutcome.of(1.0, event.outcomeLabel(), Instant.now()));
     }
 }

@@ -72,7 +72,7 @@ class FsiOhlcvSummariserTest {
     }
 
     private LevelEvent<PriceTick> le(PriceTick tick) {
-        return new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), TICK_LEVEL);
+        return new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), TICK_LEVEL, null);
     }
 
     private BigDecimal bd(double value) {

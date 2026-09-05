@@ -38,7 +38,7 @@ class FsiChannelEventAdapterTest {
         var now = Instant.now();
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         assertEquals(1, writes.size());
         assertEquals("fsi-market-trends-AAPL", writes.get(0).channelName);
@@ -53,7 +53,7 @@ class FsiChannelEventAdapterTest {
         var now = Instant.now();
         l3Bus.publish(new LevelEvent<>(
                 new RegimeAssessment("MSFT", MarketRegime.VOLATILE, 0.90, "volatile", now),
-                now.toEpochMilli(), FsiEventLevels.REGIME_1H));
+                now.toEpochMilli(), FsiEventLevels.REGIME_1H, null));
 
         assertEquals(1, writes.size());
         assertEquals("fsi-market-regime-MSFT", writes.get(0).channelName);

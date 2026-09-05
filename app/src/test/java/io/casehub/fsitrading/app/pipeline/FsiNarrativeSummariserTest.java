@@ -62,6 +62,6 @@ class FsiNarrativeSummariserTest {
     private LevelEvent<RegimeAssessment> regimeEvent(String instrument, MarketRegime regime) {
         var now = Instant.now();
         var assessment = new RegimeAssessment(instrument, regime, 0.8, "test rationale", now);
-        return new LevelEvent<>(assessment, now.toEpochMilli(), FsiEventLevels.REGIME_1H);
+        return new LevelEvent<>(assessment, now.toEpochMilli(), FsiEventLevels.REGIME_1H, null);
     }
 }

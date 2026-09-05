@@ -43,7 +43,7 @@ class FsiObservationCacheTest {
     void latestTick_updatedOnPublish() {
         var tick = new PriceTick("AAPL", BigDecimal.valueOf(175), BigDecimal.valueOf(1000),
                 Instant.now(), false);
-        l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK));
+        l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK, null));
 
         var latest = cache.latestTick("AAPL");
         assertTrue(latest.isPresent());
@@ -60,7 +60,7 @@ class FsiObservationCacheTest {
         var bar = new OHLCV("MSFT", BigDecimal.valueOf(420), BigDecimal.valueOf(421),
                 BigDecimal.valueOf(419), BigDecimal.valueOf(420.5),
                 BigDecimal.valueOf(10000), 60, Instant.now(), Instant.now().plusSeconds(60));
-        l1Bus.publish(new LevelEvent<>(bar, Instant.now().toEpochMilli(), FsiEventLevels.BAR_1M));
+        l1Bus.publish(new LevelEvent<>(bar, Instant.now().toEpochMilli(), FsiEventLevels.BAR_1M, null));
 
         assertTrue(cache.latestBar("MSFT").isPresent());
     }
@@ -69,7 +69,7 @@ class FsiObservationCacheTest {
     void latestRegime_updatedOnPublish() {
         var assessment = new RegimeAssessment("AAPL", MarketRegime.TRENDING, 0.85,
                 "Sustained momentum", Instant.now());
-        l3Bus.publish(new LevelEvent<>(assessment, Instant.now().toEpochMilli(), FsiEventLevels.REGIME_1H));
+        l3Bus.publish(new LevelEvent<>(assessment, Instant.now().toEpochMilli(), FsiEventLevels.REGIME_1H, null));
 
         var latest = cache.latestRegime("AAPL");
         assertTrue(latest.isPresent());
@@ -80,7 +80,7 @@ class FsiObservationCacheTest {
     void latestNarrative_updatedOnPublish() {
         var narrative = new SessionNarrative(List.of("AAPL", "MSFT"),
                 "Markets trending up today", Instant.now());
-        l4Bus.publish(new LevelEvent<>(narrative, Instant.now().toEpochMilli(), FsiEventLevels.NARRATIVE));
+        l4Bus.publish(new LevelEvent<>(narrative, Instant.now().toEpochMilli(), FsiEventLevels.NARRATIVE, null));
 
         var latest = cache.latestNarrative();
         assertTrue(latest.isPresent());
@@ -92,10 +92,10 @@ class FsiObservationCacheTest {
         var now = Instant.now();
         l0Bus.publish(new LevelEvent<>(
                 new PriceTick("AAPL", BigDecimal.valueOf(175), BigDecimal.valueOf(1000), now, false),
-                now.toEpochMilli(), FsiEventLevels.TICK));
+                now.toEpochMilli(), FsiEventLevels.TICK, null));
         l2Bus.publish(new LevelEvent<>(
                 new TrendSummary("AAPL", TrendDirection.UP, 0.02, 0.01, "FLAT", now, now),
-                now.toEpochMilli(), FsiEventLevels.TREND_5M));
+                now.toEpochMilli(), FsiEventLevels.TREND_5M, null));
 
         var snapshot = cache.snapshot("AAPL");
         assertNotNull(snapshot);

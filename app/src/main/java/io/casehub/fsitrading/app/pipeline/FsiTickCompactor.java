@@ -35,7 +35,7 @@ public class FsiTickCompactor implements Compactor<PriceTick> {
             if (anomaly && !tick.anomaly()) {
                 var tagged = new PriceTick(tick.instrument(), tick.price(),
                         tick.volume(), tick.timestamp(), true);
-                result.add(new LevelEvent<>(tagged, event.timestamp(), event.level()));
+                result.add(new LevelEvent<>(tagged, event.timestamp(), event.level(), event.tenancyId()));
             } else {
                 result.add(event);
             }

@@ -37,7 +37,7 @@ class MarketPulsePipelineTest {
         l2Bus = new EventStreamBus<>();
 
         l1Runner = new KeyedSummarisationRunner<>(
-                PriceTick::instrument,
+                event -> event.payload().instrument(),
                 batch -> {
                     if (batch.isEmpty()) return false;
                     long first = batch.get(0).timestamp();
@@ -77,7 +77,7 @@ class MarketPulsePipelineTest {
                     BigDecimal.valueOf(1000),
                     baseTime.plusMillis(i * 600L),
                     false);
-            l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK));
+            l0Bus.publish(new LevelEvent<>(tick, tick.timestamp().toEpochMilli(), FsiEventLevels.TICK, null));
         }
 
         l1Runner.tick(baseTime.plusSeconds(75).toEpochMilli());
@@ -96,7 +96,7 @@ class MarketPulsePipelineTest {
                     BigDecimal.valueOf(10000), 60,
                     baseTime.plusSeconds(i * 60L),
                     baseTime.plusSeconds((i + 1) * 60L));
-            l1Bus.publish(new LevelEvent<>(bar, baseTime.plusSeconds(i * 60L).toEpochMilli(), FsiEventLevels.BAR_1M));
+            l1Bus.publish(new LevelEvent<>(bar, baseTime.plusSeconds(i * 60L).toEpochMilli(), FsiEventLevels.BAR_1M, null));
         }
 
         l2Runner.tick(baseTime.plusSeconds(360).toEpochMilli());
