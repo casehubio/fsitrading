@@ -10,3 +10,8 @@ app/src/main/webui/dist/
 app/.quinoa/
 proj
 .build/
+.mvn/maven.config
+.mvn/slot-settings.xml
+.worktrees
+.worktrees/
+.claude/
