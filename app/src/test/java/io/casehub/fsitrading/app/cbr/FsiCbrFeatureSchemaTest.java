@@ -11,7 +11,7 @@ class FsiCbrFeatureSchemaTest {
     @Test
     void schemaHasSevenFields() {
         CbrFeatureSchema schema = FsiCbrFeatureSchema.SCHEMA;
-        assertThat(schema.fields()).hasSize(7);
+        assertThat(schema.fields()).hasSize(8);
         assertThat(schema.caseType()).isEqualTo("plan");
     }
 
@@ -20,8 +20,8 @@ class FsiCbrFeatureSchemaTest {
         var names = FsiCbrFeatureSchema.SCHEMA.fields().stream()
                 .map(FeatureField::name).toList();
         assertThat(names).containsExactly(
-                "event_type", "instrument_sector", "time_of_day",
-                "volatility_at_detection", "volume_profile",
+                "event_type", "instrument_sector", "market_regime",
+                "time_of_day", "volatility_at_detection", "volume_profile",
                 "price_action_pattern", "event_sequence");
     }
 

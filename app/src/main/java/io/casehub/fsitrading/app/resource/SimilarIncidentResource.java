@@ -42,7 +42,14 @@ public class SimilarIncidentResource {
     public List<PrecedentRecord> findSimilar(
             @QueryParam("caseId") String caseId,
             @QueryParam("tenantId") @DefaultValue("default") String tenantId) {
-        IncidentRecord incident = incidentStore.findByCaseId(UUID.fromString(caseId));
+        if (caseId == null || caseId.isBlank()) return List.of();
+        UUID parsedId;
+        try {
+            parsedId = UUID.fromString(caseId);
+        } catch (IllegalArgumentException e) {
+            return List.of();
+        }
+        IncidentRecord incident = incidentStore.findByCaseId(parsedId);
         if (incident == null) return List.of();
 
         Map<String, Object> snapshot = buildSnapshot(incident);

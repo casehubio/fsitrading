@@ -13,6 +13,7 @@ public final class FsiCbrFeatureSchema {
     public static final CbrFeatureSchema SCHEMA = CbrFeatureSchema.of(CASE_TYPE,
             FeatureField.categorical("event_type"),
             FeatureField.categorical("instrument_sector"),
+            FeatureField.categorical("market_regime"),
             FeatureField.numeric("time_of_day", 0, 24,
                     new SimilaritySpec.GaussianDecay(2.0)),
             FeatureField.numeric("volatility_at_detection", 0, 100,

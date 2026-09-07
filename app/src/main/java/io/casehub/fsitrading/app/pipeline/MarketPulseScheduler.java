@@ -62,6 +62,8 @@ public class MarketPulseScheduler {
     FsiMarketPushService pushService;
     @Inject
     FsiMarketEventDetector marketEventDetector;
+    @Inject
+    io.casehub.fsitrading.app.cbr.FsiRegimeSupersessionListener regimeSupersessionListener;
 
 
     private final AtomicBoolean paused = new AtomicBoolean(false);
@@ -71,6 +73,7 @@ public class MarketPulseScheduler {
         configuration.wirePipeline(l0Bus, l1Runner, l1Bus, l2Runner, l2Bus, l3Runner, l3Bus, l4Runner);
         pushService.subscribe(l0Bus, l1Bus, l2Bus, l3Bus, l4Bus);
         marketEventDetector.subscribe(l2Bus, l3Bus);
+        regimeSupersessionListener.wire(l3Bus);
         wired = true;
         log.info("Market Pulse scheduler started");}
 

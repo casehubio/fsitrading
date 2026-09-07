@@ -45,9 +45,10 @@ public class FsiFeatureExtractor {
         String instrument = (String) snapshot.get("instrument");
         String eventType  = (String) snapshot.get("eventType");
         String sector     = (String) snapshot.get("sector");
+        String regime     = (String) snapshot.get("regime");
         List<MarketEventEntity> events =
                 marketData.findRecentByInstrumentBefore(instrument, detectedAt, MAX_EVENTS);
-        return buildFeaturesFromParams(eventType, sector, detectedAt, events);
+        return buildFeaturesFromParams(eventType, sector, regime, detectedAt, events);
     }
 
 
@@ -55,18 +56,20 @@ public class FsiFeatureExtractor {
                                               List<MarketEventEntity> events) {
         String  eventType  = context.getString("eventType");
         String  sector     = context.getString("sector");
+        String  regime     = context.getString("regime");
         String  detectedAt = context.getString("detectedAt");
         Instant detection  = Instant.parse(detectedAt);
-        return buildFeaturesFromParams(eventType, sector, detection, events);
+        return buildFeaturesFromParams(eventType, sector, regime, detection, events);
     }
 
     private Map<String, Object> buildFeaturesFromParams(String eventType, String sector,
-                                                        Instant detection,
+                                                        String regime, Instant detection,
                                                         List<MarketEventEntity> events) {
         Map<String, Object> features = new LinkedHashMap<>();
 
         features.put("event_type", eventType);
         features.put("instrument_sector", sector);
+        features.put("market_regime", regime != null ? regime : "UNKNOWN");
 
         double hour = detection.atZone(ZoneOffset.UTC).getHour()
                       + detection.atZone(ZoneOffset.UTC).getMinute() / 60.0;
