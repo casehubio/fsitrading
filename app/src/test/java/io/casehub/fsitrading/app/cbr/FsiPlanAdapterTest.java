@@ -96,20 +96,20 @@ class FsiPlanAdapterTest {
         assertThat(plan.steps().getFirst().action()).isEqualTo(AdaptationAction.SUPPRESSED);
     }
 
-    private ScoredCbrCase<PlanCbrCase> scoredCase(double score, double volatility) {
+    private ScoredCbrCase<ResolvedCase> scoredCase(double score, double volatility) {
         return scoredCaseWithAgent("agent1", score, volatility);
     }
 
-    private ScoredCbrCase<PlanCbrCase> scoredCaseWithAgent(String agent, double score,
+    private ScoredCbrCase<ResolvedCase> scoredCaseWithAgent(String agent, double score,
                                                             double volatility) {
-        var trace = new PlanTrace("respond", "incident-respond", agent,
+        var trace = new ResolutionStep("respond", "incident-respond", agent,
                 "SUCCESS", 1, Map.of(), null);
         var features = Map.of(
                 "volatility_at_detection", (FeatureValue) FeatureValue.number(volatility),
                 "event_type", (FeatureValue) FeatureValue.string("FLASH_CRASH"));
-        var planCase = new PlanCbrCase("incident", "response", null, null,
+        var planCase = new ResolvedCase("incident", "response", null, null,
                 features, List.of(trace), 0.8, agent);
-        return new ScoredCbrCase<>(planCase, "case-1", score);
+        return new ScoredCbrCase<>(planCase, "case-1", ResolvedCase.CBR_TYPE, score);
     }
 
     private Map<String, FeatureValue> currentFeatures(double volatility) {

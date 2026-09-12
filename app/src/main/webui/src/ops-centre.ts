@@ -145,6 +145,14 @@ const audit: DockPanelConfig = {
   content: hostPanel("audit-trail-viewer"),
 };
 
+const narrativeTimeline: DockPanelConfig = {
+  key: "narrative",
+  label: "Decision Narrative",
+  icon: "book",
+  defaultOpen: true,
+  content: hostPanel("narrative-timeline", { endpoint: "/api/narrative" }),
+};
+
 const incidentCountBadge = badge({
   lookup: lookup("incident-status"),
   field: "totalActive",
@@ -176,7 +184,7 @@ export const opsCentrePage = page("Ops Centre",
     },
     right: {
       zones: 2,
-      panels: [approvals, workItemDetail, slaCountdown, responseChannel, similarIncidents],
+      panels: [approvals, workItemDetail, slaCountdown, responseChannel, similarIncidents, narrativeTimeline],
     },
     bottom: {
       zones: 2,

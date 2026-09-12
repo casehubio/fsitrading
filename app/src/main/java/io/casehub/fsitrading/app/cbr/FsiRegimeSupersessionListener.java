@@ -7,7 +7,7 @@ import io.casehub.fsitrading.model.RegimeAssessment;
 import io.casehub.neocortex.memory.MemoryDomain;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
 import io.casehub.neocortex.memory.cbr.CbrFilter;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
@@ -40,7 +40,7 @@ public class FsiRegimeSupersessionListener {
         if (previous != null && previous != assessment.regime()) {
             String tenantId = event.tenancyId() != null ? event.tenancyId() : "default";
             int count = cbrStore.supersedeMatching(
-                    tenantId, FSI_DOMAIN, PlanCbrCase.CBR_TYPE,
+                    tenantId, FSI_DOMAIN, ResolvedCase.CBR_TYPE,
                     Map.of("market_regime", CbrFilter.contains(previous.name())),
                     "Regime changed from " + previous + " to " + assessment.regime()
                             + " on " + assessment.instrument());

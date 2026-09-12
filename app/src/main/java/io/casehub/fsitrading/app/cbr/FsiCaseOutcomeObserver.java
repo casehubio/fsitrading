@@ -6,7 +6,7 @@ import io.casehub.neocortex.memory.MemoryDomain;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
 import io.casehub.neocortex.memory.cbr.CbrOutcome;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.platform.api.path.Path;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -48,7 +48,7 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
         String severity   = (String) snapshot.get("severity");
         String instrument = (String) snapshot.get("instrument");
 
-        PlanCbrCase planCase = new PlanCbrCase(
+        ResolvedCase cbrCase = new ResolvedCase(
                 severity + " " + eventType + " incident on " + instrument,
                 "HTN decomposition response",
                 event.outcomeLabel(),
@@ -59,7 +59,7 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
                 "fsi-incident-cbr");
 
         String caseId = event.caseId().toString();
-        String storedId = cbrStore.store(planCase, PlanCbrCase.CBR_TYPE, caseId,
+        String storedId = cbrStore.store(cbrCase, ResolvedCase.CBR_TYPE, caseId,
                                          new MemoryDomain("fsitrading"), event.tenancyId(),
                                          caseId, Path.root());
 

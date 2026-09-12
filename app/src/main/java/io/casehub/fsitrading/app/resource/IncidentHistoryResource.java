@@ -4,7 +4,7 @@ import io.casehub.neocortex.memory.MemoryDomain;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
 import io.casehub.neocortex.memory.cbr.CbrScanRequest;
 import io.casehub.neocortex.memory.cbr.CbrScanResult;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
@@ -32,6 +32,6 @@ public class IncidentHistoryResource {
             @QueryParam("cursor") String cursor,
             @QueryParam("tenantId") @DefaultValue("default") String tenantId) {
         return cbrStore.scan(new CbrScanRequest(
-                tenantId, FSI_DOMAIN, PlanCbrCase.CBR_TYPE, limit, cursor));
+                tenantId, FSI_DOMAIN, ResolvedCase.CBR_TYPE, limit, cursor));
     }
 }

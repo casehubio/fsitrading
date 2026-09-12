@@ -23,7 +23,8 @@
     "@casehubio/blocks-ui-similarity-panel": "file:../../../../../blocks-ui/components/similarity-panel",
     "@casehubio/blocks-ui-compliance-summary": "file:../../../../../blocks-ui/components/compliance-summary",
     "@casehubio/blocks-ui-gdpr-erasure-action": "file:../../../../../blocks-ui/components/gdpr-erasure-action",
-    "@casehubio/blocks-ui-audit-trail-viewer": "file:../../../../../blocks-ui/components/audit-trail-viewer"
+    "@casehubio/blocks-ui-audit-trail-viewer": "file:../../../../../blocks-ui/components/audit-trail-viewer",
+    "@casehubio/blocks-ui-narrative-timeline": "file:../../../../../blocks-ui/components/narrative-timeline"
   },
   "devDependencies": {
     "esbuild": "0.21.5",

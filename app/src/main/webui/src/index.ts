@@ -14,6 +14,7 @@ import "@casehubio/blocks-ui-similarity-panel";
 import "@casehubio/blocks-ui-compliance-summary";
 import "@casehubio/blocks-ui-gdpr-erasure-action";
 import "@casehubio/blocks-ui-audit-trail-viewer";
+import "@casehubio/blocks-ui-narrative-timeline";
 
 registerPanel("fsi-market-panel", "fsi-market-panel");
 registerPanel("case-explorer", "blocks-case-explorer");
@@ -28,6 +29,7 @@ registerPanel("audit-trail-viewer", "blocks-audit-trail-viewer");
 registerPanel("similarity-panel", "blocks-similarity-panel");
 registerPanel("compliance-summary", "blocks-compliance-summary");
 registerPanel("gdpr-erasure-action", "blocks-gdpr-erasure-action");
+registerPanel("narrative-timeline", "blocks-narrative-timeline");
 
 const container = document.getElementById("app");
 if (container) {

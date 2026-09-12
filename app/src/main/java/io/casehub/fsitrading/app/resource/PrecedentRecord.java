@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.resource;
 
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.neocortex.memory.cbr.ScoredCbrCase;
 
 
@@ -10,8 +10,8 @@ public record PrecedentRecord(
         String outcome,
         String resolutionTime) {
 
-    public static PrecedentRecord from(ScoredCbrCase<PlanCbrCase> scored) {
-        PlanCbrCase plan = scored.cbrCase();
+    public static PrecedentRecord from(ScoredCbrCase<ResolvedCase> scored) {
+        ResolvedCase plan = scored.cbrCase();
         return new PrecedentRecord(
                 scored.caseId(),
                 Math.round(scored.score() * 100.0),

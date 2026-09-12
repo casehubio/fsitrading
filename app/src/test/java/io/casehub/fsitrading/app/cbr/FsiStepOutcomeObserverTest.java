@@ -4,7 +4,7 @@ import io.casehub.api.spi.StepOutcomeEvent;
 import io.casehub.api.spi.routing.RoutingOutcome;
 import io.casehub.neocortex.memory.cbr.CbrCase;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.FeatureVectorCbrCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -40,9 +40,9 @@ class FsiStepOutcomeObserverTest {
         observer.onStepOutcome(event(RoutingOutcome.SUCCESS));
 
         var captor = ArgumentCaptor.forClass(CbrCase.class);
-        verify(cbrStore).store(captor.capture(), eq(PlanCbrCase.CBR_TYPE),
+        verify(cbrStore).store(captor.capture(), eq(FeatureVectorCbrCase.CBR_TYPE),
                 anyString(), any(), eq("tenant-1"), anyString(), any());
-        var stored = (PlanCbrCase) captor.getValue();
+        var stored = (FeatureVectorCbrCase) captor.getValue();
         assertThat(stored.problem()).contains("reduce-exposure");
         assertThat(stored.outcome()).isEqualTo("SUCCESS");
     }
@@ -56,7 +56,7 @@ class FsiStepOutcomeObserverTest {
 
         observer.onStepOutcome(event(RoutingOutcome.FAILURE));
 
-        verify(cbrStore).store(any(), eq(PlanCbrCase.CBR_TYPE),
+        verify(cbrStore).store(any(), eq(FeatureVectorCbrCase.CBR_TYPE),
                 anyString(), any(), anyString(), anyString(), any());
     }
 

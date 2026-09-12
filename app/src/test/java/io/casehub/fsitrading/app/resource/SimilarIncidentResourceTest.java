@@ -7,7 +7,7 @@ import io.casehub.fsitrading.model.MarketEventType;
 import io.casehub.fsitrading.spi.IncidentStore;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
 import io.casehub.neocortex.memory.cbr.CbrQuery;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.neocortex.memory.cbr.ScoredCbrCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,13 +56,13 @@ class SimilarIncidentResourceTest {
         when(incidentStore.findByCaseId(caseId)).thenReturn(incident);
         when(featureExtractor.extractFromSnapshot(any(), any()))
                 .thenReturn(Map.of("event_type", "FLASH_CRASH", "instrument_sector", "EQUITY"));
-        when(cbrStore.retrieveSimilar(any(), eq(PlanCbrCase.class)))
+        when(cbrStore.retrieveSimilar(any(), eq(ResolvedCase.class)))
                 .thenReturn(List.of());
 
         resource.findSimilar(caseId.toString(), "tenant-1");
 
         var queryCaptor = ArgumentCaptor.forClass(CbrQuery.class);
-        verify(cbrStore).retrieveSimilar(queryCaptor.capture(), eq(PlanCbrCase.class));
+        verify(cbrStore).retrieveSimilar(queryCaptor.capture(), eq(ResolvedCase.class));
         assertThat(queryCaptor.getValue().features()).isNotEmpty();
     }
 
@@ -76,11 +76,11 @@ class SimilarIncidentResourceTest {
         when(featureExtractor.extractFromSnapshot(any(), any()))
                 .thenReturn(Map.of("event_type", "LIQUIDITY_DROP"));
 
-        var planCase = new PlanCbrCase("incident", "response", "Resolved", null,
+        var planCase = new ResolvedCase("incident", "response", "Resolved", null,
                 Map.of(), List.of(), 0.8, "agent");
-        var scored = new ScoredCbrCase<>(planCase, "case-1", 0.85, false,
+        var scored = new ScoredCbrCase<>(planCase, "case-1", ResolvedCase.CBR_TYPE, 0.85, false,
                 Map.of(), Instant.parse("2026-09-01T10:00:00Z"), null, null);
-        when(cbrStore.retrieveSimilar(any(), eq(PlanCbrCase.class)))
+        when(cbrStore.retrieveSimilar(any(), eq(ResolvedCase.class)))
                 .thenReturn(List.of(scored));
 
         var result = resource.findSimilar(caseId.toString(), "tenant-1");
@@ -102,10 +102,10 @@ class SimilarIncidentResourceTest {
         when(featureExtractor.extractFromSnapshot(any(), any()))
                 .thenReturn(Map.of("event_type", "PRICE_TICK"));
 
-        var planCase = new PlanCbrCase("incident", "response", null, null,
+        var planCase = new ResolvedCase("incident", "response", null, null,
                 Map.of(), List.of(), 0.8, "agent");
-        var scored = new ScoredCbrCase<>(planCase, "case-2", 0.5);
-        when(cbrStore.retrieveSimilar(any(), eq(PlanCbrCase.class)))
+        var scored = new ScoredCbrCase<>(planCase, "case-2", ResolvedCase.CBR_TYPE, 0.5);
+        when(cbrStore.retrieveSimilar(any(), eq(ResolvedCase.class)))
                 .thenReturn(List.of(scored));
 
         var result = resource.findSimilar(caseId.toString(), "tenant-1");

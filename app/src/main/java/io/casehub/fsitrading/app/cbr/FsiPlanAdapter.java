@@ -7,8 +7,8 @@ import io.casehub.neocortex.memory.cbr.AdaptedStep;
 import io.casehub.neocortex.memory.cbr.AgentTrustProvider;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
 import io.casehub.neocortex.memory.cbr.PlanAdapter;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
-import io.casehub.neocortex.memory.cbr.PlanTrace;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
+import io.casehub.neocortex.memory.cbr.ResolutionStep;
 import io.casehub.neocortex.memory.cbr.ScoredCbrCase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -36,10 +36,10 @@ public class FsiPlanAdapter implements PlanAdapter {
     }
 
     @Override
-    public AdaptedPlan adapt(String caseType, ScoredCbrCase<PlanCbrCase> retrieved,
+    public AdaptedPlan adapt(String caseType, ScoredCbrCase<ResolvedCase> retrieved,
                              Map<String, FeatureValue> currentFeatures) {
         List<AdaptedStep> steps    = new ArrayList<>();
-        PlanCbrCase       pastCase = retrieved.cbrCase();
+        ResolvedCase       pastCase = retrieved.cbrCase();
 
         double pastVolatility    = extractNumeric(pastCase.features(), "volatility_at_detection");
         double currentVolatility = extractNumeric(currentFeatures, "volatility_at_detection");
@@ -52,14 +52,14 @@ public class FsiPlanAdapter implements PlanAdapter {
                                       "High-severity event " + eventType + " — advisory pre-reduce"));
         }
 
-        for (PlanTrace trace : pastCase.planTrace()) {
+        for (ResolutionStep trace : pastCase.resolutionStep()) {
             steps.add(adaptStep(trace, pastVolatility, currentVolatility));
         }
 
         return new AdaptedPlan(steps);
     }
 
-    private AdaptedStep adaptStep(PlanTrace trace, double pastVol, double currentVol) {
+    private AdaptedStep adaptStep(ResolutionStep trace, double pastVol, double currentVol) {
         if (pulseState.isMarketClosed()) {
             return step(trace, AdaptationAction.SUPPRESSED,
                     "Market closed — step requires market access");
@@ -84,7 +84,7 @@ public class FsiPlanAdapter implements PlanAdapter {
         return step(trace, AdaptationAction.RETAINED, null);
     }
 
-    private AdaptedStep step(PlanTrace trace, AdaptationAction action, String reason) {
+    private AdaptedStep step(ResolutionStep trace, AdaptationAction action, String reason) {
         return new AdaptedStep(trace.bindingName(), trace.capabilityName(),
                 trace.workerName(), trace.stepOutcome(), trace.priority(),
                 trace.parameters(), action, reason);

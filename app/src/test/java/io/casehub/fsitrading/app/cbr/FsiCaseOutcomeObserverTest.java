@@ -3,7 +3,7 @@ package io.casehub.fsitrading.app.cbr;
 import io.casehub.api.spi.CaseOutcomeEvent;
 import io.casehub.neocortex.memory.cbr.CbrCase;
 import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +35,7 @@ class FsiCaseOutcomeObserverTest {
     }
 
     @Test
-    void storesPlanCbrCaseOnCompletedOutcome() {
+    void storesResolvedCaseOnCompletedOutcome() {
         when(featureExtractor.extractFromSnapshot(any(), any()))
                 .thenReturn(Map.of("event_type", "FLASH_CRASH",
                         "instrument_sector", "EQUITY"));
@@ -52,10 +52,10 @@ class FsiCaseOutcomeObserverTest {
         observer.onOutcome(event);
 
         var captor = ArgumentCaptor.forClass(CbrCase.class);
-        verify(cbrStore).store(captor.capture(), eq(PlanCbrCase.CBR_TYPE),
+        verify(cbrStore).store(captor.capture(), eq(ResolvedCase.CBR_TYPE),
                 anyString(), any(), eq("tenant-1"), anyString(), any());
-        assertThat(captor.getValue()).isInstanceOf(PlanCbrCase.class);
-        var stored = (PlanCbrCase) captor.getValue();
+        assertThat(captor.getValue()).isInstanceOf(ResolvedCase.class);
+        var stored = (ResolvedCase) captor.getValue();
         assertThat(stored.problem()).contains("CRITICAL");
         assertThat(stored.producerAgentId()).isEqualTo("fsi-incident-cbr");
     }

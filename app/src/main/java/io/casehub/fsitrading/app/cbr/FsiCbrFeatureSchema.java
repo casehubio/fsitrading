@@ -2,13 +2,13 @@ package io.casehub.fsitrading.app.cbr;
 
 import io.casehub.neocortex.memory.cbr.CbrFeatureSchema;
 import io.casehub.neocortex.memory.cbr.FeatureField;
-import io.casehub.neocortex.memory.cbr.PlanCbrCase;
+import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.neocortex.memory.cbr.SimilaritySpec;
 import io.casehub.neocortex.memory.cbr.WarpingConstraint;
 
 public final class FsiCbrFeatureSchema {
 
-    public static final String CASE_TYPE = PlanCbrCase.CBR_TYPE;
+    public static final String CASE_TYPE = ResolvedCase.CBR_TYPE;
 
     public static final CbrFeatureSchema SCHEMA = CbrFeatureSchema.of(CASE_TYPE,
             FeatureField.categorical("event_type"),
