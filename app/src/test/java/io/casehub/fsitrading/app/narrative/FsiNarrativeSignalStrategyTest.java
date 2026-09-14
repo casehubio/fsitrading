@@ -58,6 +58,25 @@ class FsiNarrativeSignalStrategyTest {
     }
 
     @Test
+    void routingDecisionIncludesModelTierWhenPresent() {
+        var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
+                "overnight-incident", "analyse-sentiment", "analysis",
+                "SentimentAnalyser", RoutingOutcome.SUCCESS,
+                Map.of("instrument", "AAPL", "detectedAt", "2026-09-01T14:30:00Z",
+                        "routedAgentId", "agent-1", "routingScore", "0.9",
+                        "modelTier", "flagship"),
+                Duration.ofSeconds(3));
+
+        strategy.onStepOutcome(event);
+
+        var routing = captured.stream()
+                .filter(RoutingDecision.class::isInstance)
+                .map(RoutingDecision.class::cast)
+                .findFirst().orElseThrow();
+        assertThat(routing.reason()).contains("model-tier=flagship");
+    }
+
+    @Test
     void skipsNonOvernightIncidentCaseType() {
         var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
                 "other-case", "step-1", "cap-1", "worker-1",

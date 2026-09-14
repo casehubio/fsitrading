@@ -52,9 +52,13 @@ public class FsiNarrativeSignalStrategy extends AbstractNarrativeSignalStrategy 
             if (scoreStr != null) {
                 try { score = Double.parseDouble(scoreStr); } catch (NumberFormatException ignored) {}
             }
+            String modelTier = (String) snapshot.get("modelTier");
+            String reason = modelTier != null
+                ? "model-tier=" + modelTier + " (agent capability requirement)"
+                : null;
             emit(new RoutingDecision(caseId, stepName, now,
                     routedAgentId, "trust-weighted", score,
-                    List.of(step.workerName()), null));
+                    List.of(step.workerName()), reason));
         }
     }
 
