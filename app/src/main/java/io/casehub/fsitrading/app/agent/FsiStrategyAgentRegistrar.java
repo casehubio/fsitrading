@@ -48,8 +48,8 @@ public class FsiStrategyAgentRegistrar implements AgentDescriptorRegistrar {
     private AgentDescriptor buildDescriptor(StrategyType type) {
         String tier = MODEL_TIERS.getOrDefault(type, "standard");
         var caps = CAPABILITIES.get(type).stream()
-                               .map(name -> AgentCapability.builder().name(name).modelTier(tier).build())
-                               .toList();
+                .map(name -> AgentCapability.builder().name(name).modelTier(tier).build())
+                .toList();
 
         return AgentDescriptor.builder()
                               .agentId(FsiActorIdentity.forStrategy(type))
