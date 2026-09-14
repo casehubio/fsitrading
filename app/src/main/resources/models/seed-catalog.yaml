@@ -1,0 +1,48 @@
+models:
+  - id: claude-opus-4
+    backendKey: anthropic
+    vendor: anthropic
+    family: claude
+    displayName: Claude Opus 4
+    tier: FLAGSHIP
+    capabilities:
+      - tool-use
+      - long-context
+      - reasoning
+      - code-generation
+    contextWindow: 200000
+    maxOutput: 32000
+    locality: CLOUD
+    costTier: HIGH
+    authMethod: api-key
+
+  - id: claude-sonnet-4
+    backendKey: anthropic
+    vendor: anthropic
+    family: claude
+    displayName: Claude Sonnet 4
+    tier: STANDARD
+    capabilities:
+      - tool-use
+      - long-context
+      - reasoning
+      - code-generation
+    contextWindow: 200000
+    maxOutput: 16000
+    locality: CLOUD
+    costTier: MEDIUM
+    authMethod: api-key
+
+  - id: claude-haiku-4
+    backendKey: anthropic
+    vendor: anthropic
+    family: claude
+    displayName: Claude Haiku 4
+    tier: FAST
+    capabilities:
+      - tool-use
+    contextWindow: 200000
+    maxOutput: 8000
+    locality: CLOUD
+    costTier: LOW
+    authMethod: api-key
