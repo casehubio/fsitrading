@@ -24,7 +24,12 @@
     "@casehubio/blocks-ui-compliance-summary": "file:../../../../../blocks-ui/components/compliance-summary",
     "@casehubio/blocks-ui-gdpr-erasure-action": "file:../../../../../blocks-ui/components/gdpr-erasure-action",
     "@casehubio/blocks-ui-audit-trail-viewer": "file:../../../../../blocks-ui/components/audit-trail-viewer",
-    "@casehubio/blocks-ui-narrative-timeline": "file:../../../../../blocks-ui/components/narrative-timeline"
+    "@casehubio/blocks-ui-narrative-timeline": "file:../../../../../blocks-ui/components/narrative-timeline",
+    "@casehubio/blocks-ui-orchestration-workbench": "file:../../../../../blocks-ui/components/orchestration-workbench",
+    "@casehubio/blocks-ui-conversation-viewer": "file:../../../../../blocks-ui/components/conversation-viewer",
+    "@casehubio/blocks-ui-routing-rationale": "file:../../../../../blocks-ui/components/routing-rationale",
+    "@casehubio/blocks-ui-trust-workbench": "file:../../../../../blocks-ui/components/trust-workbench",
+    "@casehubio/blocks-ui-htn-diagram": "file:../../../../../blocks-ui/components/htn-diagram"
   },
   "devDependencies": {
     "esbuild": "0.21.5",

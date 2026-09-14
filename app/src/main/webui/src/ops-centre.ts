@@ -153,6 +153,38 @@ const narrativeTimeline: DockPanelConfig = {
   content: hostPanel("narrative-timeline", { endpoint: "/api/narrative" }),
 };
 
+const orchestration: DockPanelConfig = {
+  key: "orchestration",
+  label: "Orchestration",
+  icon: "grid",
+  defaultOpen: false,
+  content: hostPanel("orchestration-workbench"),
+};
+
+const htnDiagram: DockPanelConfig = {
+  key: "htn-diagram",
+  label: "Response Plan",
+  icon: "timeline",
+  defaultOpen: false,
+  content: hostPanel("htn-diagram"),
+};
+
+const conversationViewer: DockPanelConfig = {
+  key: "conversation-viewer",
+  label: "Deliberation Flow",
+  icon: "conversation",
+  defaultOpen: false,
+  content: hostPanel("conversation-viewer"),
+};
+
+const routingRationale: DockPanelConfig = {
+  key: "routing-rationale",
+  label: "Routing Rationale",
+  icon: "route",
+  defaultOpen: false,
+  content: hostPanel("routing-rationale"),
+};
+
 const incidentCountBadge = badge({
   lookup: lookup("incident-status"),
   field: "totalActive",
@@ -184,11 +216,11 @@ export const opsCentrePage = page("Ops Centre",
     },
     right: {
       zones: 2,
-      panels: [approvals, workItemDetail, slaCountdown, responseChannel, similarIncidents, narrativeTimeline],
+      panels: [approvals, workItemDetail, slaCountdown, responseChannel, similarIncidents, narrativeTimeline, routingRationale],
     },
     bottom: {
       zones: 2,
-      panels: [incidentTimeline, slaPolicy, approvalGate, notifications, compliance, audit, gdprErasure],
+      panels: [incidentTimeline, slaPolicy, approvalGate, notifications, compliance, audit, gdprErasure, orchestration, htnDiagram, conversationViewer],
     },
     statusBar: split("horizontal", [incidentCountBadge, slaStatusBadge]),
   }),

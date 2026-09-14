@@ -140,6 +140,30 @@ const preferences: DockPanelConfig = {
   content: hostPanel("preferences-editor"),
 };
 
+const routingRationale: DockPanelConfig = {
+  key: "routing-rationale",
+  label: "Routing Rationale",
+  icon: "route",
+  defaultOpen: false,
+  content: hostPanel("routing-rationale"),
+};
+
+const trustWorkbench: DockPanelConfig = {
+  key: "trust-workbench",
+  label: "Trust Workbench",
+  icon: "shield",
+  defaultOpen: false,
+  content: hostPanel("trust-workbench"),
+};
+
+const conversationViewer: DockPanelConfig = {
+  key: "conversation-viewer",
+  label: "Deliberation Flow",
+  icon: "conversation",
+  defaultOpen: false,
+  content: hostPanel("conversation-viewer"),
+};
+
 const regimeBadge = badge({
   lookup: lookup("regime"),
   colorMap: {
@@ -174,7 +198,7 @@ export const tradingDeskPage = page("Trading Desk",
     },
     right: {
       zones: 2,
-      panels: [trust, routing, deliberation, commitments],
+      panels: [trust, routing, deliberation, commitments, routingRationale, trustWorkbench, conversationViewer],
     },
     bottom: {
       zones: 1,
