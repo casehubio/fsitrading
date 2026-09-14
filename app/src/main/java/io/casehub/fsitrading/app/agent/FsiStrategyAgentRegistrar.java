@@ -38,8 +38,7 @@ public class FsiStrategyAgentRegistrar implements AgentDescriptorRegistrar {
 
     private AgentDescriptor buildDescriptor(StrategyType type) {
         var caps = CAPABILITIES.get(type).stream()
-                .map(name -> new AgentCapability(name, null, null, null, null, null,
-                        null, null, null, null, null))
+                .map(name -> AgentCapability.builder().name(name).build())
                 .toList();
 
         return AgentDescriptor.builder()
