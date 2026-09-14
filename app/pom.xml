@@ -101,6 +101,24 @@
       <artifactId>casehub-ras-api</artifactId>
     </dependency>
 
+    <!-- Ops deployment — GoalLoader, GoalCompiler, SituationRecompiler -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ops-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ops-deployment</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Desired-state runtime — LifecycleManager, ReconciliationLoop -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-desiredstate</artifactId>
+    </dependency>
+
     <!-- JQEvaluator required by engine CDI beans -->
     <dependency>
       <groupId>io.casehub</groupId>
