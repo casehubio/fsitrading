@@ -95,6 +95,12 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- RAS API — SituationDefinitionProvider, GanglionDescriptor, ActiveSituation -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-ras-api</artifactId>
+    </dependency>
+
     <!-- JQEvaluator required by engine CDI beans -->
     <dependency>
       <groupId>io.casehub</groupId>
