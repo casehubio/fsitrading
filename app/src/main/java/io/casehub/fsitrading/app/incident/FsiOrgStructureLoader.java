@@ -1,5 +1,6 @@
 package io.casehub.fsitrading.app.incident;
 
+import io.casehub.eidos.api.AgentCapability;
 import io.casehub.eidos.org.api.OrgRegistry;
 import io.casehub.eidos.org.api.OrgStructure;
 
@@ -20,9 +21,9 @@ public final class FsiOrgStructureLoader {
                 .member("haltAndWaitAgent", "responder")
                 .member("liquidationAgent", "responder")
                 .member("exposureCloserAgent", "responder")
-                .capability("emergency-halt")
-                .capability("position-close")
-                .capability("forced-liquidation")
+                .capability(cap("emergency-halt", "fast"))
+                .capability(cap("position-close", "fast"))
+                .capability(cap("forced-liquidation", "fast"))
                 .add()
 
             .unit("risk-management").name("Risk Management Team").kind("team")
@@ -30,9 +31,9 @@ public final class FsiOrgStructureLoader {
                 .member("positionReducerAgent", "lead")
                 .member("hedgeAgent", "specialist")
                 .member("adjustLimitsAgent", "specialist")
-                .capability("exposure-reduction")
-                .capability("hedging")
-                .capability("limit-adjustment")
+                .capability(cap("exposure-reduction", "standard"))
+                .capability(cap("hedging", "standard"))
+                .capability(cap("limit-adjustment", "standard"))
                 .add()
 
             .unit("analysis").name("Analysis Team").kind("team")
@@ -40,17 +41,17 @@ public final class FsiOrgStructureLoader {
                 .member("sentimentAnalyserAgent", "lead")
                 .member("reEvaluatorAgent", "analyst")
                 .member("monitorAgent", "analyst")
-                .capability("sentiment-analysis")
-                .capability("strategy-evaluation")
-                .capability("market-monitoring")
+                .capability(cap("sentiment-analysis", "flagship"))
+                .capability(cap("strategy-evaluation", "standard"))
+                .capability(cap("market-monitoring", "fast"))
                 .add()
 
             .unit("operations").name("Operations Team").kind("team")
                 .parentUnit("trading-desk")
                 .member("verifyAgent", "lead")
                 .member("alertOncallAgent", "coordinator")
-                .capability("outcome-verification")
-                .capability("human-escalation")
+                .capability(cap("outcome-verification", "standard"))
+                .capability(cap("human-escalation", "fast"))
                 .add()
 
             // Cross-team escalation: analysis lead → risk lead → emergency lead
@@ -78,4 +79,9 @@ public final class FsiOrgStructureLoader {
             .build()
             .registerAll(registry);
     }
+
+    private static AgentCapability cap(String name, String modelTier) {
+        return AgentCapability.builder().name(name).modelTier(modelTier).build();
+    }
+
 }

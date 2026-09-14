@@ -86,4 +86,18 @@ class FsiOrgStructureTest {
         var units = registry.unitsFor("monitorAgent", FsiOrgStructureLoader.TENANT);
         assertThat(units).anyMatch(u -> u.unitId().equals("analysis"));
     }
+
+    @Test
+    void emergencyResponseCapabilitiesHaveFastTier() {
+        var unit = registry.findUnit("emergency-response", FsiOrgStructureLoader.TENANT).orElseThrow();
+        assertThat(unit.capabilities()).allMatch(c -> "fast".equals(c.modelTier()));
+    }
+
+    @Test
+    void analysisHasFlagshipForSentimentAnalysis() {
+        var unit = registry.findUnit("analysis", FsiOrgStructureLoader.TENANT).orElseThrow();
+        assertThat(unit.capabilities())
+                .anyMatch(c -> "sentiment-analysis".equals(c.name()) && "flagship".equals(c.modelTier()));
+    }
+
 }

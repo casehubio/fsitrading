@@ -29,6 +29,15 @@ public class FsiStrategyAgentRegistrar implements AgentDescriptorRegistrar {
             StrategyType.PORTFOLIO_REBALANCE, List.of("portfolio-rebalance", "allocation"),
             StrategyType.OVERNIGHT_RISK_MANAGEMENT, List.of("overnight-risk", "defensive"));
 
+    private static final Map<StrategyType, String> MODEL_TIERS = Map.of(
+            StrategyType.MOMENTUM, "standard",
+            StrategyType.MEAN_REVERSION, "standard",
+            StrategyType.STATISTICAL_ARBITRAGE, "standard",
+            StrategyType.MARKET_MAKING, "fast",
+            StrategyType.EVENT_DRIVEN, "flagship",
+            StrategyType.PORTFOLIO_REBALANCE, "standard",
+            StrategyType.OVERNIGHT_RISK_MANAGEMENT, "standard");
+
     @Override
     public List<AgentDescriptor> descriptors() {
         return Arrays.stream(StrategyType.values())
@@ -37,20 +46,21 @@ public class FsiStrategyAgentRegistrar implements AgentDescriptorRegistrar {
     }
 
     private AgentDescriptor buildDescriptor(StrategyType type) {
+        String tier = MODEL_TIERS.getOrDefault(type, "standard");
         var caps = CAPABILITIES.get(type).stream()
-                .map(name -> AgentCapability.builder().name(name).build())
-                .toList();
+                               .map(name -> AgentCapability.builder().name(name).modelTier(tier).build())
+                               .toList();
 
         return AgentDescriptor.builder()
-                .agentId(FsiActorIdentity.forStrategy(type))
-                .name(FsiActorIdentity.capabilityTag(type))
-                .version(VERSION)
-                .provider(PROVIDER)
-                .modelFamily(MODEL_FAMILY)
-                .slot(SLOT)
-                .capabilities(caps)
-                .disposition(FsiDispositionProfiles.forType(type))
-                .tenancyId(TenancyConstants.DEFAULT_TENANT_ID)
-                .build();
+                              .agentId(FsiActorIdentity.forStrategy(type))
+                              .name(FsiActorIdentity.capabilityTag(type))
+                              .version(VERSION)
+                              .provider(PROVIDER)
+                              .modelFamily(MODEL_FAMILY)
+                              .slot(SLOT)
+                              .capabilities(caps)
+                              .disposition(FsiDispositionProfiles.forType(type))
+                              .tenancyId(TenancyConstants.DEFAULT_TENANT_ID)
+                              .build();
     }
 }
