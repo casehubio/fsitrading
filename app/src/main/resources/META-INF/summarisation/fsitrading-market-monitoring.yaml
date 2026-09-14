@@ -1,0 +1,85 @@
+pipeline:
+  name: fsitrading-market-monitoring
+  source:
+    type-prefix: io.casehub.fsitrading.market.
+
+  levels:
+    - name: signals
+      grouping:
+        type: windowed
+        count: 20
+        age: 30000
+      summariser:
+        type: threshold-classify
+        rules:
+          - name: price-spike
+            when: 'abs(priceChange) > volatilityThreshold'
+            category: PRICE_SPIKE
+            severity: HIGH
+          - name: volume-surge
+            when: 'volumeRatio > 3.0'
+            category: VOLUME_SURGE
+            severity: HIGH
+          - name: spread-widening
+            when: 'spreadBps > normalSpreadBps * 2'
+            category: SPREAD_WIDENING
+            severity: MEDIUM
+          - name: order-imbalance
+            when: 'bidAskImbalance > 0.7'
+            category: ORDER_IMBALANCE
+            severity: MEDIUM
+          - name: normal-tick
+            when: 'true'
+            category: NORMAL
+            severity: LOW
+      emit:
+        cloud-event-type: io.casehub.fsitrading.situation.signal
+
+    - name: conditions
+      grouping:
+        type: windowed
+        age: 60000
+        count: 30
+      aggregate-fields:
+        - severity
+        - category
+      summariser:
+        type: phase-detect
+        initial: STABLE
+        states:
+          - STABLE
+          - VOLATILE
+          - ANOMALOUS
+        transitions:
+          - from: STABLE
+            to: VOLATILE
+            count-field: severity
+            count-value: HIGH
+            op: ">="
+            threshold: 5
+          - from: STABLE
+            to: ANOMALOUS
+            count-field: category
+            count-value: SPREAD_WIDENING
+            op: ">="
+            threshold: 5
+          - from: VOLATILE
+            to: ANOMALOUS
+            count-field: category
+            count-value: SPREAD_WIDENING
+            op: ">="
+            threshold: 3
+          - from: ANOMALOUS
+            to: VOLATILE
+            count-field: category
+            count-value: NORMAL
+            op: ">="
+            threshold: 10
+          - from: VOLATILE
+            to: STABLE
+            count-field: severity
+            count-value: HIGH
+            op: "=="
+            threshold: 0
+      emit:
+        cloud-event-type: io.casehub.fsitrading.situation.condition
