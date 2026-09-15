@@ -2,6 +2,7 @@ package io.casehub.fsitrading.app.situation;
 
 import io.casehub.desiredstate.api.CompilationResult;
 import io.casehub.desiredstate.api.DesiredStateGraphFactory;
+import io.casehub.desiredstate.runtime.LifecycleManager;
 import io.casehub.ops.deployment.DeploymentGoalCompiler;
 import io.casehub.ops.deployment.DeploymentGoalLoader;
 import io.casehub.ops.deployment.adaptation.DeploymentAdaptiveSituationRecompiler;
@@ -33,6 +34,9 @@ public class FsiTradingDeploymentBootstrap {
     DesiredStateGraphFactory graphFactory;
 
     @Inject
+    LifecycleManager lifecycleManager;
+
+    @Inject
     FsiTradingSituationDefinitionProvider situationProvider;
 
     void onStart(@Observes StartupEvent ev) {
@@ -49,8 +53,10 @@ public class FsiTradingDeploymentBootstrap {
         recompiler.register(tenancyId, goals, clearanceWindows, graphFactory);
 
         var result = compiler.compile(goals, graphFactory);
+        lifecycleManager.start(tenancyId, result);
+
         if (result instanceof CompilationResult.SingleGraph single) {
-            log.infof("fsitrading deployment registered: tenancy=%s, nodes=%d, adaptations=%d",
+            log.infof("fsitrading deployment started: tenancy=%s, nodes=%d, adaptations=%d",
                     tenancyId, single.graph().nodes().size(), goals.adaptations().size());
         }
     }
