@@ -81,7 +81,7 @@ public final class FsiOrgStructureLoader {
     }
 
     private static AgentCapability cap(String name, String modelTier) {
-        return AgentCapability.builder().name(name).modelTier(modelTier).build();
+        return AgentCapability.builder().name(name).modelRef("tier:" + modelTier.toUpperCase()).build();
     }
 
 }

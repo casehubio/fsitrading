@@ -58,7 +58,30 @@ class FsiNarrativeSignalStrategyTest {
     }
 
     @Test
-    void routingDecisionIncludesModelTierWhenPresent() {
+    void emitsModelSelectionSignalWhenModelTierPresent() {
+        var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
+                "overnight-incident", "analyse-sentiment", "analysis",
+                "SentimentAnalyser", RoutingOutcome.SUCCESS,
+                Map.of("instrument", "AAPL", "detectedAt", "2026-09-01T14:30:00Z",
+                        "routedAgentId", "agent-1", "routingScore", "0.9",
+                        "modelTier", "flagship", "modelId", "claude-opus-4",
+                        "modelVendor", "anthropic", "modelDisplayName", "Claude Opus 4"),
+                Duration.ofSeconds(3));
+
+        strategy.onStepOutcome(event);
+
+        var selection = captured.stream()
+                .filter(io.casehub.blocks.summarisation.narrative.ModelSelection.class::isInstance)
+                .map(io.casehub.blocks.summarisation.narrative.ModelSelection.class::cast)
+                .findFirst().orElseThrow();
+        assertThat(selection.modelTier()).isEqualTo("flagship");
+        assertThat(selection.modelId()).isEqualTo("claude-opus-4");
+        assertThat(selection.vendor()).isEqualTo("anthropic");
+        assertThat(selection.capabilityName()).isEqualTo("analysis");
+    }
+
+    @Test
+    void routingDecisionReasonIsNullWithModelSelection() {
         var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
                 "overnight-incident", "analyse-sentiment", "analysis",
                 "SentimentAnalyser", RoutingOutcome.SUCCESS,
@@ -73,7 +96,7 @@ class FsiNarrativeSignalStrategyTest {
                 .filter(RoutingDecision.class::isInstance)
                 .map(RoutingDecision.class::cast)
                 .findFirst().orElseThrow();
-        assertThat(routing.reason()).contains("model-tier=flagship");
+        assertThat(routing.reason()).isNull();
     }
 
     @Test

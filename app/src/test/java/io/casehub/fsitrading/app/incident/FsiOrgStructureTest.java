@@ -90,14 +90,14 @@ class FsiOrgStructureTest {
     @Test
     void emergencyResponseCapabilitiesHaveFastTier() {
         var unit = registry.findUnit("emergency-response", FsiOrgStructureLoader.TENANT).orElseThrow();
-        assertThat(unit.capabilities()).allMatch(c -> "fast".equals(c.modelTier()));
+        assertThat(unit.capabilities()).allMatch(c -> "tier:FAST".equals(c.modelRef()));
     }
 
     @Test
     void analysisHasFlagshipForSentimentAnalysis() {
         var unit = registry.findUnit("analysis", FsiOrgStructureLoader.TENANT).orElseThrow();
         assertThat(unit.capabilities())
-                .anyMatch(c -> "sentiment-analysis".equals(c.name()) && "flagship".equals(c.modelTier()));
+                .anyMatch(c -> "sentiment-analysis".equals(c.name()) && "tier:FLAGSHIP".equals(c.modelRef()));
     }
 
 }

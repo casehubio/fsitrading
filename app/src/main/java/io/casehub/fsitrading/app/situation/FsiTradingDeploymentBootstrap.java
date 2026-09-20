@@ -5,7 +5,7 @@ import io.casehub.desiredstate.api.DesiredStateGraphFactory;
 import io.casehub.desiredstate.runtime.LifecycleManager;
 import io.casehub.ops.deployment.DeploymentGoalCompiler;
 import io.casehub.ops.deployment.DeploymentGoalLoader;
-import io.casehub.ops.deployment.adaptation.DeploymentAdaptiveSituationRecompiler;
+// import io.casehub.ops.deployment.adaptation.DeploymentAdaptiveSituationRecompiler; // TODO: unpublished in casehub-ops SNAPSHOT
 import io.casehub.platform.api.identity.TenancyConstants;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,8 +24,7 @@ public class FsiTradingDeploymentBootstrap {
     @Inject
     DeploymentGoalLoader goalLoader;
 
-    @Inject
-    DeploymentAdaptiveSituationRecompiler recompiler;
+    // @Inject DeploymentAdaptiveSituationRecompiler recompiler; // TODO: unpublished in casehub-ops SNAPSHOT
 
     @Inject
     DeploymentGoalCompiler compiler;
@@ -50,7 +49,7 @@ public class FsiTradingDeploymentBootstrap {
                                 : Duration.ofMinutes(5)));
 
         String tenancyId = TenancyConstants.DEFAULT_TENANT_ID;
-        recompiler.register(tenancyId, goals, clearanceWindows, graphFactory);
+        // recompiler.register(tenancyId, goals, clearanceWindows, graphFactory); // TODO: unpublished in casehub-ops SNAPSHOT
 
         var result = compiler.compile(goals, graphFactory);
         lifecycleManager.start(tenancyId, result);
