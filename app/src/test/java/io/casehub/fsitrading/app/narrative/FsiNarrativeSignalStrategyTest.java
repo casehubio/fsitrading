@@ -100,6 +100,26 @@ class FsiNarrativeSignalStrategyTest {
     }
 
     @Test
+    void emitsCbrRetrievalWhenEnsemblePresent() {
+        var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
+                "overnight-incident", "reduce-exposure", "risk-management",
+                "ConservativeHedge", RoutingOutcome.SUCCESS,
+                Map.of("instrument", "AAPL", "detectedAt", "2026-09-01T14:30:00Z",
+                        "cbrEnsemble", Map.of("ensembleConfidence", 0.85, "inputCount", 3, "scope", "STEP_LEVEL")),
+                Duration.ofSeconds(5));
+
+        strategy.onStepOutcome(event);
+
+        var cbr = captured.stream()
+                .filter(io.casehub.blocks.summarisation.narrative.CbrRetrieval.class::isInstance)
+                .map(io.casehub.blocks.summarisation.narrative.CbrRetrieval.class::cast)
+                .findFirst().orElseThrow();
+        assertThat(cbr.retrievedCount()).isEqualTo(3);
+        assertThat(cbr.topSimilarity()).isEqualTo(0.85);
+        assertThat(cbr.domain()).isEqualTo("fsitrading");
+    }
+
+    @Test
     void skipsNonOvernightIncidentCaseType() {
         var event = new StepOutcomeEvent(UUID.randomUUID(), "tenant-1",
                 "other-case", "step-1", "cap-1", "worker-1",

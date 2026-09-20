@@ -5,6 +5,7 @@ import io.casehub.blocks.summarisation.EventStreamBus;
 import io.casehub.blocks.summarisation.narrative.AbstractNarrativeSignalStrategy;
 import io.casehub.blocks.summarisation.narrative.DecisionNarrativePipeline;
 import io.casehub.blocks.summarisation.narrative.DecisionSignal;
+import io.casehub.blocks.summarisation.narrative.CbrRetrieval;
 import io.casehub.blocks.summarisation.narrative.ModelSelection;
 import io.casehub.blocks.summarisation.narrative.RoutingDecision;
 import io.casehub.blocks.summarisation.narrative.StepOutcome;
@@ -66,6 +67,15 @@ public class FsiNarrativeSignalStrategy extends AbstractNarrativeSignalStrategy 
                         modelId, modelTier, step.capabilityName() != null ? step.capabilityName() : stepName,
                         vendor, displayName));
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        var ensemble = (Map<String, Object>) snapshot.get("cbrEnsemble");
+        if (ensemble != null) {
+            int inputCount = ensemble.get("inputCount") instanceof Number n ? n.intValue() : 0;
+            double confidence = ensemble.get("ensembleConfidence") instanceof Number n ? n.doubleValue() : 0.0;
+            emit(new CbrRetrieval(caseId, stepName, now,
+                    inputCount, confidence, null, "fsitrading"));
         }
     }
 
