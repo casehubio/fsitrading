@@ -1,6 +1,7 @@
-package io.casehub.fsitrading.app.resource;
+package io.casehub.fsitrading.app.service;
 
 import io.casehub.fsitrading.app.cbr.FsiFeatureExtractor;
+import io.casehub.fsitrading.app.resource.PrecedentRecord;
 import io.casehub.fsitrading.model.IncidentRecord;
 import io.casehub.fsitrading.spi.IncidentStore;
 import io.casehub.neocortex.memory.MemoryDomain;
@@ -9,39 +10,31 @@ import io.casehub.neocortex.memory.cbr.CbrQuery;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
 import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.platform.api.path.Path;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@jakarta.ws.rs.Path("/api/incidents/similar")
-@Produces(MediaType.APPLICATION_JSON)
-public class SimilarIncidentResource {
+@ApplicationScoped
+public class SimilarIncidentService {
 
     private final CbrCaseMemoryStore cbrStore;
     private final IncidentStore incidentStore;
     private final FsiFeatureExtractor featureExtractor;
 
     @Inject
-    public SimilarIncidentResource(CbrCaseMemoryStore cbrStore,
-                                   IncidentStore incidentStore,
-                                   FsiFeatureExtractor featureExtractor) {
+    public SimilarIncidentService(CbrCaseMemoryStore cbrStore,
+                                  IncidentStore incidentStore,
+                                  FsiFeatureExtractor featureExtractor) {
         this.cbrStore = cbrStore;
         this.incidentStore = incidentStore;
         this.featureExtractor = featureExtractor;
     }
 
-    @GET
-    public List<PrecedentRecord> findSimilar(
-            @QueryParam("caseId") String caseId,
-            @QueryParam("tenantId") @DefaultValue("default") String tenantId) {
+    public List<PrecedentRecord> findSimilar(String caseId, String tenantId) {
         if (caseId == null || caseId.isBlank()) return List.of();
         UUID parsedId;
         try {
