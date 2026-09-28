@@ -12,10 +12,11 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/layout")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
-public class LayoutResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/layout")
+public class LayoutResource  {
 
     @Inject
     LayoutPersistenceStore layoutStore;

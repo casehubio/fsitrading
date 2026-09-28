@@ -6,7 +6,7 @@ import io.casehub.neocortex.memory.MemoryDomain;
 import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrOutcome;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
-import io.casehub.neocortex.memory.cbr.FeatureVectorCbrCase;
+import io.casehub.neocortex.memory.cbr.CbrFeatureRecord;
 import io.casehub.platform.api.path.Path;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -45,7 +45,7 @@ public class FsiStepOutcomeObserver implements StepOutcomeObserver {
         String problem = event.bindingName() + " executed by " + event.workerName();
         double confidence = event.outcome().name().equals("SUCCESS") ? 1.0 : 0.0;
 
-        FeatureVectorCbrCase cbrCase = new FeatureVectorCbrCase(
+        CbrFeatureRecord cbrCase = new CbrFeatureRecord(
                 problem,
                 event.capabilityName() != null ? event.capabilityName() : event.bindingName(),
                 event.outcome().name(),
@@ -55,7 +55,7 @@ public class FsiStepOutcomeObserver implements StepOutcomeObserver {
                 event.workerName());
 
         String entityId = event.caseId().toString() + ":" + event.bindingName();
-        String storedId = cbrStore.store(cbrCase, FeatureVectorCbrCase.CBR_TYPE, entityId,
+        String storedId = cbrStore.store(cbrCase, CbrFeatureRecord.CBR_TYPE, entityId,
                 new MemoryDomain("fsitrading"), event.tenancyId(),
                 event.caseId().toString(), Path.root());
 

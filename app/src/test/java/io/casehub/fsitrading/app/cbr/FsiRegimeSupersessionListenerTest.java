@@ -5,7 +5,7 @@ import io.casehub.blocks.summarisation.LevelEvent;
 import io.casehub.fsitrading.app.pipeline.FsiEventLevels;
 import io.casehub.fsitrading.model.MarketRegime;
 import io.casehub.fsitrading.model.RegimeAssessment;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,13 +25,13 @@ import static org.mockito.Mockito.when;
 
 class FsiRegimeSupersessionListenerTest {
 
-    private CbrCaseMemoryStore cbrStore;
+    private CbrRecordStore cbrStore;
     private FsiRegimeSupersessionListener listener;
     private EventStreamBus<RegimeAssessment> l3Bus;
 
     @BeforeEach
     void setUp() {
-        cbrStore = mock(CbrCaseMemoryStore.class);
+        cbrStore = mock(CbrRecordStore.class);
         l3Bus = new EventStreamBus<>();
         listener = new FsiRegimeSupersessionListener(cbrStore);
         listener.wire(l3Bus);

@@ -2,7 +2,7 @@ package io.casehub.fsitrading.app.compliance;
 
 import io.casehub.api.spi.routing.RequirementStatus;
 import io.casehub.api.spi.routing.TrustRoutingRequirement;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrScanRequest;
 import io.casehub.neocortex.memory.cbr.CbrScanResult;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -18,12 +18,12 @@ import static org.mockito.Mockito.when;
 
 class FsiComplianceServiceTest {
 
-    private CbrCaseMemoryStore cbrCaseMemoryStore;
+    private CbrRecordStore cbrCaseMemoryStore;
     private FsiComplianceService service;
 
     @BeforeEach
     void setUp() {
-        cbrCaseMemoryStore = mock(CbrCaseMemoryStore.class);
+        cbrCaseMemoryStore = mock(CbrRecordStore.class);
         service = new FsiComplianceService();
         service.meterRegistry = new SimpleMeterRegistry();
         service.cbrCaseMemoryStore = cbrCaseMemoryStore;

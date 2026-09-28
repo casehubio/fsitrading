@@ -4,7 +4,7 @@ import io.casehub.ledger.api.model.ErasureReason;
 import io.casehub.ledger.runtime.privacy.LedgerErasureService;
 import io.casehub.neocortex.memory.CaseMemoryStore;
 import io.casehub.neocortex.memory.EraseRequest;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,14 +21,14 @@ import static org.mockito.Mockito.when;
 class FsiGdprErasureServiceTest {
 
     private CaseMemoryStore caseMemoryStore;
-    private CbrCaseMemoryStore cbrCaseMemoryStore;
+    private CbrRecordStore cbrCaseMemoryStore;
     private LedgerErasureService ledgerErasureService;
     private FsiGdprErasureService service;
 
     @BeforeEach
     void setUp() {
         caseMemoryStore = mock(CaseMemoryStore.class);
-        cbrCaseMemoryStore = mock(CbrCaseMemoryStore.class);
+        cbrCaseMemoryStore = mock(CbrRecordStore.class);
         ledgerErasureService = mock(LedgerErasureService.class);
         service = new FsiGdprErasureService();
         service.caseMemoryStore = caseMemoryStore;

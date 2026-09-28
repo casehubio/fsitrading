@@ -16,9 +16,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/api/audit")
 @Produces(MediaType.APPLICATION_JSON)
-public class AuditResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/audit")
+public class AuditResource  {
 
     @Inject
     TradingLedgerService tradingLedgerService;

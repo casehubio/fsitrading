@@ -2,9 +2,9 @@ package io.casehub.fsitrading.app.cbr;
 
 import io.casehub.api.spi.StepOutcomeEvent;
 import io.casehub.api.spi.routing.RoutingOutcome;
-import io.casehub.neocortex.memory.cbr.CbrCase;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.FeatureVectorCbrCase;
+import io.casehub.neocortex.memory.cbr.CbrRecord;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
+import io.casehub.neocortex.memory.cbr.CbrFeatureRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,13 +19,13 @@ import static org.mockito.Mockito.*;
 
 class FsiStepOutcomeObserverTest {
 
-    private CbrCaseMemoryStore cbrStore;
+    private CbrRecordStore cbrStore;
     private FsiFeatureExtractor featureExtractor;
     private FsiStepOutcomeObserver observer;
 
     @BeforeEach
     void setUp() {
-        cbrStore = mock(CbrCaseMemoryStore.class);
+        cbrStore = mock(CbrRecordStore.class);
         featureExtractor = mock(FsiFeatureExtractor.class);
         observer = new FsiStepOutcomeObserver(cbrStore, featureExtractor);
     }
@@ -39,10 +39,10 @@ class FsiStepOutcomeObserverTest {
 
         observer.onStepOutcome(event(RoutingOutcome.SUCCESS));
 
-        var captor = ArgumentCaptor.forClass(CbrCase.class);
-        verify(cbrStore).store(captor.capture(), eq(FeatureVectorCbrCase.CBR_TYPE),
+        var captor = ArgumentCaptor.forClass(CbrRecord.class);
+        verify(cbrStore).store(captor.capture(), eq(CbrFeatureRecord.CBR_TYPE),
                 anyString(), any(), eq("tenant-1"), anyString(), any());
-        var stored = (FeatureVectorCbrCase) captor.getValue();
+        var stored = (CbrFeatureRecord) captor.getValue();
         assertThat(stored.problem()).contains("reduce-exposure");
         assertThat(stored.outcome()).isEqualTo("SUCCESS");
     }
@@ -56,7 +56,7 @@ class FsiStepOutcomeObserverTest {
 
         observer.onStepOutcome(event(RoutingOutcome.FAILURE));
 
-        verify(cbrStore).store(any(), eq(FeatureVectorCbrCase.CBR_TYPE),
+        verify(cbrStore).store(any(), eq(CbrFeatureRecord.CBR_TYPE),
                 anyString(), any(), anyString(), anyString(), any());
     }
 

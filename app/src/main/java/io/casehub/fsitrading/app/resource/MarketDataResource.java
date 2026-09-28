@@ -26,9 +26,10 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.Map;
 
-@Path("/api/market-data")
 @Produces(MediaType.APPLICATION_JSON)
-public class MarketDataResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/market-data")
+public class MarketDataResource  {
 
     @Inject SyntheticMarketDataProvider marketDataProvider;
     @Inject ScenarioRunner scenarioRunner;

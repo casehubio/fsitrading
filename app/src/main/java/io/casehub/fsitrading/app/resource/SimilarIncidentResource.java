@@ -4,10 +4,10 @@ import io.casehub.fsitrading.app.cbr.FsiFeatureExtractor;
 import io.casehub.fsitrading.model.IncidentRecord;
 import io.casehub.fsitrading.spi.IncidentStore;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrPlanRecord;
 import io.casehub.neocortex.memory.cbr.CbrQuery;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
-import io.casehub.neocortex.memory.cbr.ResolvedCase;
 import io.casehub.platform.api.path.Path;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DefaultValue;
@@ -21,16 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@jakarta.ws.rs.Path("/api/incidents/similar")
 @Produces(MediaType.APPLICATION_JSON)
-public class SimilarIncidentResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@jakarta.ws.rs.Path("/api/incidents/similar")
+public class SimilarIncidentResource  {
 
-    private final CbrCaseMemoryStore cbrStore;
+    private final CbrRecordStore cbrStore;
     private final IncidentStore incidentStore;
     private final FsiFeatureExtractor featureExtractor;
 
     @Inject
-    public SimilarIncidentResource(CbrCaseMemoryStore cbrStore,
+    public SimilarIncidentResource(CbrRecordStore cbrStore,
                                    IncidentStore incidentStore,
                                    FsiFeatureExtractor featureExtractor) {
         this.cbrStore = cbrStore;
@@ -58,9 +59,9 @@ public class SimilarIncidentResource {
         Map<String, FeatureValue> features = FeatureValue.toFeatureMap(rawFeatures);
 
         CbrQuery query = CbrQuery.of(tenantId, new MemoryDomain("fsitrading"),
-                        Path.root(), ResolvedCase.CBR_TYPE, features, 5)
+                                     Path.root(), CbrPlanRecord.CBR_TYPE, features, 5)
                 .withMinSimilarity(0.3);
-        return cbrStore.retrieveSimilar(query, ResolvedCase.class).stream()
+        return cbrStore.retrieveSimilar(query, CbrPlanRecord.class).stream()
                 .map(PrecedentRecord::from)
                 .toList();
     }

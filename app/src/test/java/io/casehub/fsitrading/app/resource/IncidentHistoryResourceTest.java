@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.resource;
 
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.CbrCaseSummary;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordSummary;
 import io.casehub.neocortex.memory.cbr.CbrScanRequest;
 import io.casehub.neocortex.memory.cbr.CbrScanResult;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +19,12 @@ import static org.mockito.Mockito.when;
 
 class IncidentHistoryResourceTest {
 
-    private CbrCaseMemoryStore cbrStore;
+    private CbrRecordStore cbrStore;
     private IncidentHistoryResource resource;
 
     @BeforeEach
     void setUp() {
-        cbrStore = mock(CbrCaseMemoryStore.class);
+        cbrStore = mock(CbrRecordStore.class);
         resource = new IncidentHistoryResource(cbrStore);
     }
 
@@ -40,7 +40,7 @@ class IncidentHistoryResourceTest {
 
     @Test
     void returnsCaseSummaries() {
-        var summary = new CbrCaseSummary("case-1", "entity-1", "plan",
+        var summary = new CbrRecordSummary("case-1", "entity-1", "plan",
                 "agent-1", 0.85, Instant.parse("2026-09-01T10:00:00Z"));
         when(cbrStore.scan(any())).thenReturn(new CbrScanResult(List.of(summary), null));
 

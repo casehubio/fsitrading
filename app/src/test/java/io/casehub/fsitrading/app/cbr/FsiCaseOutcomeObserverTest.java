@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.cbr;
 
 import io.casehub.api.spi.CaseOutcomeEvent;
-import io.casehub.neocortex.memory.cbr.CbrCase;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.ResolvedCase;
+import io.casehub.neocortex.memory.cbr.CbrRecord;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
+import io.casehub.neocortex.memory.cbr.CbrPlanRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -23,19 +23,19 @@ import static org.mockito.Mockito.when;
 
 class FsiCaseOutcomeObserverTest {
 
-    private CbrCaseMemoryStore cbrStore;
+    private CbrRecordStore cbrStore;
     private FsiFeatureExtractor featureExtractor;
     private FsiCaseOutcomeObserver observer;
 
     @BeforeEach
     void setUp() {
-        cbrStore = mock(CbrCaseMemoryStore.class);
+        cbrStore = mock(CbrRecordStore.class);
         featureExtractor = mock(FsiFeatureExtractor.class);
         observer = new FsiCaseOutcomeObserver(cbrStore, featureExtractor);
     }
 
     @Test
-    void storesResolvedCaseOnCompletedOutcome() {
+    void storesCbrPlanRecordOnCompletedOutcome() {
         when(featureExtractor.extractFromSnapshot(any(), any()))
                 .thenReturn(Map.of("event_type", "FLASH_CRASH",
                         "instrument_sector", "EQUITY"));
@@ -51,11 +51,11 @@ class FsiCaseOutcomeObserverTest {
 
         observer.onOutcome(event);
 
-        var captor = ArgumentCaptor.forClass(CbrCase.class);
-        verify(cbrStore).store(captor.capture(), eq(ResolvedCase.CBR_TYPE),
+        var captor = ArgumentCaptor.forClass(CbrRecord.class);
+        verify(cbrStore).store(captor.capture(), eq(CbrPlanRecord.CBR_TYPE),
                 anyString(), any(), eq("tenant-1"), anyString(), any());
-        assertThat(captor.getValue()).isInstanceOf(ResolvedCase.class);
-        var stored = (ResolvedCase) captor.getValue();
+        assertThat(captor.getValue()).isInstanceOf(CbrPlanRecord.class);
+        var stored = (CbrPlanRecord) captor.getValue();
         assertThat(stored.problem()).contains("CRITICAL");
         assertThat(stored.producerAgentId()).isEqualTo("fsi-incident-cbr");
     }

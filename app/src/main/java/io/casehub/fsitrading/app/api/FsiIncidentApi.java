@@ -52,7 +52,7 @@ public class FsiIncidentApi {
     @RestPath("/work-items")
     public Object listWorkItems(@QueryParam("type") String type,
                                  @QueryParam("status") String status) {
-        return workItemResource.list(type, status);
+        return workItemResource.list(type, null, status);
     }
 
     @PlatformMutation("Resolve a work item")

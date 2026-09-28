@@ -12,9 +12,10 @@ import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
-public class OrderResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/orders")
+public class OrderResource  {
 
     @Inject
     OrderService orderService;

@@ -5,9 +5,9 @@ import io.casehub.blocks.summarisation.LevelEvent;
 import io.casehub.fsitrading.model.MarketRegime;
 import io.casehub.fsitrading.model.RegimeAssessment;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrFilter;
-import io.casehub.neocortex.memory.cbr.ResolvedCase;
+import io.casehub.neocortex.memory.cbr.CbrPlanRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.jboss.logging.Logger;
@@ -21,11 +21,11 @@ public class FsiRegimeSupersessionListener {
     private static final Logger LOG = Logger.getLogger(FsiRegimeSupersessionListener.class);
     private static final MemoryDomain FSI_DOMAIN = new MemoryDomain("fsitrading");
 
-    private final CbrCaseMemoryStore cbrStore;
+    private final CbrRecordStore cbrStore;
     private final Map<String, MarketRegime> lastRegime = new ConcurrentHashMap<>();
 
     @Inject
-    public FsiRegimeSupersessionListener(CbrCaseMemoryStore cbrStore) {
+    public FsiRegimeSupersessionListener(CbrRecordStore cbrStore) {
         this.cbrStore = cbrStore;
     }
 
@@ -40,7 +40,7 @@ public class FsiRegimeSupersessionListener {
         if (previous != null && previous != assessment.regime()) {
             String tenantId = event.tenancyId() != null ? event.tenancyId() : "default";
             int count = cbrStore.supersedeMatching(
-                    tenantId, FSI_DOMAIN, ResolvedCase.CBR_TYPE,
+                    tenantId, FSI_DOMAIN, CbrPlanRecord.CBR_TYPE,
                     Map.of("market_regime", CbrFilter.contains(previous.name())),
                     "Regime changed from " + previous + " to " + assessment.regime()
                             + " on " + assessment.instrument());

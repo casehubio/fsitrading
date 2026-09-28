@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.cbr;
 
-import io.casehub.neocortex.memory.cbr.CbrFeatureSchema;
+import io.casehub.neocortex.memory.cbr.CbrRecordSchema;
 import io.casehub.neocortex.memory.cbr.FeatureField;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ class FsiCbrFeatureSchemaTest {
 
     @Test
     void schemaHasSevenFields() {
-        CbrFeatureSchema schema = FsiCbrFeatureSchema.SCHEMA;
+        CbrRecordSchema schema = FsiCbrFeatureSchema.SCHEMA;
         assertThat(schema.fields()).hasSize(8);
         assertThat(schema.caseType()).isEqualTo("plan");
     }

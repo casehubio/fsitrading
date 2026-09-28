@@ -11,13 +11,14 @@ import jakarta.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@Path("/api/kpis")
 @Produces(MediaType.APPLICATION_JSON)
-public class KpiResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/kpis")
+public class KpiResource  {
 
     @Inject
     PositionService positionService;
-    @jakarta.inject.Inject
+    @Inject
     io.casehub.fsitrading.app.service.StrategyService strategyService;
 
 
@@ -55,7 +56,7 @@ public class KpiResource {
                         .toList();
     }
 
-    public record HeatmapCell(String instrument, String strategy, java.math.BigDecimal pnl) {}
+    public record HeatmapCell(String instrument, String strategy, BigDecimal pnl) {}
 
 
     public record KpiSummary(BigDecimal totalPnl, double winRate, long tradeCount, BigDecimal avgReturn) {}

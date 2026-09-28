@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Path("/api/incidents")
 @Produces(MediaType.APPLICATION_JSON)
-public class IncidentResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/incidents")
+public class IncidentResource  {
 
     @Inject
     IncidentStore store;

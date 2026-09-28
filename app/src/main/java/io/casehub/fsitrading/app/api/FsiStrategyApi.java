@@ -29,6 +29,8 @@ public class FsiStrategyApi {
     @PlatformMutation("Deploy a strategy")
     @RestPath("/deploy")
     public Object deploy(java.util.Map<String, Object> body) {
-        return resource.deploy(body).getEntity();
+        var name = (String) body.get("name");
+        var type = io.casehub.fsitrading.model.StrategyType.valueOf(((String) body.get("strategyType")).toUpperCase());
+        return resource.create(new StrategyResource.CreateStrategyRequest(name, type));
     }
 }

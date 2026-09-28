@@ -10,10 +10,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.Map;
 
-@Path("/api/preferences/trust-routing")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class PreferencesResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/preferences/trust-routing")
+public class PreferencesResource  {
 
     @ConfigProperty(name = "casehub.fsitrading.arena.routing.threshold", defaultValue = "0.3")
     double routingThreshold;

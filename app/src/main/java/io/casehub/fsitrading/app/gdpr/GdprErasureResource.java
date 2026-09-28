@@ -11,11 +11,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/gdpr")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed("fsi-ops")
-public class GdprErasureResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/gdpr")
+public class GdprErasureResource  {
 
     public record ErasureRequest(String subjectId, ErasureReason reason) {}
 

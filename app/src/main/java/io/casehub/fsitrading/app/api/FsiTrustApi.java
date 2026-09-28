@@ -43,7 +43,7 @@ public class FsiTrustApi {
     @PlatformQuery("Get latest routing decision")
     @RestPath("/routing/decisions/latest")
     public Object latestRoutingDecision() {
-        return routingResource.latest().getEntity();
+        return routingResource.latestDecision();
     }
 
     @PlatformQuery("Get trust routing preferences")

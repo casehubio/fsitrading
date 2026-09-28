@@ -14,9 +14,10 @@ import jakarta.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 
-@Path("/api/trust/strategies")
 @Produces(MediaType.APPLICATION_JSON)
-public class TrustScoreResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/trust/strategies")
+public class TrustScoreResource  {
 
     static final int BOOTSTRAP_THRESHOLD = 10;
 

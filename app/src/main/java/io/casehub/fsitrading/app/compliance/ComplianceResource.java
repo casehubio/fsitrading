@@ -8,9 +8,10 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/api/compliance")
 @Produces(MediaType.APPLICATION_JSON)
-public class ComplianceResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/compliance")
+public class ComplianceResource  {
 
     @Inject FsiComplianceService complianceService;
 

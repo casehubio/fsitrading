@@ -38,12 +38,12 @@ public class FsiKpiApi {
     @PlatformQuery("Get incident history")
     @RestPath("/incident-history")
     public Object getIncidentHistory() {
-        return incidentHistoryResource.list();
+        return incidentHistoryResource.history(20, null, "default");
     }
 
     @PlatformQuery("Find similar past incidents")
     @RestPath("/similar-incidents")
     public Object findSimilarIncidents(@QueryParam("caseId") UUID caseId) {
-        return similarIncidentResource.findSimilar(caseId);
+        return similarIncidentResource.findSimilar(caseId != null ? caseId.toString() : null, "default");
     }
 }

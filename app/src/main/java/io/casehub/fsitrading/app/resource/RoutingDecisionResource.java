@@ -11,9 +11,10 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/api/routing/decisions")
 @Produces(MediaType.APPLICATION_JSON)
-public class RoutingDecisionResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/routing/decisions")
+public class RoutingDecisionResource  {
 
     @Inject
     EntityManager em;

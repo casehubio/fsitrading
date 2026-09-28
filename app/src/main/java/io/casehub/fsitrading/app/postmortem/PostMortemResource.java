@@ -9,8 +9,9 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.UUID;
 
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
 @Path("/api/postmortem")
-public class PostMortemResource {
+public class PostMortemResource  {
 
     @Inject PostMortemService postMortemService;
 

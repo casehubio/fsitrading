@@ -13,9 +13,10 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-@Path("/api/deliberations")
 @Produces(MediaType.APPLICATION_JSON)
-public class DeliberationResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/deliberations")
+public class DeliberationResource  {
 
     @Inject
     DeliberationRecordRepository repository;

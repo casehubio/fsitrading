@@ -14,9 +14,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Path("/api/narrative")
 @Produces(MediaType.APPLICATION_JSON)
-public class NarrativeResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/narrative")
+public class NarrativeResource  {
 
     private final Map<String, List<DecisionNarrative>> narrativeCache = new ConcurrentHashMap<>();
 

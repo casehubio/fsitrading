@@ -4,7 +4,7 @@ import io.casehub.api.spi.routing.RequirementStatus;
 import io.casehub.api.spi.routing.TrustRoutingRequirement;
 import org.jboss.logging.Logger;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrScanRequest;
 import io.casehub.neocortex.memory.cbr.CbrScanResult;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -21,7 +21,7 @@ public class FsiComplianceService {
     private static final MemoryDomain FSI_DOMAIN = new MemoryDomain("fsitrading");
 
     @Inject MeterRegistry meterRegistry;
-    @Inject CbrCaseMemoryStore cbrCaseMemoryStore;
+    @Inject CbrRecordStore cbrCaseMemoryStore;
 
     public List<TrustRoutingRequirement> evaluateAll() {
         List<TrustRoutingRequirement> requirements = new ArrayList<>();

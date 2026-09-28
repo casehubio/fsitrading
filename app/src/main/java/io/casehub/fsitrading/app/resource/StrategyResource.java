@@ -12,9 +12,10 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/api/strategies")
 @Produces(MediaType.APPLICATION_JSON)
-public class StrategyResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/strategies")
+public class StrategyResource  {
 
     @Inject
     StrategyService strategyService;

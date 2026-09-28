@@ -32,7 +32,7 @@ public class FsiComplianceApi {
     @RestPath("/deliberations")
     public Object listDeliberations(@QueryParam("instrument") String instrument,
                                      @QueryParam("limit") Integer limit) {
-        return deliberationResource.list(instrument, limit);
+        return deliberationResource.list(instrument, null, null);
     }
 
     @PlatformQuery("Get deliberation by ID")

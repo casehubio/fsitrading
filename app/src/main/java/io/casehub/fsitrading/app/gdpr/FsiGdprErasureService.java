@@ -5,7 +5,7 @@ import io.casehub.ledger.runtime.privacy.LedgerErasureService;
 import io.casehub.neocortex.memory.CaseMemoryStore;
 import io.casehub.neocortex.memory.EraseRequest;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -15,7 +15,7 @@ public class FsiGdprErasureService {
     private static final MemoryDomain FSI_DOMAIN = new MemoryDomain("fsitrading");
 
     @Inject CaseMemoryStore caseMemoryStore;
-    @Inject CbrCaseMemoryStore cbrCaseMemoryStore;
+    @Inject CbrRecordStore cbrCaseMemoryStore;
     @Inject LedgerErasureService ledgerErasureService;
 
     public FsiErasureResult erase(String traderId, String tenantId, ErasureReason reason) {

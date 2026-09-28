@@ -1,6 +1,5 @@
 package io.casehub.fsitrading.app.resource;
 
-import io.casehub.blocks.agentic.AgentRef;
 import io.casehub.blocks.agentic.model.ExecutionModel;
 import io.casehub.fsitrading.app.arena.ArenaContext;
 import io.casehub.fsitrading.app.model.ArenaRunEntity;
@@ -25,10 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Path("/api/evaluations")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class EvaluationResource {
+@io.casehub.platform.api.mcp.HandWrittenEndpoint("pending @McpDomain migration")
+@Path("/api/evaluations")
+public class EvaluationResource  {
 
     private static final Logger log = Logger.getLogger(EvaluationResource.class);
 
@@ -119,8 +119,8 @@ public class EvaluationResource {
                     new MemoryDomain("agent"),
                     "fsitrading",
                     text)
-                    .withCaseId(ctx.runId().toString())
-                    .withAttributes(Map.of("instrument", signal.instrument(),
+                                         .withCaseId(ctx.runId().toString())
+                                         .withAttributes(Map.of("instrument", signal.instrument(),
                             "eventType", signal.eventType(),
                             "runId", ctx.runId().toString())));
         } catch (Exception e) {

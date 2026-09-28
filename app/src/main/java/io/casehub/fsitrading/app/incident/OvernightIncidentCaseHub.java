@@ -5,8 +5,8 @@ import io.casehub.api.model.CaseDefinition;
 import io.casehub.api.model.cbr.CbrConfig;
 import io.casehub.fsitrading.app.cbr.FsiCbrFeatureSchema;
 import io.casehub.fsitrading.app.cbr.FsiFeatureExtractor;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
-import io.casehub.neocortex.memory.cbr.ResolvedCase;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
+import io.casehub.neocortex.memory.cbr.CbrPlanRecord;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -16,7 +16,7 @@ public class OvernightIncidentCaseHub extends YamlCaseHub {
     private final OvernightIncidentCaseDescriptor descriptor = new OvernightIncidentCaseDescriptor();
 
     @Inject
-    CbrCaseMemoryStore cbrStore;
+    CbrRecordStore cbrStore;
 
     @Inject
     FsiFeatureExtractor fsiFeatureExtractor;
@@ -39,8 +39,8 @@ public class OvernightIncidentCaseHub extends YamlCaseHub {
                     .minSimilarity(yamlConfig.minSimilarity())
                     .temporalDecayHalfLifeDays(yamlConfig.temporalDecayHalfLifeDays())
                     .domain("fsitrading")
-                    .caseType(ResolvedCase.CBR_TYPE)
-                    .cbrType(ResolvedCase.CBR_TYPE)
+                    .caseType(CbrPlanRecord.CBR_TYPE)
+                    .cbrType(CbrPlanRecord.CBR_TYPE)
                     .timing(CbrConfig.CbrRetrievalTiming.CASE_LIFETIME)
                     .weight("event_type", 0.15)
                     .weight("instrument_sector", 0.10)
