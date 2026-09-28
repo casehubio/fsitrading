@@ -18,6 +18,13 @@
   <dependencies>
         <dependency>
             <groupId>io.casehub</groupId>
+            <artifactId>casehub-platform-simulation-generator</artifactId>
+            <version>0.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.casehub</groupId>
             <artifactId>casehub-neocortex-memory-api</artifactId>
             <version>0.2-SNAPSHOT</version>
         </dependency>

@@ -24,6 +24,13 @@
       <version>${casehub.version}</version>
     </dependency>
 
+    <!-- Simulation API — @SimulationEligible annotation for SPI interfaces -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-platform-simulation-api</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
