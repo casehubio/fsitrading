@@ -3,7 +3,7 @@ package io.casehub.fsitrading.app.cbr;
 import io.casehub.api.spi.CaseOutcomeEvent;
 import io.casehub.api.spi.CaseOutcomeObserver;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrCaseMemoryStore;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrOutcome;
 import io.casehub.neocortex.memory.cbr.FeatureValue;
 import io.casehub.neocortex.memory.cbr.ResolvedCase;
@@ -20,11 +20,11 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
 
     private static final String CASE_TYPE = "overnight-incident";
 
-    private final CbrCaseMemoryStore cbrStore;
+    private final CbrRecordStore cbrStore;
     private final FsiFeatureExtractor featureExtractor;
 
     @Inject
-    public FsiCaseOutcomeObserver(CbrCaseMemoryStore cbrStore,
+    public FsiCaseOutcomeObserver(CbrRecordStore cbrStore,
                                   FsiFeatureExtractor featureExtractor) {
         this.cbrStore = cbrStore;
         this.featureExtractor = featureExtractor;

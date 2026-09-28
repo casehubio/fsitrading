@@ -26,7 +26,7 @@ public class FsiIncidentApi {
 
     @PlatformQuery("List incidents")
     @RestPath("/")
-    public Object listIncidents(@QueryParam("limit") int limit) {
+    public Object listIncidents(@QueryParam("limit") Integer limit) {
         return incidentResource.list(limit);
     }
 

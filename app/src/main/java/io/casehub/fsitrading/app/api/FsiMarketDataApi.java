@@ -24,19 +24,19 @@ public class FsiMarketDataApi {
 
     @PlatformQuery("Get recent market events")
     @RestPath("/recent")
-    public Object recent(@QueryParam("limit") int limit) {
+    public Object recent(@QueryParam("limit") Integer limit) {
         return resource.recent(limit);
     }
 
     @PlatformQuery("Get OHLCV bars for an instrument")
     @RestPath("/bars/{instrument}")
-    public Object bars(@PathParam String instrument, @QueryParam("limit") int limit) {
+    public Object bars(@PathParam String instrument, @QueryParam("limit") Integer limit) {
         return resource.bars(instrument, limit);
     }
 
     @PlatformQuery("Get trend summaries for an instrument")
     @RestPath("/trends/{instrument}")
-    public Object trends(@PathParam String instrument, @QueryParam("limit") int limit) {
+    public Object trends(@PathParam String instrument, @QueryParam("limit") Integer limit) {
         return resource.trends(instrument, limit);
     }
 

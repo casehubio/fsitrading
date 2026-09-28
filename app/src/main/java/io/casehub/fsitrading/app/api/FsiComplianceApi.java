@@ -31,7 +31,7 @@ public class FsiComplianceApi {
     @PlatformQuery("List deliberations")
     @RestPath("/deliberations")
     public Object listDeliberations(@QueryParam("instrument") String instrument,
-                                     @QueryParam("limit") int limit) {
+                                     @QueryParam("limit") Integer limit) {
         return deliberationResource.list(instrument, limit);
     }
 
