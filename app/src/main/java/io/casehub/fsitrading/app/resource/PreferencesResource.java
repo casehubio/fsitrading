@@ -1,17 +1,19 @@
-package io.casehub.fsitrading.app.api;
+package io.casehub.fsitrading.app.resource;
 
-import io.casehub.platform.api.mcp.McpDomain;
-import io.casehub.platform.api.mcp.PlatformMutation;
-import io.casehub.platform.api.mcp.PlatformQuery;
-import io.casehub.platform.api.mcp.RestPath;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.Map;
 
-@McpDomain(value = "fsi/preferences", basePath = "/api/fsi/preferences")
-@ApplicationScoped
-public class FsiPreferencesApi {
+@Path("/api/preferences/trust-routing")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class PreferencesResource {
 
     @ConfigProperty(name = "casehub.fsitrading.arena.routing.threshold", defaultValue = "0.3")
     double routingThreshold;
@@ -19,16 +21,14 @@ public class FsiPreferencesApi {
     @ConfigProperty(name = "casehub.fsitrading.arena.approval.timeout-hours", defaultValue = "4")
     int approvalTimeoutHours;
 
-    @PlatformQuery("Get trust routing preferences")
-    @RestPath("/")
+    @GET
     public Map<String, Object> getPreferences() {
         return Map.of(
                 "routingThreshold", routingThreshold,
                 "approvalTimeoutHours", approvalTimeoutHours);
     }
 
-    @PlatformMutation("Update trust routing preferences")
-    @RestPath("/")
+    @PUT
     public Map<String, Object> updatePreferences(Map<String, Object> updates) {
         return Map.of(
                 "routingThreshold", routingThreshold,
