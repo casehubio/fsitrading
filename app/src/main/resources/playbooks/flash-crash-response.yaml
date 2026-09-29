@@ -1,0 +1,86 @@
+playbook:
+  name: flash-crash-response
+  case-type: flash-crash
+  trigger:
+    event: RegimeChanged
+    condition: newRegime == VOLATILE AND priceDropPct > 5 within 60s
+    maxInstances: 1
+  deadline: 120s
+  deadline-fallback: ESCALATED
+
+states:
+  DETECTED:
+    steps:
+      - parallel:
+          - fsitrading.assess-risk:
+              instrument: ${event.instrument}
+              scenario: extreme
+          - fsitrading.check-fix-session:
+              session-id: ${config.fsitrading.fix-session-id}
+      - if: ${result.check-fix-session.connected} == false
+        then:
+          - fsitrading.notify-risk-desk:
+              severity: CRITICAL
+              message: "FIX session disconnected during flash crash — orders cannot execute"
+          - transition: ESCALATED
+      - fsitrading.halt-new-orders:
+          reason: flash-crash-detected
+          scope: ALL
+    on-step-failure: ESCALATED
+    transition: RESPONDING
+
+  RESPONDING:
+    steps:
+      - import: parallel-assessment
+        perspectives:
+          - "Assess risk exposure impact: current positions, VaR breach potential, counterparty exposure"
+          - "Evaluate regulatory compliance: MiFID II obligations, reporting requirements, position limit breaches"
+          - "Assess execution capability: FIX session health, available liquidity, execution venue status"
+        instrument: ${event.instrument}
+        deadline: 30s
+      - block:
+          - fsitrading.assess-risk:
+              instrument: ${event.instrument}
+              scenario: extreme
+          - forEach: instruments where ${result.assess-risk.exposure-pct} > 0
+            steps:
+              - import: risk-gate
+                instrument: ${each.instrument}
+                proposed-action: close-position
+              - if: ${result.trigger-risk-gate.approved} != false
+                then:
+                  - fsitrading.close-position:
+                      instrument: ${each.instrument}
+    on-step-failure: ESCALATED
+    transition: MONITORING
+
+  MONITORING:
+    steps:
+      - loop:
+          steps:
+            - fsitrading.assess-risk:
+                instrument: ${event.instrument}
+                scenario: stressed
+          until: ${result.assess-risk.level} == 'LOW' || ${result.assess-risk.level} == 'MEDIUM'
+          delay: 10s
+          max-iterations: 12
+      - fsitrading.release-orders:
+          semaphore-id: ${result.halt-new-orders.semaphore-id}
+    on-step-failure: ESCALATED
+    transition: RESOLVED
+
+  RESOLVED:
+    terminal: true
+
+  ESCALATED:
+    steps:
+      - fsitrading.notify-risk-desk:
+          severity: CRITICAL
+          message: "Flash crash response escalated — manual intervention required"
+      - fsitrading.reconcile-orders: {}
+      - wait-state:
+          name: human-approval
+          timeout: 300s
+      - fsitrading.release-orders:
+          semaphore-id: ${result.halt-new-orders.semaphore-id}
+    terminal: true
