@@ -1,0 +1,338 @@
+namespace: fsitrading
+
+actions:
+  assess-risk:
+    description: Assess risk for an instrument under a given scenario
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+        description: Instrument symbol (e.g. AAPL, EURUSD)
+      scenario:
+        type: STRING
+        default: normal
+        description: Risk scenario (normal, volatile, crisis)
+    outputs:
+      level:
+        type: STRING
+        description: Risk level (LOW, MEDIUM, HIGH, CRITICAL)
+      varAmount:
+        type: NUMBER
+        description: Value at Risk amount
+      exposurePct:
+        type: NUMBER
+        description: Portfolio exposure percentage
+    invoke:
+      mcp: "fsi/risk/assess"
+
+  fetch-position:
+    description: Fetch current position for an instrument
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+        description: Instrument symbol
+    outputs:
+      quantity:
+        type: NUMBER
+      avgCost:
+        type: NUMBER
+      realizedPnl:
+        type: NUMBER
+    invoke:
+      mcp: "fsi/positions/getByInstrument"
+
+  submit-order:
+    description: Submit a trade order
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      side:
+        type: STRING
+        required: true
+        enum: [BUY, SELL]
+      quantity:
+        type: NUMBER
+        required: true
+      orderType:
+        type: STRING
+        default: MARKET
+        enum: [MARKET, LIMIT, STOP, STOP_LIMIT]
+    outputs:
+      orderId:
+        type: STRING
+      status:
+        type: STRING
+      fillPrice:
+        type: NUMBER
+    invoke:
+      mcp: "fsi/orders/submit"
+
+  evaluate-strategy:
+    description: Evaluate a trading strategy for an instrument under current regime
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      strategy:
+        type: STRING
+        required: true
+        description: Strategy name (e.g. momentum, mean-reversion)
+      regime:
+        type: STRING
+        default: TRENDING
+        enum: [TRENDING, MEAN_REVERTING, VOLATILE, QUIET]
+    outputs:
+      action:
+        type: STRING
+        description: Recommended action (TRADE, HOLD)
+      side:
+        type: STRING
+      confidence:
+        type: NUMBER
+      rationale:
+        type: STRING
+    invoke:
+      mcp: "fsi/strategies/evaluate"
+
+  check-market-data:
+    description: Get current market data snapshot for an instrument
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      depth:
+        type: INTEGER
+        default: 1
+    outputs:
+      bid:
+        type: NUMBER
+      ask:
+        type: NUMBER
+      spread:
+        type: NUMBER
+      volume:
+        type: NUMBER
+    invoke:
+      mcp: "fsi/market-data/snapshot"
+
+  trigger-risk-gate:
+    description: Evaluate pre-trade risk gate for approval
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      action:
+        type: STRING
+        required: true
+      side:
+        type: STRING
+        required: true
+        enum: [BUY, SELL]
+      riskLevel:
+        type: STRING
+        required: true
+        enum: [LOW, MEDIUM, HIGH, CRITICAL]
+    outputs:
+      approved:
+        type: BOOLEAN
+      gateId:
+        type: STRING
+      rejectionReason:
+        type: STRING
+    invoke:
+      mcp: "fsi/risk/gate"
+
+  halt-new-orders:
+    description: Halt new order submission via reference-counted semaphore
+    inputs:
+      reason:
+        type: STRING
+        required: true
+      scope:
+        type: STRING
+        default: ALL
+        enum: [ALL, INSTRUMENT]
+      instrument:
+        type: STRING
+      playbookInstanceId:
+        type: STRING
+        required: true
+    outputs:
+      ticketId:
+        type: STRING
+        description: Semaphore ticket ID for later release
+    invoke:
+      mcp: "fsi/orders/halt"
+
+  release-orders:
+    description: Release a specific order halt by ticket ID
+    inputs:
+      ticketId:
+        type: STRING
+        required: true
+    outputs:
+      released:
+        type: BOOLEAN
+    invoke:
+      mcp: "fsi/orders/release"
+
+  close-position:
+    description: Close a position by submitting a counter-order
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      quantity:
+        type: NUMBER
+        required: true
+    outputs:
+      orderId:
+        type: STRING
+      status:
+        type: STRING
+    invoke:
+      mcp: "fsi/positions/close"
+
+  adjust-risk-thresholds:
+    description: Adjust runtime risk thresholds for an instrument
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      thresholdType:
+        type: STRING
+        required: true
+        enum: [position-limit, stop-loss-pct, exposure-cap, max-risk-level]
+      newValue:
+        type: NUMBER
+        required: true
+    outputs:
+      previousValue:
+        type: NUMBER
+      newValue:
+        type: NUMBER
+    invoke:
+      mcp: "fsi/risk/adjustThresholds"
+
+  reconcile-orders:
+    description: Release all order halts for a playbook instance
+    inputs:
+      playbookInstanceId:
+        type: STRING
+        required: true
+    outputs:
+      releasedCount:
+        type: INTEGER
+    invoke:
+      mcp: "fsi/orders/reconcile"
+
+  notify-risk-desk:
+    description: Send alert notification to risk desk
+    inputs:
+      severity:
+        type: STRING
+        required: true
+        enum: [INFO, WARNING, CRITICAL]
+      message:
+        type: STRING
+        required: true
+      instrument:
+        type: STRING
+      context:
+        type: OBJECT
+    outputs:
+      acknowledged:
+        type: BOOLEAN
+    invoke:
+      rest:
+        method: POST
+        url: "${config.fsitrading.risk-desk-url}/alerts"
+
+  analyse-sentiment:
+    description: LLM-powered market sentiment analysis
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      context:
+        type: STRING
+        description: Market context for sentiment analysis
+      perspective:
+        type: STRING
+        default: neutral
+    outputs:
+      sentiment:
+        type: STRING
+        description: BULLISH, BEARISH, NEUTRAL
+      confidence:
+        type: NUMBER
+      rationale:
+        type: STRING
+    invoke:
+      agent:
+        descriptor: sentiment-analyser
+        structured-output: true
+        timeout: 30s
+
+  explain-decision:
+    description: Generate human-readable explanation of a trading decision
+    inputs:
+      decision:
+        type: OBJECT
+        required: true
+        description: The trading decision to explain
+      audience:
+        type: STRING
+        default: trader
+        enum: [trader, compliance, executive]
+    outputs:
+      explanation:
+        type: STRING
+      references:
+        type: ARRAY
+    invoke:
+      agent:
+        descriptor: decision-explainer
+        structured-output: true
+        timeout: 30s
+
+  calculate-var:
+    description: Calculate Value at Risk using Python model
+    inputs:
+      instrument:
+        type: STRING
+        required: true
+      horizon:
+        type: INTEGER
+        default: 1
+        description: VaR horizon in days
+      confidence:
+        type: NUMBER
+        default: 0.99
+    outputs:
+      var:
+        type: NUMBER
+      cvar:
+        type: NUMBER
+    invoke:
+      python: "scripts/var-calculator.py"
+
+  check-fix-session:
+    description: Check FIX protocol session connectivity
+    inputs:
+      session-id:
+        type: STRING
+        required: true
+    outputs:
+      connected:
+        type: BOOLEAN
+      latencyMs:
+        type: INTEGER
+    invoke:
+      process:
+        command: fix-session-check
+        args: ["--session", "${inputs.session-id}"]
+        output: json
+        timeout: 10s
