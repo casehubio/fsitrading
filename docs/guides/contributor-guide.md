@@ -30,6 +30,8 @@
 | `casehub-qhorus` | L3: Agent comms | Typed agent communication (COMMAND/RESPONSE/DONE/DECLINE/FAILURE) |
 | `casehub-worker` | Worker framework | `Capability` definitions for case bindings |
 | `casehub-neocortex-memory` | Memory | Platform memory store (JPA-backed) |
+| `casehub-platform-simulation-api` | Simulation | `@SimulationEligible` annotation for SPI interfaces |
+| `casehub-platform-simulation-generator` | Simulation (APT) | Compile-time CDI decorator generation for `@SimulationEligible` SPIs |
 
 ---
 
@@ -126,13 +128,12 @@ Each agent extends `AbstractStrategyAgent` and implements `evaluate(MarketSignal
 
 ## What's Next
 
-C1 (Strategy Arena) is complete. Remaining roadmap:
+C1 through C5b and C13 are implemented. Remaining roadmap:
 
-- C2: Event-driven arena triggering, multi-instrument expansion
-- C3: Multi-agent strategy debate
-- C4: SLA enforcement with escalation tiers (`FsiSlaBreachPolicy`)
-- C5: Pages UI -- trading desk dock-workbench
-- C6: Full CBR pipeline, advanced quality dimensions
+- C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
+- Engine cross-repo: `StepFileCallableDispatcher` for case→playbook runtime dispatch
+- Engine cross-repo: `PlaybookStateMachineExecutor` for state machine runtime
+- Engine cross-repo: Step-level CBR outcome recording bridge (#1190)
 
 ---
 

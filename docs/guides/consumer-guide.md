@@ -86,6 +86,18 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - Incident summary endpoints for dashboard metrics
 - 39 REST endpoints (see API section below)
 
+**Implemented (C13 Trading YAML Playbooks):**
+- Three-tier orchestration: case definitions detect and dispatch, playbooks coordinate imperative response via yaml-core step files, prose resolution documents surface guidance for novel situations
+- 16 trading step definitions under `fsitrading` namespace (11 MCP, 1 REST, 2 agent, 2 process invoke bindings)
+- 4 trading SPIs with `@SimulationEligible`: MarketDataProvider, OrderExecutionService, RiskAssessmentEngine, StrategyEvaluationService
+- 3 new domain services: OrderSemaphoreService (ref-counted order halt), RiskGateService (pre-trade risk gate), RiskThresholdService (runtime threshold management)
+- FsiRiskApi `@McpDomain` facade with risk/assess, risk/gate, risk/adjustThresholds operations
+- 5 playbooks: flash-crash-response (state machine with 120s deadline), strategy-evaluation-cycle (multi-strategy quorum), overnight-incident (SLA-driven), risk-escalation (CRITICAL/HIGH match), market-regime-shift (per-regime parameter adaptation)
+- 2 shared yaml-core modules: risk-gate (assess-risk → gate → escalation), parallel-assessment (multi-perspective LLM sentiment)
+- CBR generalised from overnight-incident to all 5 case types via FsiCbrFeatureExtractor SPI and CDI registry
+- Simulation layer: 5 corpus YAML files for SPI decorators, FsiSimulationConnector for temporal event injection, 4 scenario profiles (normal-market, flash-crash, regime-shift, overnight-gap)
+- 5 prose resolution documents (counterparty default, regulatory inquiry, unprecedented event, system failure, margin call) ingested via FsiResolutionGuideAdapter for CBR similarity retrieval
+
 **Not yet implemented:**
 - C6: Full CBR pipeline, advanced quality dimensions (max drawdown, market timing, Kelly criterion)
 
