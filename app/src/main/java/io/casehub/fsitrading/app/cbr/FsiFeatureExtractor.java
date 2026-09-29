@@ -1,6 +1,7 @@
 package io.casehub.fsitrading.app.cbr;
 
 import io.casehub.api.context.CaseContext;
+import io.casehub.fsitrading.spi.FsiCbrFeatureExtractor;
 import io.casehub.fsitrading.app.model.MarketEventEntity;
 import io.casehub.fsitrading.app.service.SyntheticMarketDataProvider;
 import io.casehub.fsitrading.model.MarketEventType;
@@ -15,16 +16,22 @@ import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
-public class FsiFeatureExtractor {
+public class FsiFeatureExtractor implements FsiCbrFeatureExtractor {
 
-    private static final int MAX_EVENTS    = 30;
-    private static final int VOLUME_WINDOW = 10;
+    private static final String CASE_TYPE     = "overnight-incident";
+    private static final int    MAX_EVENTS    = 30;
+    private static final int    VOLUME_WINDOW = 10;
 
     private final SyntheticMarketDataProvider marketData;
 
     @Inject
     public FsiFeatureExtractor(SyntheticMarketDataProvider marketData) {
         this.marketData = marketData;
+    }
+
+    @Override
+    public String caseType() {
+        return CASE_TYPE;
     }
 
     public Map<String, Object> extract(CaseContext context) {
@@ -41,6 +48,7 @@ public class FsiFeatureExtractor {
         return buildFeatures(context, events);
     }
 
+    @Override
     public Map<String, Object> extractFromSnapshot(Map<String, Object> snapshot, Instant detectedAt) {
         String instrument = (String) snapshot.get("instrument");
         String eventType  = (String) snapshot.get("eventType");

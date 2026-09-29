@@ -3,10 +3,10 @@ package io.casehub.fsitrading.app.cbr;
 import io.casehub.api.spi.CaseOutcomeEvent;
 import io.casehub.api.spi.CaseOutcomeObserver;
 import io.casehub.neocortex.memory.MemoryDomain;
-import io.casehub.neocortex.memory.cbr.CbrRecordStore;
 import io.casehub.neocortex.memory.cbr.CbrOutcome;
-import io.casehub.neocortex.memory.cbr.FeatureValue;
 import io.casehub.neocortex.memory.cbr.CbrPlanRecord;
+import io.casehub.neocortex.memory.cbr.CbrRecordStore;
+import io.casehub.neocortex.memory.cbr.FeatureValue;
 import io.casehub.platform.api.path.Path;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -18,21 +18,18 @@ import java.util.Map;
 @ApplicationScoped
 public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
 
-    private static final String CASE_TYPE = "overnight-incident";
-
-    private final CbrRecordStore cbrStore;
-    private final FsiFeatureExtractor featureExtractor;
+    private final CbrRecordStore              cbrStore;
+    private final FsiFeatureExtractorRegistry extractorRegistry;
 
     @Inject
     public FsiCaseOutcomeObserver(CbrRecordStore cbrStore,
-                                  FsiFeatureExtractor featureExtractor) {
-        this.cbrStore = cbrStore;
-        this.featureExtractor = featureExtractor;
+                                  FsiFeatureExtractorRegistry extractorRegistry) {
+        this.cbrStore          = cbrStore;
+        this.extractorRegistry = extractorRegistry;
     }
 
     @Override
     public void onOutcome(CaseOutcomeEvent event) {
-        if (!CASE_TYPE.equals(event.caseType())) {return;}
         if (!"COMPLETED".equals(event.outcomeLabel())) {return;}
 
         Map<String, Object> snapshot   = event.caseFileSnapshot();
@@ -40,9 +37,10 @@ public class FsiCaseOutcomeObserver implements CaseOutcomeObserver {
         if (detectedAt == null) {return;}
         Instant detection = Instant.parse(detectedAt);
 
-        Map<String, Object> rawFeatures =
-                featureExtractor.extractFromSnapshot(snapshot, detection);
-        Map<String, FeatureValue> features = FeatureValue.toFeatureMap(rawFeatures);
+        var rawFeatures = extractorRegistry.extractFeatures(
+                event.caseType(), snapshot, detection);
+        if (rawFeatures.isEmpty()) {return;}
+        Map<String, FeatureValue> features = FeatureValue.toFeatureMap(rawFeatures.get());
 
         String eventType  = (String) snapshot.get("eventType");
         String severity   = (String) snapshot.get("severity");
