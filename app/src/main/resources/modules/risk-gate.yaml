@@ -1,0 +1,23 @@
+module:
+  name: risk-gate
+  parameters:
+    instrument: { type: string, required: true }
+    proposed-action: { type: string, required: true }
+    proposed-side: { type: string }
+    escalation-severity: { type: string, default: CRITICAL }
+
+steps:
+  - fsitrading.assess-risk:
+      instrument: ${param.instrument}
+  - if: ${result.assess-risk.level} == 'CRITICAL' || ${result.assess-risk.level} == 'HIGH'
+    then:
+      - fsitrading.trigger-risk-gate:
+          instrument: ${param.instrument}
+          proposed-action: ${param.proposed-action}
+          proposed-side: ${param.proposed-side}
+          risk-level: ${result.assess-risk.level}
+      - if: ${result.trigger-risk-gate.approved} == false
+        then:
+          - fsitrading.notify-risk-desk:
+              severity: ${param.escalation-severity}
+              message: "Risk gate rejected: ${param.proposed-action} on ${param.instrument}. Reason: ${result.trigger-risk-gate.rejection-reason}"

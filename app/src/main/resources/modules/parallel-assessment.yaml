@@ -1,0 +1,17 @@
+module:
+  name: parallel-assessment
+  parameters:
+    perspectives: { type: list, required: true }
+    instrument: { type: string, required: true }
+    deadline: { type: string, default: "30s" }
+
+steps:
+  - parallel:
+      forEach: ${param.perspectives}
+      as: perspective
+      steps:
+        - fsitrading.analyse-sentiment:
+            instrument: ${param.instrument}
+            context: ${each.perspective}
+    timeout: ${param.deadline}
+    on-error: { retries: 0, fallback: notify }
