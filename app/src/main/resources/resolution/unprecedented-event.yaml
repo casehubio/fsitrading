@@ -1,0 +1,49 @@
+document-id: unprecedented-event
+domain: fsi-trading
+
+problem: >
+  A market event has occurred that does not match any known pattern in the CBR
+  case base — no similar past incidents provide guidance. This could be a novel
+  market structure failure, a geopolitical event with no precedent, or a
+  technology-driven disruption with unknown cascading effects. Automated
+  playbooks cannot reliably respond because the event is outside their
+  training distribution.
+
+solution: >
+  Immediately reduce exposure to limit potential losses while the situation
+  is assessed. Activate the human escalation chain. Gather multi-perspective
+  analysis from available sources. Document the event and response for CBR
+  retention so future similar events have precedent to draw from.
+
+features:
+  severity: CRITICAL
+  category: unknown
+  domain: fsi-trading
+  cbr-match-score: 0.0
+  requires-human-judgment: true
+
+steps:
+  - description: Reduce overall portfolio exposure to defensive posture
+    preconditions: Event detected, no CBR match found
+    expected-outcome: Net exposure reduced by 50% or more
+    automation-hint: fsitrading.close-position for largest positions
+
+  - description: Halt all new order submission
+    preconditions: Defensive posture established
+    expected-outcome: Order semaphore active, no new positions can be opened
+    automation-hint: fsitrading.halt-new-orders with scope=ALL
+
+  - description: Escalate to senior trader and risk committee
+    preconditions: Exposure reduced, orders halted
+    expected-outcome: Human decision-makers engaged and briefed
+    automation-hint: fsitrading.notify-risk-desk with severity=CRITICAL
+
+  - description: Gather multi-perspective situational assessment
+    preconditions: Event data available
+    expected-outcome: Multiple analytical perspectives on likely trajectory
+    automation-hint: fsitrading.analyse-sentiment with multiple contexts
+
+  - description: Record event and response as new CBR case
+    preconditions: Response complete, outcome observable
+    expected-outcome: New CBR case stored for future retrieval
+    automation-hint: null

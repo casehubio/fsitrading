@@ -1,0 +1,47 @@
+document-id: regulatory-inquiry
+domain: fsi-trading
+
+problem: >
+  A regulatory body has initiated an inquiry into trading activity — potentially
+  triggered by unusual pattern detection, market abuse surveillance, or routine
+  audit. Requires immediate preservation of relevant records and coordinated
+  response. Failure to respond within mandated timeframes risks enforcement action.
+
+solution: >
+  Activate legal hold on all relevant trading data and communications. Identify
+  the scope of the inquiry (instruments, timeframe, actors). Generate a complete
+  audit trail from the commitment ledger. Prepare a structured response with
+  trade rationale documentation from the CBR decision history.
+
+features:
+  severity: HIGH
+  category: compliance
+  domain: fsi-trading
+  inquiry-type: market-surveillance
+  requires-legal-hold: true
+
+steps:
+  - description: Activate legal hold on all relevant trading records
+    preconditions: Inquiry scope identified (instruments, dates, actors)
+    expected-outcome: Data preservation confirmed, deletion suspended
+    automation-hint: null
+
+  - description: Extract complete audit trail from commitment ledger
+    preconditions: Legal hold active, scope defined
+    expected-outcome: Full decision chain exported with causedByEntryId links
+    automation-hint: null
+
+  - description: Generate trade rationale documentation from CBR history
+    preconditions: Relevant case IDs identified from audit trail
+    expected-outcome: Decision rationale for each flagged trade with supporting CBR cases
+    automation-hint: fsitrading.explain-decision for each flagged trade
+
+  - description: Prepare regulatory response package
+    preconditions: Audit trail and rationale documentation complete
+    expected-outcome: Structured response ready for legal review
+    automation-hint: null
+
+  - description: Submit response within regulatory deadline
+    preconditions: Legal review approved
+    expected-outcome: Response filed, acknowledgement received
+    automation-hint: fsitrading.notify-risk-desk with compliance template

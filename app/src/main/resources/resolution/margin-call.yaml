@@ -1,0 +1,49 @@
+document-id: margin-call
+domain: fsi-trading
+
+problem: >
+  A margin call has been received from a broker or clearing house. Portfolio
+  losses have eroded the margin cushion below maintenance requirements. If
+  additional margin is not posted or positions are not reduced within the
+  deadline, the broker will initiate forced liquidation of positions at
+  potentially unfavourable prices.
+
+solution: >
+  Assess current margin deficit and deadline. Evaluate whether to post
+  additional margin or reduce positions to meet requirements. If reducing
+  positions, prioritise by contribution to margin requirement (highest-margin
+  positions first) while minimising market impact. Execute position reductions
+  through the risk gate to maintain compliance during the unwind.
+
+features:
+  severity: HIGH
+  category: operational
+  domain: fsi-trading
+  margin-type: variation-margin
+  deadline-hours: 24
+
+steps:
+  - description: Quantify margin deficit and deadline
+    preconditions: Margin call notification received
+    expected-outcome: Exact deficit amount, posting deadline, and affected accounts
+    automation-hint: fsitrading.calculate-var for margin-impacted positions
+
+  - description: Assess risk of each position's contribution to margin
+    preconditions: Current positions and margin requirements available
+    expected-outcome: Ranked list of positions by margin consumption
+    automation-hint: fsitrading.assess-risk for each position
+
+  - description: Determine response — post margin vs reduce positions
+    preconditions: Deficit quantified, available capital assessed
+    expected-outcome: Decision documented with rationale
+    automation-hint: fsitrading.explain-decision for margin response
+
+  - description: Execute position reductions if needed
+    preconditions: Response decision approved, risk gate configured
+    expected-outcome: Positions reduced to meet margin requirements
+    automation-hint: fsitrading.close-position through risk-gate module
+
+  - description: Confirm margin compliance with broker
+    preconditions: Margin posted or positions reduced
+    expected-outcome: Broker confirms margin requirements met
+    automation-hint: fsitrading.notify-risk-desk with margin-compliance template

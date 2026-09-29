@@ -1,0 +1,47 @@
+document-id: counterparty-default
+domain: fsi-trading
+
+problem: >
+  A counterparty has failed to meet settlement obligations, defaulting on
+  outstanding trades. Exposure includes unsettled trades, pending deliveries,
+  and any margin posted to the defaulting counterparty. Immediate risk of
+  cascading losses if positions are not unwound and exposure is not hedged.
+
+solution: >
+  Freeze all pending trades with the counterparty. Quantify net exposure
+  across all instruments and maturities. Initiate close-out netting per ISDA
+  master agreement terms. Hedge residual market risk from positions that cannot
+  be immediately netted. Report to regulators within required timeframes.
+
+features:
+  severity: CRITICAL
+  category: operational
+  domain: fsi-trading
+  counterparty-type: prime-broker
+  requires-regulatory-notification: true
+
+steps:
+  - description: Halt all new orders to the defaulting counterparty
+    preconditions: Counterparty identity confirmed
+    expected-outcome: Order semaphore active for counterparty scope
+    automation-hint: fsitrading.halt-new-orders with scope=COUNTERPARTY
+
+  - description: Calculate net exposure across all open positions
+    preconditions: Current position data available
+    expected-outcome: Net exposure figure per instrument and aggregate
+    automation-hint: fsitrading.calculate-var for counterparty positions
+
+  - description: Initiate close-out netting under ISDA terms
+    preconditions: ISDA master agreement in force with counterparty
+    expected-outcome: Net settlement amount calculated, legal notice dispatched
+    automation-hint: null
+
+  - description: Hedge residual market risk from unnetted positions
+    preconditions: Net exposure calculated, market liquidity assessed
+    expected-outcome: Hedge trades executed to neutralise directional risk
+    automation-hint: fsitrading.submit-order for hedge positions
+
+  - description: File regulatory notifications
+    preconditions: Exposure quantified, timeline established
+    expected-outcome: Notifications filed with relevant regulators within SLA
+    automation-hint: fsitrading.notify-risk-desk with regulatory template

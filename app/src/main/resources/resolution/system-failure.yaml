@@ -1,0 +1,50 @@
+document-id: system-failure
+domain: fsi-trading
+
+problem: >
+  A critical trading infrastructure component has failed — FIX session
+  disconnected, order management system unresponsive, market data feed
+  interrupted, or database connectivity lost. Existing positions cannot be
+  monitored or managed, and new orders cannot be reliably submitted or
+  confirmed. Risk of orphaned orders at the broker that the system cannot
+  track.
+
+solution: >
+  Assess which systems are affected and what positions are at risk.
+  Reconcile order state with broker(s) to identify any orphaned or
+  unconfirmed orders. Activate backup communication channels if available.
+  Notify the risk desk and operations team. Do not attempt automated
+  trading until system health is confirmed.
+
+features:
+  severity: CRITICAL
+  category: infrastructure
+  domain: fsi-trading
+  system-component: trading-infrastructure
+  requires-manual-reconciliation: true
+
+steps:
+  - description: Halt all automated trading immediately
+    preconditions: System failure detected
+    expected-outcome: All order submission stopped
+    automation-hint: fsitrading.halt-new-orders with scope=ALL
+
+  - description: Check FIX session connectivity status
+    preconditions: None
+    expected-outcome: FIX session status known (connected/disconnected)
+    automation-hint: fsitrading.check-fix-session
+
+  - description: Reconcile order state with broker
+    preconditions: Any available communication channel to broker
+    expected-outcome: All orders accounted for — matched, filled, or cancelled
+    automation-hint: fsitrading.reconcile-orders
+
+  - description: Notify operations team and risk desk
+    preconditions: Reconciliation complete or best-effort status known
+    expected-outcome: Operations and risk teams aware, manual monitoring active
+    automation-hint: fsitrading.notify-risk-desk with severity=CRITICAL
+
+  - description: Monitor system recovery and verify data integrity
+    preconditions: Root cause identified or being investigated
+    expected-outcome: System restored, position state verified against broker
+    automation-hint: null
