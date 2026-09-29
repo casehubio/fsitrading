@@ -1,0 +1,52 @@
+playbook:
+  name: risk-escalation
+  case-type: risk-escalation
+  trigger:
+    event: RiskAssessmentCompleted
+    condition: level in [CRITICAL, HIGH]
+
+steps:
+  - match: ${risk.level}
+    cases:
+      CRITICAL:
+        - fsitrading.halt-new-orders:
+            reason: risk-escalation
+            scope: ALL
+        - fsitrading.notify-risk-desk:
+            severity: CRITICAL
+            message: "Risk escalation: CRITICAL level detected. All new orders halted pending committee review."
+        - wait-state:
+            name: risk-committee-approval
+            timeout: 60s
+            on-timeout: reject
+        - match: ${approval.decision}
+          cases:
+            approved:
+              - fsitrading.release-orders:
+                  semaphore-id: ${result.halt-new-orders.semaphore-id}
+              - fsitrading.adjust-risk-thresholds:
+                  instrument: ${risk.instrument}
+                  threshold-type: EXPOSURE_PCT
+                  new-value: ${approval.new-threshold}
+            rejected:
+              - forEach:
+                  items: ${risk.exposed-positions}
+                  as: position
+                  steps:
+                    - fsitrading.close-position:
+                        instrument: ${each.position.instrument}
+              - fsitrading.release-orders:
+                  semaphore-id: ${result.halt-new-orders.semaphore-id}
+
+      HIGH:
+        - fsitrading.notify-risk-desk:
+            severity: WARNING
+            message: "Risk escalation: HIGH level detected on ${risk.instrument}. Heightened monitoring active."
+        - loop:
+            steps:
+              - fsitrading.assess-risk:
+                  instrument: ${risk.instrument}
+                  scenario: elevated
+            until: ${result.assess-risk.level} == 'LOW' || ${result.assess-risk.level} == 'MEDIUM'
+            delay: 30s
+            max-iterations: 20

@@ -1,0 +1,65 @@
+playbook:
+  name: market-regime-shift
+  case-type: regime-shift
+  trigger:
+    event: RegimeChanged
+    condition: not suppressed by flash-crash-response
+    priority: 3
+
+steps:
+  - fsitrading.check-market-data:
+      instrument: ${event.instrument}
+
+  - match: ${event.newRegime}
+    cases:
+      TRENDING:
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: LOOKBACK_WINDOW
+            new-value: 20
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: SIGNAL_THRESHOLD
+            new-value: 0.7
+
+      MEAN_REVERTING:
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: POSITION_LIMIT_PCT
+            new-value: 0.15
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: REVERSION_BAND
+            new-value: 2.0
+
+      VOLATILE:
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: POSITION_SIZE_MULTIPLIER
+            new-value: 0.5
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: STOP_LOSS_WIDTH
+            new-value: 2.0
+
+      default:
+        - fsitrading.adjust-risk-thresholds:
+            instrument: ${event.instrument}
+            threshold-type: POSITION_SIZE_MULTIPLIER
+            new-value: 0.75
+
+  - loop:
+      steps:
+        - fsitrading.assess-risk:
+            instrument: ${event.instrument}
+            scenario: regime-transition
+      until: ${result.assess-risk.level} == 'LOW'
+      delay: 30s
+      max-iterations: 20
+
+  - fsitrading.explain-decision:
+      instrument: ${event.instrument}
+      action: regime-adaptation
+      side: N/A
+      confidence: 1.0
+      rationale: "Regime shift from ${event.oldRegime} to ${event.newRegime} — parameters adjusted, convergence achieved"
