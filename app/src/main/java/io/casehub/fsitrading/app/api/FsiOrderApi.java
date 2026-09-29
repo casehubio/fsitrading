@@ -15,6 +15,9 @@ import java.util.UUID;
 public class FsiOrderApi {
 
     @Inject OrderResource resource;
+    @Inject
+            io.casehub.fsitrading.app.service.OrderSemaphoreService semaphoreService;
+
 
     @PlatformQuery("List all orders")
     @RestPath("/")
@@ -27,4 +30,29 @@ public class FsiOrderApi {
     public Object listByStrategy(@PathParam UUID strategyId) {
         return resource.listByStrategy(strategyId);
     }
+
+    @io.casehub.platform.api.mcp.PlatformMutation("Halt new orders for instrument")
+    @io.casehub.platform.api.mcp.RestPath("/halt")
+    public Object halt(HaltRequest request) {
+        return semaphoreService.halt(request.reason(), request.scope(), request.instrument(), request.playbookInstanceId());
+    }
+
+    @io.casehub.platform.api.mcp.PlatformMutation("Release order halt")
+    @io.casehub.platform.api.mcp.RestPath("/release")
+    public Object release(ReleaseRequest request) {
+        return semaphoreService.release(request.ticketId());
+    }
+
+    @io.casehub.platform.api.mcp.PlatformMutation("Reconcile orders after incident")
+    @io.casehub.platform.api.mcp.RestPath("/reconcile")
+    public Object reconcile(ReconcileRequest request) {
+        return semaphoreService.releaseAllForPlaybook(request.playbookInstanceId());
+    }
+
+    public record HaltRequest(String reason, String scope, String instrument, String playbookInstanceId) {}
+
+    public record ReleaseRequest(java.util.UUID ticketId) {}
+
+    public record ReconcileRequest(String playbookInstanceId) {}
+
 }

@@ -40,6 +40,11 @@
         <artifactId>jackson-jq-extra</artifactId>
         <version>1.6.2</version>
       </dependency>
+      <dependency>
+        <groupId>io.casehub</groupId>
+        <artifactId>casehub-ledger-jpa-common</artifactId>
+        <version>0.2-SNAPSHOT</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
