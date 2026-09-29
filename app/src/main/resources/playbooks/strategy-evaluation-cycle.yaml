@@ -1,0 +1,50 @@
+playbook:
+  name: strategy-evaluation-cycle
+  case-type: strategy-evaluation
+  trigger:
+    schedule: "0 */30 9-16 * * MON-FRI"
+    manual: POST /api/evaluations/trigger
+
+steps:
+  - forEach:
+      items: ${config.fsitrading.watchlist}
+      as: instrument
+      steps:
+        - parallel:
+            - fsitrading.evaluate-strategy:
+                instrument: ${each.instrument}
+                strategy: momentum
+                regime: ${config.fsitrading.current-regime}
+            - fsitrading.evaluate-strategy:
+                instrument: ${each.instrument}
+                strategy: mean-reversion
+                regime: ${config.fsitrading.current-regime}
+            - fsitrading.evaluate-strategy:
+                instrument: ${each.instrument}
+                strategy: stat-arb
+                regime: ${config.fsitrading.current-regime}
+          quorum:
+            threshold: 2
+            action-field: action
+            direction-from: highest-confidence
+            confidence-aggregation: average
+
+        - if: ${quorum.action} == 'TRADE'
+          then:
+            - import: risk-gate
+              instrument: ${each.instrument}
+              proposed-action: submit-order
+              proposed-side: ${quorum.side}
+            - if: ${result.trigger-risk-gate.approved} != false
+              then:
+                - fsitrading.submit-order:
+                    instrument: ${each.instrument}
+                    side: ${quorum.side}
+                    quantity: ${config.fsitrading.default-quantity}
+                    type: LIMIT
+                - fsitrading.explain-decision:
+                    instrument: ${each.instrument}
+                    action: ${quorum.action}
+                    side: ${quorum.side}
+                    confidence: ${quorum.confidence}
+                    rationale: ${quorum.rationale}
