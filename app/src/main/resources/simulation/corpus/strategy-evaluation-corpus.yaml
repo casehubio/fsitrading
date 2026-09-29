@@ -1,0 +1,72 @@
+# Strategy evaluation corpus — key-lookup by instrument:regime composite
+# Qualified name: strategy-evaluation-service.evaluate
+
+- key: AAPL:TRENDING
+  output:
+    action: TRADE
+    side: BUY
+    confidence: 0.82
+    rationale: "Strong uptrend with rising volume; momentum indicators aligned"
+
+- key: AAPL:MEAN_REVERTING
+  output:
+    action: TRADE
+    side: SELL
+    confidence: 0.65
+    rationale: "Price extended above mean; expecting reversion within 2 sigma"
+
+- key: AAPL:VOLATILE
+  output:
+    action: HOLD
+    side: BUY
+    confidence: 0.35
+    rationale: "Elevated volatility; insufficient edge for directional trade"
+
+- key: MSFT:TRENDING
+  output:
+    action: TRADE
+    side: BUY
+    confidence: 0.78
+    rationale: "Sector rotation favouring tech; relative strength positive"
+
+- key: MSFT:VOLATILE
+  output:
+    action: REDUCE
+    side: SELL
+    confidence: 0.71
+    rationale: "Defensive position sizing under elevated VIX environment"
+
+- key: SPY:TRENDING
+  output:
+    action: TRADE
+    side: BUY
+    confidence: 0.88
+    rationale: "Broad market trend confirmed by breadth and volume"
+
+- key: SPY:VOLATILE
+  output:
+    action: HOLD
+    side: BUY
+    confidence: 0.30
+    rationale: "Index at support but volatility regime suggests caution"
+
+- key: NVDA:TRENDING
+  output:
+    action: TRADE
+    side: BUY
+    confidence: 0.75
+    rationale: "Semiconductor cycle upturn with accelerating AI demand"
+
+- key: NVDA:MEAN_REVERTING
+  output:
+    action: TRADE
+    side: SELL
+    confidence: 0.60
+    rationale: "Overbought relative to sector; expected to consolidate"
+
+- key: EURUSD:TRENDING
+  output:
+    action: TRADE
+    side: BUY
+    confidence: 0.70
+    rationale: "EUR strengthening on ECB rate differential narrowing"

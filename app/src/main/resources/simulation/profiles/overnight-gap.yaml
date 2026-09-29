@@ -1,0 +1,125 @@
+# Overnight gap — market close, gap open, morning recovery
+# ~12h simulated duration at 1x speed
+
+- label: close-aapl
+  delay: 0s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.00"
+    volume: "42000"
+
+- label: close-msft
+  delay: 2s
+  payload:
+    action: price-tick
+    instrument: MSFT
+    price: "420.00"
+    volume: "30000"
+
+- label: close-spy
+  delay: 2s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "575.00"
+    volume: "75000"
+
+- label: after-hours-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "174.50"
+    volume: "2000"
+
+- label: overnight-news-drop
+  delay: 120s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "171.00"
+    volume: "500"
+    anomaly: true
+
+- label: pre-market-gap-aapl
+  delay: 120s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "168.50"
+    volume: "8000"
+    anomaly: true
+
+- label: gap-regime-change
+  delay: 5s
+  payload:
+    action: regime-change
+    instrument: AAPL
+    old-regime: QUIET
+    new-regime: VOLATILE
+
+- label: open-gap-aapl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "167.00"
+    volume: "95000"
+    anomaly: true
+
+- label: open-gap-spy
+  delay: 5s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "570.00"
+    volume: "110000"
+
+- label: early-morning-aapl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "168.50"
+    volume: "65000"
+
+- label: morning-recovery-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "170.50"
+    volume: "50000"
+
+- label: regime-stabilising
+  delay: 30s
+  payload:
+    action: regime-change
+    instrument: AAPL
+    old-regime: VOLATILE
+    new-regime: MEAN_REVERTING
+
+- label: recovery-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "172.00"
+    volume: "38000"
+
+- label: recovery-spy
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "573.00"
+    volume: "55000"
+
+- label: settling-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "173.00"
+    volume: "30000"

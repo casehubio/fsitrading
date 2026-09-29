@@ -1,0 +1,106 @@
+# Regime shift — gradual transition from trending to mean-reverting
+# ~2h simulated duration at 1x speed
+
+- label: trending-aapl-1
+  delay: 0s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.00"
+    volume: "30000"
+
+- label: trending-spy-1
+  delay: 5s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "575.00"
+    volume: "55000"
+
+- label: trending-aapl-2
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "176.20"
+    volume: "28000"
+
+- label: trending-nvda-1
+  delay: 15s
+  payload:
+    action: price-tick
+    instrument: NVDA
+    price: "131.50"
+    volume: "45000"
+
+- label: trend-weakening-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "176.50"
+    volume: "22000"
+
+- label: trend-weakening-spy
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "576.00"
+    volume: "40000"
+
+- label: momentum-fading-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "176.30"
+    volume: "18000"
+
+- label: regime-transition
+  delay: 30s
+  payload:
+    action: regime-change
+    instrument: AAPL
+    old-regime: TRENDING
+    new-regime: MEAN_REVERTING
+
+- label: regime-transition-spy
+  delay: 5s
+  payload:
+    action: regime-change
+    instrument: SPY
+    old-regime: TRENDING
+    new-regime: MEAN_REVERTING
+
+- label: mean-reverting-aapl-1
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.80"
+    volume: "20000"
+
+- label: mean-reverting-aapl-2
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.40"
+    volume: "22000"
+
+- label: mean-reverting-spy
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "574.50"
+    volume: "38000"
+
+- label: settling-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.60"
+    volume: "25000"

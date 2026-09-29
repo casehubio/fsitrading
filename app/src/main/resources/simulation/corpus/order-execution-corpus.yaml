@@ -1,0 +1,32 @@
+# Order execution corpus — sequential (fill, partial, reject cycle)
+# Qualified name: order-execution-service.submit
+
+- output:
+    orderId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    status: FILLED
+    fillPrice: 175.10
+
+- output:
+    orderId: "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+    status: PARTIALLY_FILLED
+    fillPrice: 420.25
+
+- output:
+    orderId: "c3d4e5f6-a7b8-9012-cdef-123456789012"
+    status: FILLED
+    fillPrice: 174.95
+
+- output:
+    orderId: "d4e5f6a7-b8c9-0123-defa-234567890123"
+    status: REJECTED
+    fillPrice: 0.00
+
+- output:
+    orderId: "e5f6a7b8-c9d0-1234-efab-345678901234"
+    status: FILLED
+    fillPrice: 130.15
+
+- output:
+    orderId: "f6a7b8c9-d0e1-2345-fabc-456789012345"
+    status: FILLED
+    fillPrice: 185.30

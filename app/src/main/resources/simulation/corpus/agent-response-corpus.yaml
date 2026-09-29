@@ -1,0 +1,47 @@
+# Agent response corpus — key-lookup by prompt category
+# Used by agent invoke bindings (analyse-sentiment, explain-decision)
+
+- key: sentiment-bullish
+  output:
+    sentiment: BULLISH
+    confidence: 0.85
+    summary: "Positive earnings surprise and analyst upgrades driving optimism"
+    sources:
+      - "Q3 earnings beat by 12%"
+      - "Two major analyst upgrades in past week"
+      - "Sector fund inflows accelerating"
+
+- key: sentiment-bearish
+  output:
+    sentiment: BEARISH
+    confidence: 0.78
+    summary: "Macro headwinds and sector rotation pressuring valuations"
+    sources:
+      - "Rising 10-year yield above 4.5%"
+      - "Consumer confidence declining 3 consecutive months"
+      - "Institutional net selling in past 10 sessions"
+
+- key: sentiment-neutral
+  output:
+    sentiment: NEUTRAL
+    confidence: 0.55
+    summary: "Mixed signals; market digesting recent data without clear direction"
+    sources:
+      - "CPI in-line with expectations"
+      - "Employment data steady"
+      - "Earnings season mixed across sectors"
+
+- key: explain-risk-escalation
+  output:
+    explanation: "Risk threshold breach triggered by concentrated exposure in single sector exceeding 40% of portfolio. VaR estimate crossed the $100K daily limit. Automated halt prevents further accumulation until risk committee review."
+    recommendation: "Reduce position sizes in top 3 holdings by 15-20% to bring sector exposure below 30% threshold."
+
+- key: explain-regime-shift
+  output:
+    explanation: "Market regime transition from trending to volatile detected via rolling 30-day volatility crossing 2x historical average. Correlation breakdown across sectors indicates stress rather than normal fluctuation."
+    recommendation: "Shift to defensive positioning: reduce net exposure, increase hedge ratios, tighten stop losses on momentum positions."
+
+- key: explain-flash-crash
+  output:
+    explanation: "Rapid price decline exceeding 5% in 60-second window detected. Pattern consistent with liquidity withdrawal rather than fundamental repricing. Historical CBR cases suggest 70% probability of partial recovery within 15 minutes."
+    recommendation: "Halt new orders immediately. Assess each position for forced liquidation risk. Do not chase the recovery — let the semaphore release gate based on volatility normalisation."

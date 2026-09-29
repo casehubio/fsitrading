@@ -1,0 +1,51 @@
+# Market data corpus — key-lookup by instrument symbol
+# Qualified name: market-data-provider.snapshot
+
+- key: AAPL
+  output:
+    bid: 174.85
+    ask: 175.15
+    spread: 0.30
+    volume: 45000000
+
+- key: MSFT
+  output:
+    bid: 419.50
+    ask: 420.50
+    spread: 1.00
+    volume: 28000000
+
+- key: GOOGL
+  output:
+    bid: 174.70
+    ask: 175.30
+    spread: 0.60
+    volume: 22000000
+
+- key: AMZN
+  output:
+    bid: 184.60
+    ask: 185.40
+    spread: 0.80
+    volume: 35000000
+
+- key: NVDA
+  output:
+    bid: 129.50
+    ask: 130.50
+    spread: 1.00
+    volume: 52000000
+
+- key: SPY
+  output:
+    bid: 575.20
+    ask: 575.40
+    spread: 0.20
+    volume: 85000000
+
+- key: EURUSD
+  output:
+    bid: 1.0845
+    ask: 1.0847
+    spread: 0.0002
+    volume: 120000000

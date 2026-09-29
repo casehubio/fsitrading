@@ -1,0 +1,120 @@
+# Flash crash — sudden price drop, liquidity withdrawal, partial recovery
+# ~30min simulated duration at 1x speed
+
+- label: pre-crash-normal-aapl
+  delay: 0s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.00"
+    volume: "30000"
+
+- label: pre-crash-normal-spy
+  delay: 2s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "575.00"
+    volume: "60000"
+
+- label: initial-drop-aapl
+  delay: 5s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "172.50"
+    volume: "85000"
+    anomaly: true
+
+- label: initial-drop-spy
+  delay: 1s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "569.00"
+    volume: "120000"
+    anomaly: true
+
+- label: accelerating-drop-aapl
+  delay: 3s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "168.00"
+    volume: "150000"
+    anomaly: true
+
+- label: regime-shift-to-volatile
+  delay: 2s
+  payload:
+    action: regime-change
+    instrument: AAPL
+    old-regime: TRENDING
+    new-regime: VOLATILE
+
+- label: liquidity-withdrawal-aapl
+  delay: 5s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "165.50"
+    volume: "5000"
+    anomaly: true
+
+- label: liquidity-withdrawal-spy
+  delay: 2s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "562.00"
+    volume: "8000"
+    anomaly: true
+
+- label: trough-aapl
+  delay: 10s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "163.00"
+    volume: "3000"
+    anomaly: true
+
+- label: early-recovery-aapl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "167.00"
+    volume: "25000"
+
+- label: early-recovery-spy
+  delay: 10s
+  payload:
+    action: price-tick
+    instrument: SPY
+    price: "566.00"
+    volume: "45000"
+
+- label: recovery-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "170.50"
+    volume: "40000"
+
+- label: regime-normalising
+  delay: 30s
+  payload:
+    action: regime-change
+    instrument: AAPL
+    old-regime: VOLATILE
+    new-regime: MEAN_REVERTING
+
+- label: stabilisation-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "172.00"
+    volume: "32000"

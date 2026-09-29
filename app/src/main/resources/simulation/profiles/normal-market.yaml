@@ -1,0 +1,98 @@
+# Normal market session — steady trading, mild volatility, U-shaped volume
+# ~6h simulated duration at 1x speed
+
+- label: pre-open-tick-aapl
+  delay: 0s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.00"
+    volume: "15000"
+
+- label: pre-open-tick-msft
+  delay: 2s
+  payload:
+    action: price-tick
+    instrument: MSFT
+    price: "420.00"
+    volume: "12000"
+
+- label: open-volume-surge-aapl
+  delay: 5s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.25"
+    volume: "45000"
+
+- label: open-volume-surge-nvda
+  delay: 3s
+  payload:
+    action: price-tick
+    instrument: NVDA
+    price: "130.20"
+    volume: "52000"
+
+- label: morning-drift-aapl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.40"
+    volume: "28000"
+
+- label: morning-drift-msft
+  delay: 15s
+  payload:
+    action: price-tick
+    instrument: MSFT
+    price: "420.50"
+    volume: "18000"
+
+- label: midday-quiet-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.35"
+    volume: "8000"
+
+- label: midday-quiet-googl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: GOOGL
+    price: "175.10"
+    volume: "6000"
+
+- label: afternoon-pickup-aapl
+  delay: 60s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.60"
+    volume: "32000"
+
+- label: afternoon-pickup-nvda
+  delay: 20s
+  payload:
+    action: price-tick
+    instrument: NVDA
+    price: "130.80"
+    volume: "40000"
+
+- label: close-volume-aapl
+  delay: 30s
+  payload:
+    action: price-tick
+    instrument: AAPL
+    price: "175.55"
+    volume: "48000"
+
+- label: close-volume-msft
+  delay: 10s
+  payload:
+    action: price-tick
+    instrument: MSFT
+    price: "421.00"
+    volume: "35000"

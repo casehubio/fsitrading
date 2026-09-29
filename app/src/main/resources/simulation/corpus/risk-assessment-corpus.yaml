@@ -1,0 +1,74 @@
+# Risk assessment corpus — key-lookup by instrument:scenario composite
+# Qualified name: risk-assessment-engine.assess
+
+- key: AAPL:normal
+  output:
+    level: LOW
+    varAmount: 12500.00
+    exposurePct: 0.08
+
+- key: AAPL:volatile
+  output:
+    level: MEDIUM
+    varAmount: 37500.00
+    exposurePct: 0.22
+
+- key: AAPL:crash
+  output:
+    level: CRITICAL
+    varAmount: 125000.00
+    exposurePct: 0.65
+
+- key: MSFT:normal
+  output:
+    level: LOW
+    varAmount: 15000.00
+    exposurePct: 0.10
+
+- key: MSFT:volatile
+  output:
+    level: HIGH
+    varAmount: 45000.00
+    exposurePct: 0.30
+
+- key: GOOGL:normal
+  output:
+    level: LOW
+    varAmount: 11000.00
+    exposurePct: 0.07
+
+- key: SPY:normal
+  output:
+    level: LOW
+    varAmount: 8500.00
+    exposurePct: 0.05
+
+- key: SPY:volatile
+  output:
+    level: MEDIUM
+    varAmount: 28000.00
+    exposurePct: 0.18
+
+- key: SPY:crash
+  output:
+    level: CRITICAL
+    varAmount: 95000.00
+    exposurePct: 0.55
+
+- key: NVDA:normal
+  output:
+    level: MEDIUM
+    varAmount: 22000.00
+    exposurePct: 0.15
+
+- key: NVDA:volatile
+  output:
+    level: HIGH
+    varAmount: 68000.00
+    exposurePct: 0.42
+
+- key: EURUSD:normal
+  output:
+    level: LOW
+    varAmount: 5000.00
+    exposurePct: 0.03

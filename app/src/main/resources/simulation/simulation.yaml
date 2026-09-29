@@ -1,0 +1,59 @@
+default-tenancy-id: sim-tenant
+
+methods:
+  market-data-provider.snapshot:
+    strategy: key-lookup
+    key-extractor: "field:instrument"
+    corpus-files:
+      - "classpath:simulation/corpus/market-data-corpus.yaml"
+
+  risk-assessment-engine.assess:
+    strategy: key-lookup
+    key-extractor: "composite:instrument,scenario"
+    corpus-files:
+      - "classpath:simulation/corpus/risk-assessment-corpus.yaml"
+
+  order-execution-service.submit:
+    strategy: sequential
+    exhaustion-policy: WRAP
+    corpus-files:
+      - "classpath:simulation/corpus/order-execution-corpus.yaml"
+
+  order-execution-service.cancel:
+    strategy: sequential
+    corpus: []
+
+  order-execution-service.status:
+    strategy: sequential
+    corpus:
+      - output: FILLED
+      - output: PENDING
+      - output: FILLED
+
+  strategy-evaluation-service.evaluate:
+    strategy: key-lookup
+    key-extractor: "composite:instrument,regime"
+    corpus-files:
+      - "classpath:simulation/corpus/strategy-evaluation-corpus.yaml"
+
+temporal-profiles:
+  normal-market:
+    qualified-name: fsi-market-data
+    events-file: "classpath:simulation/profiles/normal-market.yaml"
+    speed: 1.0
+    loop: true
+
+  flash-crash:
+    qualified-name: fsi-market-data
+    events-file: "classpath:simulation/profiles/flash-crash.yaml"
+    speed: 1.0
+
+  regime-shift:
+    qualified-name: fsi-market-data
+    events-file: "classpath:simulation/profiles/regime-shift.yaml"
+    speed: 1.0
+
+  overnight-gap:
+    qualified-name: fsi-market-data
+    events-file: "classpath:simulation/profiles/overnight-gap.yaml"
+    speed: 1.0
