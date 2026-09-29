@@ -1,0 +1,65 @@
+playbook:
+  name: overnight-incident
+  case-type: overnight-incident
+  trigger:
+    event: RasSituationEvent
+    condition: type in [volatility-spike, market-anomaly, active-breach]
+  deadline: ${sla-deadline}
+  deadline-fallback: POST_MORTEM
+  sla:
+    CRITICAL: 300s
+    HIGH: 900s
+    MEDIUM: 3600s
+
+states:
+  DETECTED:
+    steps:
+      - fsitrading.check-market-data:
+          instrument: ${event.instrument}
+    transition: TRIAGING
+
+  TRIAGING:
+    steps:
+      - parallel:
+          - fsitrading.assess-risk:
+              instrument: ${event.instrument}
+              scenario: ${event.type}
+          - fsitrading.analyse-sentiment:
+              instrument: ${event.instrument}
+              context: "Overnight incident triage: assess severity and likely trajectory of ${event.type} event"
+    on-step-failure: RESPONDING
+    transition: RESPONDING
+
+  RESPONDING:
+    steps:
+      - match: ${triage.resolution-type}
+        cases:
+          automated:
+            - import: risk-gate
+              instrument: ${event.instrument}
+              proposed-action: reduce-exposure
+              escalation-severity: ${event.severity}
+            - if: ${result.trigger-risk-gate.approved} != false
+              then:
+                - fsitrading.close-position:
+                    instrument: ${event.instrument}
+          human-required:
+            - fsitrading.notify-risk-desk:
+                severity: ${event.severity}
+                message: "Overnight incident requires trader approval: ${event.type} on ${event.instrument}"
+            - wait-state:
+                name: trader-approval
+                timeout: remaining-sla-budget
+                on-error: { retries: 0, fallback: reject }
+    on-step-failure: POST_MORTEM
+    transition: POST_MORTEM
+
+  POST_MORTEM:
+    steps:
+      - fsitrading.explain-decision:
+          instrument: ${event.instrument}
+          action: incident-response
+          side: N/A
+          confidence: 1.0
+          rationale: "Automated post-mortem for ${event.type} incident on ${event.instrument}"
+    terminal: true
