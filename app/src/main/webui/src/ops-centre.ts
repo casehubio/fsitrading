@@ -86,7 +86,7 @@ const incidentTimeline: DockPanelConfig = {
   label: "Timeline",
   icon: "timeline",
   defaultOpen: true,
-  content: hostPanel("blocks-timeline"),
+  content: hostPanel("agency-timeline"),
 };
 
 const slaPolicy: DockPanelConfig = {
