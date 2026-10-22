@@ -87,6 +87,12 @@ spec:
         candidateGroups: ["fsi-oncall"]
 
   cbrConfig:
+    features:
+      severity: ".severity"
+      eventType: ".eventType"
+      instruments: ".instruments"
+    domain: fsitrading
+    caseType: overnight-incident
     topK: 5
     minSimilarity: 0.6
     temporalDecayHalfLifeDays: 90

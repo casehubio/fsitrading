@@ -275,6 +275,17 @@
       <artifactId>quarkus-quinoa</artifactId>
       <version>2.8.3</version>
     </dependency>
+    <!-- CaseHub npm packages (unpacked by maven-dependency-plugin) -->
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-pages-npm</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.casehub</groupId>
+      <artifactId>casehub-mosaic-npm</artifactId>
+      <version>${casehub.version}</version>
+    </dependency>
 
     <!-- YAML 1.2 factory — centralised ObjectMapper with boolean-word-as-string -->
     <dependency>
@@ -340,6 +351,55 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-casehub-packages</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-pages-npm</artifactId>
+                  <version>${casehub.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>io.casehub</groupId>
+                  <artifactId>casehub-mosaic-npm</artifactId>
+                  <version>${casehub.version}</version>
+                  <outputDirectory>${project.basedir}/src/main/webui/.casehub-packages</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>strip-casehub-internal-deps</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>python3</executable>
+              <arguments>
+                <argument>${project.basedir}/../scripts/strip-internal-deps.py</argument>
+                <argument>${project.basedir}/src/main/webui/.casehub-packages/packages</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
@@ -378,19 +438,6 @@
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
           </systemPropertyVariables>
-          <excludes>
-            <exclude>**/*EndToEndTest.java</exclude>
-            <exclude>**/*ResourceTest.java</exclude>
-            <exclude>**/*IntegrationTest.java</exclude>
-            <exclude>**/DeliberationRecordTest.java</exclude>
-            <exclude>**/JpaIncidentStoreTest.java</exclude>
-            <exclude>**/DeliberationDecisionLedgerEntryTest.java</exclude>
-            <exclude>**/TradingLedgerServiceTest.java</exclude>
-            <exclude>**/PositionServiceTest.java</exclude>
-            <exclude>**/FsiDeliberationTriggerTest.java</exclude>
-            <exclude>**/FsiDeliberationOrchestratorTest.java</exclude>
-            <exclude>**/OrderServiceTest.java</exclude>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>
