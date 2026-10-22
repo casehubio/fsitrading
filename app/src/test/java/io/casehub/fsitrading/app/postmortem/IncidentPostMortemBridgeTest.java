@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.postmortem;
 
 import io.casehub.api.spi.CaseOutcomeEvent;
-import io.casehub.blocks.channel.ChannelMessageMeta;
+import io.casehub.agency.communication.dispatch.ChannelMessageMeta;
 import io.casehub.qhorus.api.message.MessageDispatch;
 import io.casehub.qhorus.api.message.MessageDispatcher;
 import io.casehub.work.api.WorkItemLifecycleEvent;

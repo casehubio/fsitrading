@@ -1,12 +1,12 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.conversation.CommonGroundAnalyser;
-import io.casehub.blocks.conversation.CommonGroundState;
-import io.casehub.blocks.conversation.ConversationRenderer;
-import io.casehub.blocks.conversation.ConversationRendererConfig;
-import io.casehub.blocks.conversation.ConversationState;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.RenderContext;
+import io.casehub.agency.deliberation.conversation.CommonGroundAnalyser;
+import io.casehub.agency.deliberation.conversation.CommonGroundState;
+import io.casehub.agency.deliberation.conversation.ConversationRenderer;
+import io.casehub.agency.deliberation.conversation.ConversationRendererConfig;
+import io.casehub.agency.deliberation.conversation.ConversationState;
+import io.casehub.agency.deliberation.conversation.ConvergenceSignal;
+import io.casehub.agency.deliberation.conversation.RenderContext;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Map;

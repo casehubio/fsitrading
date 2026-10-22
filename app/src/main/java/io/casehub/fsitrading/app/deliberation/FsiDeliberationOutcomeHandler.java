@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.conversation.CommonGroundState;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.GroundedFact;
+import io.casehub.agency.deliberation.conversation.CommonGroundState;
+import io.casehub.agency.deliberation.conversation.ConvergenceSignal;
+import io.casehub.agency.deliberation.conversation.ConvergenceState;
+import io.casehub.agency.deliberation.conversation.GroundedFact;
 import io.casehub.fsitrading.model.OrderSide;
 import io.casehub.fsitrading.model.OrderType;
 import jakarta.enterprise.context.ApplicationScoped;

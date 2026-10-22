@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.arena;
 
 import io.casehub.api.spi.routing.RoutingOutcome;
-import io.casehub.blocks.routing.agent.CbrOutcomeWeights;
+import io.casehub.agency.governance.routing.agent.CbrOutcomeWeights;
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;

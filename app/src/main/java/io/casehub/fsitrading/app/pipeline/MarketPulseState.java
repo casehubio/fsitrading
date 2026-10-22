@@ -1,7 +1,9 @@
 package io.casehub.fsitrading.app.pipeline;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.Instant;
 
+@ApplicationScoped
 public class MarketPulseState {
 
     private boolean marketClosed;

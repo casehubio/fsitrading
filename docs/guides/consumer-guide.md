@@ -45,7 +45,7 @@ Chapters 1--2 implemented (August 2026). Working vertical slices: domain model, 
 - Arena integration -- observation context injected into strategy agent evaluations
 - WebSocket push via pages-push EventBroadcaster -- live ticks, bars, trends, regime to browser
 - Minimal fsi-market-panel web component (Quinoa + esbuild) proving end-to-end push path
-- Sequence + Loop orchestration model via casehub-blocks patterns
+- Sequence + Loop orchestration model via casehub-agency patterns
 - 39 REST endpoints (see API section below)
 - Dual-datasource configuration (H2 dev, PostgreSQL prod)
 

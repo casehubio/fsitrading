@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.LevelEvent;
 import io.casehub.fsitrading.model.MarketRegime;
 import io.casehub.fsitrading.model.RegimeAssessment;
 import io.casehub.fsitrading.model.TrendDirection;

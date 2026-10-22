@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.channel.ChannelMessageMeta;
-import io.casehub.blocks.conversation.ConversationState;
+import io.casehub.agency.communication.dispatch.ChannelMessageMeta;
+import io.casehub.agency.deliberation.conversation.ConversationState;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

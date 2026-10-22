@@ -276,10 +276,10 @@ The Ops Centre reuses the same blocks-ui components already imported in `index.t
 New import for the Ops Centre response channel panel:
 
 ```typescript
-import "@casehubio/blocks-ui-channel-activity";
+import "@casehubio/agency-ui-channel-activity";
 ```
 
-This follows the existing flat import convention (`@casehubio/blocks-ui-{component}`) used throughout `index.ts`. The `channel-activity` component exists in blocks-ui.
+This follows the existing flat import convention (`@casehubio/agency-ui-{component}`) used throughout `index.ts`. The `channel-activity` component exists in blocks-ui.
 
 ---
 

@@ -1,14 +1,14 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.agentic.AgentRef;
-import io.casehub.blocks.agentic.AgentResult;
-import io.casehub.blocks.agentic.model.ExecutionModel;
-import io.casehub.blocks.agentic.pattern.Patterns;
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.KeyedSummarisationRunner;
-import io.casehub.blocks.summarisation.SummarisationRunner;
-import io.casehub.blocks.summarisation.Summariser;
-import io.casehub.blocks.summarisation.WindowPolicy;
+import io.casehub.agency.core.AgentRef;
+import io.casehub.agency.core.AgentResult;
+import io.casehub.agency.orchestration.execution.ExecutionModel;
+import io.casehub.agency.orchestration.pattern.Patterns;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.KeyedSummarisationRunner;
+import io.casehub.agency.summarisation.SummarisationRunner;
+import io.casehub.agency.summarisation.Summariser;
+import io.casehub.agency.summarisation.WindowPolicy;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.PriceTick;
 import io.casehub.fsitrading.model.RegimeAssessment;

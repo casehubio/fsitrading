@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.conversation.ConversationProjection;
+import io.casehub.agency.deliberation.conversation.ConversationProjection;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped

@@ -1,8 +1,8 @@
 package io.casehub.fsitrading.app.resource;
 
-import io.casehub.blocks.agentic.model.ExecutionBackend;
-import io.casehub.blocks.agentic.model.ExecutionModel;
-import io.casehub.blocks.agentic.model.ExecutionResult;
+import io.casehub.agency.orchestration.execution.ExecutionBackend;
+import io.casehub.agency.orchestration.execution.ExecutionModel;
+import io.casehub.agency.orchestration.execution.ExecutionResult;
 import io.casehub.fsitrading.app.arena.ArenaContext;
 import io.casehub.fsitrading.app.model.ArenaRunEntity;
 import io.casehub.fsitrading.model.ConsensusResult;

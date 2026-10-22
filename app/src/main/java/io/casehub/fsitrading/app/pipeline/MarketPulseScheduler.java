@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.KeyedSummarisationRunner;
-import io.casehub.blocks.summarisation.LevelEvent;
-import io.casehub.blocks.summarisation.SummarisationRunner;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.KeyedSummarisationRunner;
+import io.casehub.agency.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.SummarisationRunner;
 import io.casehub.fsitrading.app.service.SyntheticMarketDataProvider;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.PriceTick;

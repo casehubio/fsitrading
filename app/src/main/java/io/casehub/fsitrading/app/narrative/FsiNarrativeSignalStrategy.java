@@ -1,14 +1,14 @@
 package io.casehub.fsitrading.app.narrative;
 
 import io.casehub.api.spi.StepOutcomeEvent;
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.narrative.AbstractNarrativeSignalStrategy;
-import io.casehub.blocks.summarisation.narrative.DecisionNarrativePipeline;
-import io.casehub.blocks.summarisation.narrative.DecisionSignal;
-import io.casehub.blocks.summarisation.narrative.CbrRetrieval;
-import io.casehub.blocks.summarisation.narrative.ModelSelection;
-import io.casehub.blocks.summarisation.narrative.RoutingDecision;
-import io.casehub.blocks.summarisation.narrative.StepOutcome;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.perception.narrative.AbstractNarrativeSignalStrategy;
+import io.casehub.agency.perception.narrative.DecisionNarrativePipeline;
+import io.casehub.agency.perception.narrative.DecisionSignal;
+import io.casehub.agency.perception.narrative.CbrRetrieval;
+import io.casehub.agency.perception.narrative.ModelSelection;
+import io.casehub.agency.perception.narrative.RoutingDecision;
+import io.casehub.agency.perception.narrative.StepOutcome;
 import java.time.Duration;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;

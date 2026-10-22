@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.EventStreamBus;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.PriceTick;
 import io.casehub.fsitrading.model.RegimeAssessment;

@@ -1,12 +1,12 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.agentic.model.DriverEvent;
-import io.casehub.blocks.agentic.model.EventSource;
-import io.casehub.blocks.conversation.CommonGroundAnalyser;
-import io.casehub.blocks.conversation.ConvergenceAnalyser;
-import io.casehub.blocks.conversation.ConvergencePolicy;
-import io.casehub.blocks.conversation.ConversationState;
-import io.casehub.blocks.conversation.EpistemicRule;
+import io.casehub.agency.orchestration.execution.DriverEvent;
+import io.casehub.agency.orchestration.execution.EventSource;
+import io.casehub.agency.deliberation.conversation.CommonGroundAnalyser;
+import io.casehub.agency.deliberation.conversation.ConvergenceAnalyser;
+import io.casehub.agency.deliberation.conversation.ConvergencePolicy;
+import io.casehub.agency.deliberation.conversation.ConversationState;
+import io.casehub.agency.deliberation.conversation.EpistemicRule;
 import io.casehub.fsitrading.app.pipeline.FsiMarketPushService;
 import io.casehub.qhorus.api.gateway.MessageObserver;
 import io.casehub.qhorus.api.gateway.MessageReceivedEvent;

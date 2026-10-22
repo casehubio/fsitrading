@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.arena;
 
-import io.casehub.blocks.agentic.RoutingCandidate;
-import io.casehub.blocks.agentic.model.PatternType;
+import io.casehub.agency.core.RoutingCandidate;
+import io.casehub.agency.orchestration.execution.PatternType;
 import io.casehub.fsitrading.app.service.PositionService;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.arena;
 
-import io.casehub.blocks.agentic.RoutingCandidate;
-import io.casehub.blocks.routing.RoutingDecisionRecord;
+import io.casehub.agency.core.RoutingCandidate;
+import io.casehub.agency.governance.routing.RoutingDecisionRecord;
 import io.casehub.fsitrading.model.ApprovalOutcome;
 import io.casehub.fsitrading.model.ConsensusResult;
 import io.casehub.fsitrading.model.MarketSignal;

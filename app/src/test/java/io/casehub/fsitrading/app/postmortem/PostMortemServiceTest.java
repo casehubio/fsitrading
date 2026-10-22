@@ -1,12 +1,12 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.conversation.ConversationPoint;
-import io.casehub.blocks.conversation.ConversationState;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.PointClassification;
-import io.casehub.blocks.conversation.Priority;
-import io.casehub.blocks.conversation.ThreadEntry;
+import io.casehub.agency.deliberation.conversation.ConversationPoint;
+import io.casehub.agency.deliberation.conversation.ConversationState;
+import io.casehub.agency.deliberation.conversation.ConvergenceSignal;
+import io.casehub.agency.deliberation.conversation.ConvergenceState;
+import io.casehub.agency.deliberation.conversation.PointClassification;
+import io.casehub.agency.deliberation.conversation.Priority;
+import io.casehub.agency.deliberation.conversation.ThreadEntry;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
