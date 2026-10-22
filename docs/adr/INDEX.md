@@ -2,8 +2,8 @@
 
 | ADR | Decision | Status |
 |-----|----------|--------|
-| [001](001-blocks-patterns-replace-case-engine.md) | Blocks patterns replace case engine for arena orchestration | Accepted |
-| [002](002-direct-blocks-agents.md) | Strategy agents implement blocks agent interface directly | Accepted |
+| [001](001-agency-patterns-replace-case-engine.md) | Agency patterns replace case engine for arena orchestration | Accepted |
+| [002](002-direct-agency-agents.md) | Strategy agents implement agency agent interface directly | Accepted |
 | [003](003-routing-platform-bridge.md) | Multi-select routing via platform bridge | Accepted |
 | [004](004-rest-only-trigger.md) | REST-only arena trigger for C1 | Accepted |
 | [005](005-pluggable-voting-aggregation.md) | Pluggable voting aggregation by instrument | Accepted |

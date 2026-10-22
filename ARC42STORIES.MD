@@ -128,11 +128,11 @@ C4Context
 
 ### Core Architectural Decisions
 
-**Multi-agent trading harness:** Each strategy is an agent (`AgentDescriptor`) with capability tags and disposition profiles. blocks' orchestration framework (Supervisor, Parallel, Voting, Debate, HTN, Conditional, Sequence, Loop) coordinates multi-agent decision-making. All 6 AI routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination) select the best agent for each situation.
+**Multi-agent trading harness:** Each strategy is an agent (`AgentDescriptor`) with capability tags and disposition profiles. agency's orchestration framework (Supervisor, Parallel, Voting, Debate, HTN, Conditional, Sequence, Loop) coordinates multi-agent decision-making. All 6 AI routing strategies (LLM, CBR, Disposition, PlanComposition, Predecessor, Coordination) select the best agent for each situation.
 
-**Multi-level market analysis via summarisation:** blocks' temporal summarisation framework IS the market analysis — 5 levels from raw ticks through 1-minute bars, 5-minute trends, hourly regime detection, to session narrative. Each strategy agent observes at the temporal granularity matching its time horizon.
+**Multi-level market analysis via summarisation:** agency's temporal summarisation framework IS the market analysis — 5 levels from raw ticks through 1-minute bars, 5-minute trends, hourly regime detection, to session narrative. Each strategy agent observes at the temporal granularity matching its time horizon.
 
-**Structured agent deliberation:** When significant market events occur, specialist agents deliberate on qhorus channels using blocks' conversation protocol with epistemic common ground tracking and convergence detection. Automated post-mortems generated from conversation state.
+**Structured agent deliberation:** When significant market events occur, specialist agents deliberate on qhorus channels using agency's conversation protocol with epistemic common ground tracking and convergence detection. Automated post-mortems generated from conversation state.
 
 **Case-based reasoning for market events:** CBR with typed feature-vector similarity — `TimeSeries` with DTW for price pattern matching, `DiscreteSequence` with edit distance for event sequence comparison. Plan adaptation transforms retrieved incident response plans to current conditions.
 
@@ -140,7 +140,7 @@ C4Context
 
 **Immutable audit trail:** `LedgerExecutionListener` provides EU AI Act Art.12 compliance-grade audit of every orchestration decision. Full causality chain via `causedByEntryId`.
 
-**Professional trading workspaces:** Two dock-workbench pages (Trading Desk + Ops Centre) composed from 25 blocks-ui components with drag-and-drop panel rearrangement, floating/popout windows, and persistent layout state.
+**Professional trading workspaces:** Two dock-workbench pages (Trading Desk + Ops Centre) composed from 25 mosaic components with drag-and-drop panel rearrangement, floating/popout windows, and persistent layout state.
 
 ### Plan Structure — Vertical Slices
 
@@ -285,9 +285,9 @@ Inherited from CaseHub Profile:
 | # | Chapter | Primary showcase | Orchestration | Status |
 |---|---|---|---|---|
 | C0 | Foundation Fixes | Prerequisites | — | 🔨 In Progress |
-| C1 | Strategy Arena | blocks orchestration, routing, eidos | Supervisor, Parallel, Voting | 🟢 |
-| C2 | Market Pulse | blocks summarisation, pages-push | Sequence, Loop | 🟢 |
-| C3 | Trade Deliberation | blocks conversation, convergence | Debate | 🟢 |
+| C1 | Strategy Arena | agency orchestration, routing, eidos | Supervisor, Parallel, Voting | 🟢 |
+| C2 | Market Pulse | agency summarisation, pages-push | Sequence, Loop | 🟢 |
+| C3 | Trade Deliberation | agency conversation, convergence | Debate | 🟢 |
 | C4 | Overnight Ops | engine cases, oversight, SLA | HTN, Conditional | 🔲 |
 | C5 | The Trading Desk | dock-workbench, floating panels | (all) | 🔲 |
 | C6 | Knowledge & Compliance | neocortex CBR, GDPR | — | 🔲 |
@@ -301,7 +301,7 @@ Each chapter gets its own design spec before implementation. Full spec: `specs/m
 #### C0 — Foundation Fixes
 **Status:** 🔨 In Progress | **Issue:** #17
 
-Close prerequisite debt: fix #14 (@Transactional), add blocks dependency, triage infrastructure issues, rewrite ARC42STORIES.MD. No new domain features.
+Close prerequisite debt: fix #14 (@Transactional), add agency dependency, triage infrastructure issues, rewrite ARC42STORIES.MD. No new domain features.
 
 #### C1 — Strategy Arena
 **Status:** 🔲 | **Issue:** TBD
@@ -311,7 +311,7 @@ Multiple strategies evaluate a market signal, get trust-routed via all 6 AI rout
 #### C2 — Market Pulse
 **Status:** 🔲 | **Issue:** TBD
 
-5-level summarisation pipeline (tick → 1-min bar → 5-min trend → hourly regime → session narrative) via blocks' SummarisationRunner chains. KeyedSummarisationRunner per instrument. PartitionedObservationService per strategy. TieredContentSummariser (verbatim/grouped/LLM). Channel bridges (ChannelEventAdapter/Publisher). Pages-push WebSocket for real-time dashboard updates.
+5-level summarisation pipeline (tick → 1-min bar → 5-min trend → hourly regime → session narrative) via agency's SummarisationRunner chains. KeyedSummarisationRunner per instrument. PartitionedObservationService per strategy. TieredContentSummariser (verbatim/grouped/LLM). Channel bridges (ChannelEventAdapter/Publisher). Pages-push WebSocket for real-time dashboard updates.
 
 #### C3 — Trade Deliberation
 **Status:** 🟢 | **Issue:** #20

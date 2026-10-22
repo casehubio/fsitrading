@@ -1,4 +1,4 @@
-# ADR-001: Blocks Patterns Replace Case Engine for Arena Orchestration
+# ADR-001: Agency Patterns Replace Case Engine for Arena Orchestration
 
 **Status:** Accepted
 **Date:** 2026-08-11
@@ -10,11 +10,11 @@ The Strategy Arena evaluates market signals through multiple strategy agents con
 
 ## Decision
 
-Use blocks orchestration patterns (`Sequence`, `Parallel`, `Voting`, `Conditional`) as the arena's orchestrator. The arena is an `ExecutionModel<ArenaContext>` built at startup and invoked per REST trigger.
+Use agency orchestration patterns (`Sequence`, `Parallel`, `Voting`, `Conditional`) as the arena's orchestrator. The arena is an `ExecutionModel<ArenaContext>` built at startup and invoked per REST trigger.
 
 ## Alternatives Rejected
 
-- **Embed** — blocks orchestration inside a case binding's capability. Case model assumes one capability → one result, fights concurrency.
+- **Embed** — agency orchestration inside a case binding's capability. Case model assumes one capability → one result, fights concurrency.
 - **Layer** — arena wraps individual per-strategy case instances. Adds indirection without value; individual cases would be trivial.
 
 ## Consequences
