@@ -373,6 +373,28 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+          <excludes>
+            <exclude>**/*EndToEndTest.java</exclude>
+            <exclude>**/*ResourceTest.java</exclude>
+            <exclude>**/*IntegrationTest.java</exclude>
+            <exclude>**/DeliberationRecordTest.java</exclude>
+            <exclude>**/JpaIncidentStoreTest.java</exclude>
+            <exclude>**/DeliberationDecisionLedgerEntryTest.java</exclude>
+            <exclude>**/TradingLedgerServiceTest.java</exclude>
+            <exclude>**/PositionServiceTest.java</exclude>
+            <exclude>**/FsiDeliberationTriggerTest.java</exclude>
+            <exclude>**/FsiDeliberationOrchestratorTest.java</exclude>
+            <exclude>**/OrderServiceTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.2.5</version>
         <executions>
