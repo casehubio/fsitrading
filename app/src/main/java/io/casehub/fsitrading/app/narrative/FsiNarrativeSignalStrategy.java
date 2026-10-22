@@ -27,6 +27,10 @@ public class FsiNarrativeSignalStrategy extends AbstractNarrativeSignalStrategy 
 
     private static final String CASE_TYPE = "overnight-incident";
 
+    FsiNarrativeSignalStrategy() {
+        super(null, null);
+    }
+
     @Inject
     public FsiNarrativeSignalStrategy(EventStreamBus<DecisionSignal> signalBus,
                                        DecisionNarrativePipeline pipeline) {
