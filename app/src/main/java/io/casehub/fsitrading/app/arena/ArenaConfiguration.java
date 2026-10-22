@@ -1,13 +1,13 @@
 package io.casehub.fsitrading.app.arena;
 
-import io.casehub.blocks.agentic.AgentRef;
-import io.casehub.blocks.agentic.AgentResult;
-import io.casehub.blocks.agentic.RoutingCandidate;
-import io.casehub.blocks.agentic.model.ExecutionModel;
-import io.casehub.blocks.agentic.pattern.Patterns;
-import io.casehub.blocks.agentic.routing.RoutingContext;
-import io.casehub.blocks.agentic.routing.RoutingDecision;
-import io.casehub.blocks.routing.RoutingDecisionRecord;
+import io.casehub.agency.agentic.AgentRef;
+import io.casehub.agency.agentic.AgentResult;
+import io.casehub.agency.agentic.RoutingCandidate;
+import io.casehub.agency.agentic.model.ExecutionModel;
+import io.casehub.agency.agentic.pattern.Patterns;
+import io.casehub.agency.agentic.routing.RoutingContext;
+import io.casehub.agency.agentic.routing.RoutingDecision;
+import io.casehub.agency.routing.RoutingDecisionRecord;
 import io.casehub.eidos.api.AgentDescriptor;
 import io.casehub.fsitrading.FsiActorIdentity;
 import io.casehub.fsitrading.app.agent.AbstractStrategyAgent;

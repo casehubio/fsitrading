@@ -1,10 +1,10 @@
 package io.casehub.fsitrading.app.narrative;
 
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.LevelEvent;
-import io.casehub.blocks.summarisation.narrative.DecisionNarrative;
-import io.casehub.blocks.summarisation.narrative.DecisionNarrativePipeline;
-import io.casehub.blocks.summarisation.narrative.DecisionSignal;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.narrative.DecisionNarrative;
+import io.casehub.agency.summarisation.narrative.DecisionNarrativePipeline;
+import io.casehub.agency.summarisation.narrative.DecisionSignal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +40,7 @@ class NarrativeResourceTest {
                 "Chose ConservativeHedge over MomentumBurst",
                 List.of("routing-record-1"), 0.85, Instant.now());
         narrativeBus.publish(new LevelEvent<>(narrative, Instant.now().toEpochMilli(),
-                new io.casehub.blocks.summarisation.EventLevel("decision-narratives", 2), null));
+                new io.casehub.agency.summarisation.EventLevel("decision-narratives", 2), null));
 
         var result = resource.get("case-1");
         assertThat(result).hasSize(1);
@@ -54,9 +54,9 @@ class NarrativeResourceTest {
         var n2 = new DecisionNarrative("case-1", List.of("step-2"),
                 "Second step", List.of(), 0.9, Instant.now());
         narrativeBus.publish(new LevelEvent<>(n1, Instant.now().toEpochMilli(),
-                new io.casehub.blocks.summarisation.EventLevel("decision-narratives", 2), null));
+                new io.casehub.agency.summarisation.EventLevel("decision-narratives", 2), null));
         narrativeBus.publish(new LevelEvent<>(n2, Instant.now().toEpochMilli(),
-                new io.casehub.blocks.summarisation.EventLevel("decision-narratives", 2), null));
+                new io.casehub.agency.summarisation.EventLevel("decision-narratives", 2), null));
 
         var result = resource.get("case-1");
         assertThat(result).hasSize(2);

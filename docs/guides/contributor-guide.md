@@ -22,7 +22,7 @@
 | `casehub-platform-api` | L1: Identity | `ActorType`, `TenancyConstants` -- actor identity for ledger entries |
 | `casehub-platform-expression` | L1: Expression | JQ evaluator for case definition bindings |
 | `casehub-platform-config` | L1: Config | YAML-backed `PreferenceProvider` displacing `MockPreferenceProvider` |
-| `casehub-blocks` | Orchestration | `Patterns`, `ExecutionModel`, `AgentRef`, `RoutingStrategy` -- arena pipeline composition |
+| `casehub-agency` | Orchestration | `Patterns`, `ExecutionModel`, `AgentRef`, `RoutingStrategy` -- arena pipeline composition |
 | `casehub-engine-planning` | L5: Planning | Plan item store for case execution |
 | `casehub-engine-ledger` | L6: Trust routing | Trust-weighted routing with `WorkerDecisionEntry` per worker execution |
 | `casehub-ledger` | L4: Ledger | `LedgerEntryRepository`, `LedgerAttestation`, `AttestationVerdict` -- tamper-evident audit with Merkle chain |

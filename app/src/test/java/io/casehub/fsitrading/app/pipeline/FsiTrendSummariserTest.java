@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.EventLevel;
-import io.casehub.blocks.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.EventLevel;
+import io.casehub.agency.summarisation.LevelEvent;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.fsitrading.model.TrendDirection;
 import io.casehub.fsitrading.model.TrendSummary;

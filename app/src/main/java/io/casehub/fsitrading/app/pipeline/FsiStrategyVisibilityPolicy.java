@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.EventLevel;
+import io.casehub.agency.summarisation.EventLevel;
 import io.casehub.fsitrading.model.StrategyType;
 
 import java.util.Map;

@@ -2,12 +2,12 @@ package io.casehub.fsitrading.app.narrative;
 
 import io.casehub.api.spi.StepOutcomeEvent;
 import io.casehub.api.spi.routing.RoutingOutcome;
-import io.casehub.blocks.summarisation.EventStreamBus;
-import io.casehub.blocks.summarisation.LevelEvent;
-import io.casehub.blocks.summarisation.narrative.DecisionNarrativePipeline;
-import io.casehub.blocks.summarisation.narrative.DecisionSignal;
-import io.casehub.blocks.summarisation.narrative.RoutingDecision;
-import io.casehub.blocks.summarisation.narrative.StepOutcome;
+import io.casehub.agency.summarisation.EventStreamBus;
+import io.casehub.agency.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.narrative.DecisionNarrativePipeline;
+import io.casehub.agency.summarisation.narrative.DecisionSignal;
+import io.casehub.agency.summarisation.narrative.RoutingDecision;
+import io.casehub.agency.summarisation.narrative.StepOutcome;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -71,8 +71,8 @@ class FsiNarrativeSignalStrategyTest {
         strategy.onStepOutcome(event);
 
         var selection = captured.stream()
-                .filter(io.casehub.blocks.summarisation.narrative.ModelSelection.class::isInstance)
-                .map(io.casehub.blocks.summarisation.narrative.ModelSelection.class::cast)
+                .filter(io.casehub.agency.summarisation.narrative.ModelSelection.class::isInstance)
+                .map(io.casehub.agency.summarisation.narrative.ModelSelection.class::cast)
                 .findFirst().orElseThrow();
         assertThat(selection.modelTier()).isEqualTo("flagship");
         assertThat(selection.modelId()).isEqualTo("claude-opus-4");
@@ -111,8 +111,8 @@ class FsiNarrativeSignalStrategyTest {
         strategy.onStepOutcome(event);
 
         var cbr = captured.stream()
-                .filter(io.casehub.blocks.summarisation.narrative.CbrRetrieval.class::isInstance)
-                .map(io.casehub.blocks.summarisation.narrative.CbrRetrieval.class::cast)
+                .filter(io.casehub.agency.summarisation.narrative.CbrRetrieval.class::isInstance)
+                .map(io.casehub.agency.summarisation.narrative.CbrRetrieval.class::cast)
                 .findFirst().orElseThrow();
         assertThat(cbr.retrievedCount()).isEqualTo(3);
         assertThat(cbr.topSimilarity()).isEqualTo(0.85);

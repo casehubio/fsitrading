@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.deliberation.handler;
 
-import io.casehub.blocks.channel.AgentTask;
-import io.casehub.blocks.channel.ChannelAgentHandler;
-import io.casehub.blocks.channel.ChannelAgentRequest;
-import io.casehub.blocks.channel.ChannelMessageMeta;
+import io.casehub.agency.channel.AgentTask;
+import io.casehub.agency.channel.ChannelAgentHandler;
+import io.casehub.agency.channel.ChannelAgentRequest;
+import io.casehub.agency.channel.ChannelMessageMeta;
 import io.casehub.fsitrading.app.pipeline.FsiObservationCache;
 import io.casehub.fsitrading.model.OHLCV;
 import io.casehub.platform.api.identity.ActorType;

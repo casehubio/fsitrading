@@ -2,11 +2,11 @@ package io.casehub.fsitrading.app.deliberation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.casehub.blocks.conversation.CommonGroundAnalyser;
-import io.casehub.blocks.conversation.ConvergenceAnalyser;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.EpistemicRules;
+import io.casehub.agency.conversation.CommonGroundAnalyser;
+import io.casehub.agency.conversation.ConvergenceAnalyser;
+import io.casehub.agency.conversation.ConvergenceSignal;
+import io.casehub.agency.conversation.ConvergenceState;
+import io.casehub.agency.conversation.EpistemicRules;
 import io.casehub.fsitrading.FsiActorIdentity;
 import io.casehub.fsitrading.app.ledger.TradingLedgerService;
 import io.casehub.fsitrading.model.Instrument;
@@ -95,8 +95,8 @@ public class FsiDeliberationOrchestrator {
 
     @Transactional
     public void completeDeliberation(UUID recordId, ConvergenceSignal signal,
-                                      io.casehub.blocks.conversation.CommonGroundState commonGround,
-                                      io.casehub.blocks.conversation.ConversationState conversationState) {
+                                      io.casehub.agency.conversation.CommonGroundState commonGround,
+                                      io.casehub.agency.conversation.ConversationState conversationState) {
         var record = recordRepository.findById(recordId).orElseThrow(
                 () -> new IllegalStateException("DeliberationRecord not found: " + recordId));
 

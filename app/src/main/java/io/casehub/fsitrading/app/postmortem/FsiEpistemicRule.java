@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.conversation.ConversationPoint;
-import io.casehub.blocks.conversation.EpistemicRule;
-import io.casehub.blocks.conversation.EpistemicStatus;
-import io.casehub.blocks.conversation.ParticipantContext;
+import io.casehub.agency.conversation.ConversationPoint;
+import io.casehub.agency.conversation.EpistemicRule;
+import io.casehub.agency.conversation.EpistemicStatus;
+import io.casehub.agency.conversation.ParticipantContext;
 
 public final class FsiEpistemicRule implements EpistemicRule {
 

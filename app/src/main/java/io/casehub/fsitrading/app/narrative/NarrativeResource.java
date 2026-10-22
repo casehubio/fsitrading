@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.narrative;
 
-import io.casehub.blocks.summarisation.narrative.DecisionNarrative;
-import io.casehub.blocks.summarisation.narrative.DecisionNarrativePipeline;
+import io.casehub.agency.summarisation.narrative.DecisionNarrative;
+import io.casehub.agency.summarisation.narrative.DecisionNarrativePipeline;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

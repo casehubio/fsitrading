@@ -1,11 +1,11 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.conversation.CommonGroundState;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.ConversationState;
-import io.casehub.blocks.conversation.EpistemicStatus;
-import io.casehub.blocks.conversation.GroundedFact;
+import io.casehub.agency.conversation.CommonGroundState;
+import io.casehub.agency.conversation.ConvergenceSignal;
+import io.casehub.agency.conversation.ConvergenceState;
+import io.casehub.agency.conversation.ConversationState;
+import io.casehub.agency.conversation.EpistemicStatus;
+import io.casehub.agency.conversation.GroundedFact;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

@@ -46,7 +46,7 @@ Mutable state flowing through the composition:
 |---|---|---|
 | `marketSignal` | Trigger (input) | `MarketSignal` |
 | `selectedAgents` | Supervisor | `List<RoutingCandidate>` |
-| `routingDecisions` | Supervisor | `List<io.casehub.blocks.routing.RoutingDecisionRecord>` — one per selected candidate |
+| `routingDecisions` | Supervisor | `List<io.casehub.agency.routing.RoutingDecisionRecord>` — one per selected candidate |
 | `evaluations` | Parallel | `Map<StrategyType, StrategyResponse>` |
 | `consensus` | Voting | `ConsensusResult` |
 | `riskAssessment` | Risk assessment | `RiskAssessment` |
@@ -207,7 +207,7 @@ Implements blocks' `RoutingStrategy<ArenaContext>`. Multi-select adapter that co
 6. **CBR routing:** Calls `CbrAgentRoutingStrategy.select(context, candidates)`. Same single-to-multi conversion as LLM. If CBR returns `unresolvable` (insufficient history), the signal is omitted.
 7. **Blending:** Computes blended score per candidate across all 6 signals using configurable weights (default: equal weight for present signals). Signals that were omitted (unresolvable) are excluded from the weight normalization.
 8. **Multi-select:** Selects all candidates with blended score ≥ configurable minimum (default 0.3). Returns `RoutingDecision.Selected(List<AgentRef>)`
-9. Records one `io.casehub.blocks.routing.RoutingDecisionRecord` per selected candidate on `ArenaContext.routingDecisions`. Each record: `capabilityTag = "strategy-evaluation"`, `workerId = agentRef.name()`, `trustScoreAtRouting = blendedScore`, `thresholdApplied = minimumThreshold`, `evidenceEntryId = null` (no ledger entry at routing time; populated later by `LedgerExecutionListener`)
+9. Records one `io.casehub.agency.routing.RoutingDecisionRecord` per selected candidate on `ArenaContext.routingDecisions`. Each record: `capabilityTag = "strategy-evaluation"`, `workerId = agentRef.name()`, `trustScoreAtRouting = blendedScore`, `thresholdApplied = minimumThreshold`, `evidenceEntryId = null` (no ledger entry at routing time; populated later by `LedgerExecutionListener`)
 
 The `AgentRoutingStrategy` interface (`select()`) is single-select by design — it returns one winner. For the arena's multi-select needs, `FsiArenaRouting` treats LLM and CBR results as binary scoring signals (1.0/0.0) that participate in blending alongside the 4 continuous signal-provider scores. All 6 routing strategies are invoked and influence candidate selection: 4 (`RoutingSignalProvider` beans) provide continuous per-candidate scores (0.0–1.0), 2 (`AgentRoutingStrategy` implementations) provide binary endorsements (1.0 for the selected candidate, 0.0 for others). With equal weights, a binary endorsement contributes ≈1/6 of the blended score — sufficient to push a marginal candidate above or below the selection threshold, but without the score gradation of continuous signals. **C1 limitation:** LLM/CBR signals are binary, not graduated. Genuine multi-select scoring (confidence-ranked candidate lists) is a C6 improvement when the CBR pipeline supports graduated scoring.
 
@@ -237,7 +237,7 @@ All platform-provided. fsitrading supplies configuration only.
 
 ### 3.5 Dependency Note
 
-The routing bridge depends only on public SPI types: `RoutingSignalAssembler`, `AgentRoutingContext`, `AgentCandidate`, `RoutingSignalProvider`, `AgentRoutingStrategy` — all in `io.casehub.api.spi.routing` (engine-api). No dependency on engine-internal packages. The `RoutingSignalProvider` implementations (`DispositionAwareRouting`, etc.) are in `io.casehub.blocks.routing.agent` (blocks). `LlmAgentRoutingStrategy` and `CbrAgentRoutingStrategy` are also in `io.casehub.blocks.routing.agent` — they implement `AgentRoutingStrategy` (single-select) rather than `RoutingSignalProvider` (per-candidate scoring), so `FsiArenaRouting` invokes them directly (§3.1 steps 5–6) and converts their results to scoring signals for blending.
+The routing bridge depends only on public SPI types: `RoutingSignalAssembler`, `AgentRoutingContext`, `AgentCandidate`, `RoutingSignalProvider`, `AgentRoutingStrategy` — all in `io.casehub.api.spi.routing` (engine-api). No dependency on engine-internal packages. The `RoutingSignalProvider` implementations (`DispositionAwareRouting`, etc.) are in `io.casehub.agency.routing.agent` (blocks). `LlmAgentRoutingStrategy` and `CbrAgentRoutingStrategy` are also in `io.casehub.agency.routing.agent` — they implement `AgentRoutingStrategy` (single-select) rather than `RoutingSignalProvider` (per-candidate scoring), so `FsiArenaRouting` invokes them directly (§3.1 steps 5–6) and converts their results to scoring signals for blending.
 
 ---
 

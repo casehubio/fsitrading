@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.conversation.ConversationProjection;
+import io.casehub.agency.conversation.ConversationProjection;
 
 public class IncidentConversationProjection extends ConversationProjection {
 

@@ -1,10 +1,10 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.conversation.CommonGroundState;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.EpistemicStatus;
-import io.casehub.blocks.conversation.GroundedFact;
+import io.casehub.agency.conversation.CommonGroundState;
+import io.casehub.agency.conversation.ConvergenceSignal;
+import io.casehub.agency.conversation.ConvergenceState;
+import io.casehub.agency.conversation.EpistemicStatus;
+import io.casehub.agency.conversation.GroundedFact;
 import io.casehub.fsitrading.model.OrderSide;
 import io.casehub.fsitrading.model.OrderType;
 import org.junit.jupiter.api.BeforeEach;

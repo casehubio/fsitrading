@@ -1,10 +1,10 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.channel.ChannelAgentHandler;
-import io.casehub.blocks.channel.ChannelAgentRequest;
-import io.casehub.blocks.channel.ChannelAgentDispatcher;
-import io.casehub.blocks.channel.ChannelMessageMeta;
-import io.casehub.blocks.channel.AgentTask;
+import io.casehub.agency.channel.ChannelAgentHandler;
+import io.casehub.agency.channel.ChannelAgentRequest;
+import io.casehub.agency.channel.ChannelAgentDispatcher;
+import io.casehub.agency.channel.ChannelMessageMeta;
+import io.casehub.agency.channel.AgentTask;
 import io.casehub.platform.api.identity.ActorType;
 import io.casehub.qhorus.api.message.MessageDispatch;
 import io.casehub.qhorus.api.message.MessageType;

@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.postmortem;
 
-import io.casehub.blocks.conversation.ConversationRendererConfig;
+import io.casehub.agency.conversation.ConversationRendererConfig;
 
 import java.util.Map;
 import java.util.Set;

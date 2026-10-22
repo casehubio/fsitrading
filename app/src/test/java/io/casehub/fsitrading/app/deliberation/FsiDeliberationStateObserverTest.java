@@ -1,10 +1,10 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.agentic.model.DriverEvent;
-import io.casehub.blocks.channel.ChannelMessageMeta;
-import io.casehub.blocks.conversation.ConvergenceSignal;
-import io.casehub.blocks.conversation.ConvergenceState;
-import io.casehub.blocks.conversation.EpistemicRules;
+import io.casehub.agency.agentic.model.DriverEvent;
+import io.casehub.agency.channel.ChannelMessageMeta;
+import io.casehub.agency.conversation.ConvergenceSignal;
+import io.casehub.agency.conversation.ConvergenceState;
+import io.casehub.agency.conversation.EpistemicRules;
 import io.casehub.qhorus.api.gateway.MessageObserver;
 import io.casehub.qhorus.api.gateway.MessageReceivedEvent;
 import io.casehub.qhorus.api.message.MessageType;

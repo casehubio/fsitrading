@@ -1,7 +1,7 @@
 package io.casehub.fsitrading.app.pipeline;
 
-import io.casehub.blocks.summarisation.Compactor;
-import io.casehub.blocks.summarisation.LevelEvent;
+import io.casehub.agency.summarisation.Compactor;
+import io.casehub.agency.summarisation.LevelEvent;
 import io.casehub.fsitrading.model.PriceTick;
 
 import java.math.BigDecimal;

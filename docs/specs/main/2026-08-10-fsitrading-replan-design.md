@@ -56,7 +56,7 @@ Implemented in June 2026. Working vertical slice: domain model, order lifecycle,
 **Scope:**
 - **#6** — Remove `-deployment` deps, add Jandex arc config, fix `application.properties` for CDI bean discovery
 - **#14** — Add `@Transactional` to `SimulatedOrderExecutor.executeDecision()` for dual-datasource atomicity
-- **Maven dependencies** — Add `casehub-blocks`, `casehub-neocortex-memory-api`, `casehub-neocortex-memory`, `casehub-neocortex-memory-inmem` (test scope) to `pom.xml`. Required by C1 (orchestration, routing, memory) and C6 (CBR).
+- **Maven dependencies** — Add `casehub-agency`, `casehub-neocortex-memory-api`, `casehub-neocortex-memory`, `casehub-neocortex-memory-inmem` (test scope) to `pom.xml`. Required by C1 (orchestration, routing, memory) and C6 (CBR).
 - **ARC42STORIES.MD** — Rewrite to reflect the new vertical-slice plan. Preserve C1-C3 "Done" history. Replace §4.3+ (journey/chapter sequencing, layer taxonomy, Layer×Chapter matrix) with the new C0-C6 structure.
 - **Triage open infrastructure issues** — #1/#9 (CI workflow, duplicates), #2 (parent BOM), #3/#11 (build infra, duplicates), #4/#10 (issue-workflow, duplicates), #5 (ARC42STORIES stub — superseded by rewrite). Close obsolete, fold relevant into C0.
 - Verify build: `JAVA_HOME=$(/usr/libexec/java_home -v 26) mvn --batch-mode install`
@@ -432,7 +432,7 @@ app/src/main/webui/
   src/index.ts, panels/, dashboards/trading-desk.yaml, dashboards/ops-centre.yaml
 ```
 
-Maven unpacks `casehub-pages-npm` + `casehub-blocks-ui-npm` SNAPSHOTs. Quinoa builds via esbuild.
+Maven unpacks `casehub-pages-npm` + `casehub-agency-ui-npm` SNAPSHOTs. Quinoa builds via esbuild.
 
 ### 5.2 Trading Desk Layout
 

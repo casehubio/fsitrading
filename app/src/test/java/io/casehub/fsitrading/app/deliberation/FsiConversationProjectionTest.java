@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.deliberation;
 
-import io.casehub.blocks.channel.ChannelMessageMeta;
+import io.casehub.agency.channel.ChannelMessageMeta;
 import io.casehub.qhorus.api.message.MessageType;
 import io.casehub.qhorus.api.message.MessageView;
 import org.junit.jupiter.api.Test;

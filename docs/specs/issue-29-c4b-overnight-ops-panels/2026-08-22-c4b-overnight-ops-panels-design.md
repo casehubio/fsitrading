@@ -16,7 +16,7 @@ C4b bridges these: register blocks-ui components, wire data sources to C4a endpo
 
 ## §1 blocks-ui Dependency
 
-Add `@casehubio/blocks-ui-work`, `@casehubio/blocks-ui-case`, and `@casehubio/blocks-ui-core` npm packages using the same Maven unpack + `file:` protocol link pattern as pages packages.
+Add `@casehubio/agency-ui-work`, `@casehubio/agency-ui-case`, and `@casehubio/agency-ui-core` npm packages using the same Maven unpack + `file:` protocol link pattern as pages packages.
 
 ### Maven (app/pom.xml)
 
@@ -25,8 +25,8 @@ Add the blocks-ui npm Maven artifact:
 ```xml
 <dependency>
   <groupId>io.casehub</groupId>
-  <artifactId>casehub-blocks-ui-npm</artifactId>
-  <version>${casehub-blocks.version}</version>
+  <artifactId>casehub-agency-ui-npm</artifactId>
+  <version>${casehub-agency.version}</version>
   <type>tar.gz</type>
   <classifier>npm</classifier>
   <scope>provided</scope>
@@ -40,9 +40,9 @@ The existing `maven-dependency-plugin` unpack execution extracts npm packages in
 ```json
 {
   "dependencies": {
-    "@casehubio/blocks-ui-core": "file:../../.casehub-packages/blocks-ui-core",
-    "@casehubio/blocks-ui-work": "file:../../.casehub-packages/blocks-ui-work",
-    "@casehubio/blocks-ui-case": "file:../../.casehub-packages/blocks-ui-case"
+    "@casehubio/agency-ui-core": "file:../../.casehub-packages/blocks-ui-core",
+    "@casehubio/agency-ui-work": "file:../../.casehub-packages/blocks-ui-work",
+    "@casehubio/agency-ui-case": "file:../../.casehub-packages/blocks-ui-case"
   }
 }
 ```
@@ -52,14 +52,14 @@ The existing `maven-dependency-plugin` unpack execution extracts npm packages in
 Import the blocks-ui component modules to trigger `customElements.define()`:
 
 ```typescript
-import "@casehubio/blocks-ui-work/work-item-inbox";
-import "@casehubio/blocks-ui-work/work-item-detail";
-import "@casehubio/blocks-ui-work/approval-gate";
-import "@casehubio/blocks-ui-work/sla-indicator";
-import "@casehubio/blocks-ui-work/sla-breach-policy";
-import "@casehubio/blocks-ui-case/case-explorer";
-import "@casehubio/blocks-ui-work/notification-inbox";
-import "@casehubio/blocks-ui-core/blocks-timeline";
+import "@casehubio/agency-ui-work/work-item-inbox";
+import "@casehubio/agency-ui-work/work-item-detail";
+import "@casehubio/agency-ui-work/approval-gate";
+import "@casehubio/agency-ui-work/sla-indicator";
+import "@casehubio/agency-ui-work/sla-breach-policy";
+import "@casehubio/agency-ui-case/case-explorer";
+import "@casehubio/agency-ui-work/notification-inbox";
+import "@casehubio/agency-ui-core/blocks-timeline";
 ```
 
 The exact import paths depend on how blocks-ui packages export their components. Verify against the actual package entry points during implementation.
@@ -496,7 +496,7 @@ V107 follows sequentially after V106 (C4a's `fsi_incident_timeline`).
 
 | File | Action | Description |
 |------|--------|-------------|
-| `app/pom.xml` | Modify | Add casehub-blocks-ui-npm dependency + unpack config |
+| `app/pom.xml` | Modify | Add casehub-agency-ui-npm dependency + unpack config |
 
 ---
 

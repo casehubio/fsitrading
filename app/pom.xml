@@ -222,7 +222,7 @@
     <!-- Agentic orchestration patterns, conversation protocol, summarisation, AI routing -->
     <dependency>
       <groupId>io.casehub</groupId>
-      <artifactId>casehub-blocks</artifactId>
+      <artifactId>casehub-agency</artifactId>
       <version>${casehub.version}</version>
     </dependency>
 

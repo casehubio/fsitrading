@@ -1,6 +1,6 @@
 package io.casehub.fsitrading.app.resource;
 
-import io.casehub.blocks.agentic.model.ExecutionModel;
+import io.casehub.agency.agentic.model.ExecutionModel;
 import io.casehub.fsitrading.app.arena.ArenaContext;
 import io.casehub.fsitrading.app.model.ArenaRunEntity;
 import io.casehub.fsitrading.model.MarketSignal;
@@ -78,7 +78,7 @@ public class EvaluationResource  {
         try {
             var backend = arenaModel.backend() != null
                     ? arenaModel.backend()
-                    : io.casehub.blocks.agentic.model.ExecutionBackend.<ArenaContext>reactive();
+                    : io.casehub.agency.agentic.model.ExecutionBackend.<ArenaContext>reactive();
             backend.execute(arenaModel, ctx)
                     .await().atMost(java.time.Duration.ofMinutes(5));
 

@@ -1,6 +1,6 @@
 ## D0: Use blocks-ui components — no custom replacements
 
-**Choice:** All 8 C4 panels use existing blocks-ui components registered via `hostPanel()`. Add `@casehubio/blocks-ui-*` npm dependency to `package.json` using the same `file:` protocol link pattern as pages packages.
+**Choice:** All 8 C4 panels use existing blocks-ui components registered via `hostPanel()`. Add `@casehubio/agency-ui-*` npm dependency to `package.json` using the same `file:` protocol link pattern as pages packages.
 **Alternatives:**
 - Build custom Lit components for fsitrading — violates platform coherence; the components already exist, are tested, and are used by 3 other CaseHub apps
 **Rationale:** Issue #29 explicitly says "wire blocks-ui panels." These are production-grade platform components: `work-item-inbox` has 11 test files, SSE-based live updates, keyboard shortcuts, accessibility mixins. Building custom replacements duplicates effort and diverges from platform patterns.
@@ -11,7 +11,7 @@
 
 ## D1: Blocks-ui components via hostPanel — no combined custom panel
 
-**Choice:** Register `work-item-inbox`, `work-item-detail`, and `approval-gate` as separate blocks-ui components via `hostPanel()`. Each is an independent panel in the dock-workbench. Selection events communicated via `pages-event` bus (`emitPagesEvent`/`onPagesEvent` from `@casehubio/blocks-ui-core`).
+**Choice:** Register `work-item-inbox`, `work-item-detail`, and `approval-gate` as separate blocks-ui components via `hostPanel()`. Each is an independent panel in the dock-workbench. Selection events communicated via `pages-event` bus (`emitPagesEvent`/`onPagesEvent` from `@casehubio/agency-ui-core`).
 **Alternatives:**
 - Combined custom `fsi-work-item-panel` — violates D0; builds a monolithic custom replacement for three production platform components
 - `work-item-workbench` (blocks-ui pre-built composition) — handles inbox→detail selection internally; may be appropriate if dock-workbench zone layout doesn't need separate panels

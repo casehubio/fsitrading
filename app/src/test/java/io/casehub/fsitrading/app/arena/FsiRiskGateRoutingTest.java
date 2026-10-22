@@ -1,9 +1,9 @@
 package io.casehub.fsitrading.app.arena;
 
-import io.casehub.blocks.agentic.AgentRef;
-import io.casehub.blocks.agentic.RoutingCandidate;
-import io.casehub.blocks.agentic.routing.RoutingContext;
-import io.casehub.blocks.agentic.routing.RoutingDecision;
+import io.casehub.agency.agentic.AgentRef;
+import io.casehub.agency.agentic.RoutingCandidate;
+import io.casehub.agency.agentic.routing.RoutingContext;
+import io.casehub.agency.agentic.routing.RoutingDecision;
 import io.casehub.fsitrading.model.ApprovalOutcome;
 import io.casehub.fsitrading.model.ConsensusResult;
 import io.casehub.fsitrading.model.InstrumentConsensus;
