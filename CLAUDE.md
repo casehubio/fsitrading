@@ -120,7 +120,7 @@ This is an **application layer**, not a framework. The foundation provides coord
 
 1. **CBR (Case-Based Reasoning)** — design market event response as a CBR system from day one. Past market incidents (flash crashes, liquidity events, overnight gaps) feed future detection and response. Use `CaseRetriever` SPI even though the RAG pipeline is still maturing. Plan for Retrieve/Reuse/Revise/Retain. Read `../parent/docs/CBR-CAPABILITY.md`.
 
-2. **casehub-agency** — the reusable building blocks repo. Design trading patterns (risk approval gate, strategy debate, escalation to human trader, multi-agent consensus on position sizing) as agency candidates. Implement locally first, then propose extraction.
+2. **casehub-agency** — the reusable building agency repo. Design trading patterns (risk approval gate, strategy debate, escalation to human trader, multi-agent consensus on position sizing) as agency candidates. Implement locally first, then propose extraction.
 
 3. **AI fusion** — think beyond rule-based agents. Where can LLM agents add value? Market narrative synthesis? Anomaly explanation? Natural language trade rationale? Sentiment analysis from news feeds? Design SPIs that allow LLM-powered and rule-based agents to coexist with the same trust model.
 
