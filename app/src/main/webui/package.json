@@ -20,7 +20,7 @@
     "@casehubio/agency-ui-sla-breach-policy": "file:.casehub-packages/packages/sla-breach-policy",
     "@casehubio/agency-ui-case-explorer": "file:.casehub-packages/packages/case-explorer",
     "@casehubio/agency-ui-notification-inbox": "file:.casehub-packages/packages/notification-inbox",
-    "@casehubio/agency-ui-blocks-timeline": "file:.casehub-packages/packages/blocks-timeline",
+    "@casehubio/mosaic-agency-timeline": "file:.casehub-packages/packages/agency-timeline",
     "@casehubio/agency-ui-similarity-panel": "file:.casehub-packages/packages/similarity-panel",
     "@casehubio/agency-ui-compliance-summary": "file:.casehub-packages/packages/compliance-summary",
     "@casehubio/agency-ui-gdpr-erasure-action": "file:.casehub-packages/packages/gdpr-erasure-action",

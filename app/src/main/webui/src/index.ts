@@ -9,7 +9,7 @@ import "@casehubio/agency-ui-sla-indicator";
 import "@casehubio/agency-ui-sla-breach-policy";
 import "@casehubio/agency-ui-case-explorer";
 import "@casehubio/agency-ui-notification-inbox";
-import "@casehubio/agency-ui-blocks-timeline";
+import "@casehubio/mosaic-agency-timeline";
 import "@casehubio/agency-ui-similarity-panel";
 import "@casehubio/agency-ui-compliance-summary";
 import "@casehubio/agency-ui-gdpr-erasure-action";
