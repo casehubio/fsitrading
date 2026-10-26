@@ -1,5 +1,6 @@
 package io.casehub.fsitrading.app.situation;
 
+import io.casehub.ops.api.deployment.PatternTrigger;
 import io.casehub.ops.deployment.DeploymentGoalLoader;
 import org.junit.jupiter.api.Test;
 
@@ -26,17 +27,17 @@ class FsiTradingDeploymentYamlTest {
 
         assertThat(goals.adaptations().get(0).name())
                 .isEqualTo("scale-risk-on-volatility");
-        assertThat(goals.adaptations().get(0).trigger().situation())
+        assertThat(((PatternTrigger) goals.adaptations().get(0).trigger()).situation())
                 .isEqualTo("fsitrading.volatility-spike");
 
         assertThat(goals.adaptations().get(1).name())
                 .isEqualTo("tighten-trust-on-anomaly");
-        assertThat(goals.adaptations().get(1).trigger().situation())
+        assertThat(((PatternTrigger) goals.adaptations().get(1).trigger()).situation())
                 .isEqualTo("fsitrading.market-anomaly");
 
         assertThat(goals.adaptations().get(2).name())
                 .isEqualTo("add-forensics-on-breach");
-        assertThat(goals.adaptations().get(2).trigger().situation())
+        assertThat(((PatternTrigger) goals.adaptations().get(2).trigger()).situation())
                 .isEqualTo("fsitrading.active-breach");
     }
 
