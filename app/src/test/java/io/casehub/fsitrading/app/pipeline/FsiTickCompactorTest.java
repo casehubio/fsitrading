@@ -26,7 +26,7 @@ class FsiTickCompactorTest {
 
     @Test
     void deduplicatesSameInstrumentSameSecond() {
-        var now = Instant.now();
+        var now = Instant.ofEpochSecond(1_700_000_000);
         var tick1 = le(new PriceTick("AAPL", bd(175.00), bd(1000), now, false));
         var tick2 = le(new PriceTick("AAPL", bd(175.50), bd(2000), now.plusMillis(100), false));
 
