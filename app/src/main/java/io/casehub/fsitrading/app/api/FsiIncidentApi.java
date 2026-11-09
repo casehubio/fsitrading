@@ -11,7 +11,6 @@ import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.QueryParam;
 
 import java.util.UUID;
 
@@ -26,50 +25,44 @@ public class FsiIncidentApi {
 
     @PlatformQuery("List incidents")
     @RestPath("/")
-    public Object listIncidents(@QueryParam("limit") Integer limit) {
-        return incidentResource.list(limit);
+    public List<IncidentRecord> listIncidents(Integer limit) {
+        return incidentResource.list(limit != null ? limit : 20);
     }
 
-    @PlatformQuery("Get incident details")
+    @PlatformQuery("Get an incident by case ID")
     @RestPath("/{caseId}")
-    public Object getIncident(@PathParam UUID caseId) {
+    public IncidentRecord getIncident(@PathParam UUID caseId) {
         return incidentResource.get(caseId);
     }
 
     @PlatformQuery("Get incident timeline")
     @RestPath("/{caseId}/timeline")
-    public Object getTimeline(@PathParam UUID caseId) {
+    public List<IncidentTimelineRecord> getTimeline(@PathParam UUID caseId) {
         return incidentResource.timeline(caseId);
     }
 
     @PlatformQuery("Get incident severity summary")
     @RestPath("/summary/severity")
-    public Object summarySeverity() {
+    public List<IncidentSummary.SeverityCount> summarySeverity() {
         return incidentResource.summarySeverity();
     }
 
     @PlatformQuery("List work items")
     @RestPath("/work-items")
-    public Object listWorkItems(@QueryParam("type") String type,
-                                 @QueryParam("status") String status) {
+    public List<WorkItem> listWorkItems(String type, String status) {
         return workItemResource.list(type, null, status);
     }
 
     @PlatformMutation("Resolve a work item")
     @RestPath("/work-items/{id}/resolve")
-    public Object resolveWorkItem(@PathParam UUID id, WorkItemResource.ResolveRequest request) {
-        return workItemResource.resolve(id, request).getEntity();
+    public WorkItem resolveWorkItem(@PathParam UUID id, ResolveRequest request) {
+        return (WorkItem) workItemResource.resolve(id, request).getEntity();
     }
 
-    @PlatformQuery("Get decision narrative for an incident")
+    @PlatformQuery("Get decision narratives for a case")
     @RestPath("/{caseId}/narrative")
-    public Object getNarrative(@PathParam String caseId) {
+    public List<DecisionNarrative> getNarrative(String caseId) {
         return narrativeResource.get(caseId);
     }
 
-    @PlatformQuery("Get post-mortem for an incident")
-    @RestPath("/{caseId}/postmortem")
-    public Object getPostMortem(@PathParam UUID caseId) {
-        return postMortemResource.getPostMortem(caseId).getEntity();
-    }
 }

@@ -5,12 +5,10 @@ import io.casehub.fsitrading.app.resource.IncidentHistoryResource;
 import io.casehub.fsitrading.app.resource.KpiResource;
 import io.casehub.fsitrading.app.resource.SimilarIncidentResource;
 import io.casehub.platform.api.mcp.McpDomain;
-import io.casehub.platform.api.mcp.PlatformMutation;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.QueryParam;
 
 import java.util.UUID;
 
@@ -24,26 +22,26 @@ public class FsiKpiApi {
     @Inject SimilarIncidentResource similarIncidentResource;
 
     @PlatformQuery("Get KPI dashboard metrics")
-    @RestPath("/")
-    public Object getKpis() {
+    @RestPath("/summary")
+    public KpiSummary getKpis() {
         return kpiResource.getKpis();
     }
 
-    @PlatformQuery("Get alert heatmap data")
+    @PlatformQuery("Get strategy-instrument heatmap")
     @RestPath("/heatmap")
-    public Object getHeatmap() {
+    public List<HeatmapCell> getHeatmap() {
         return kpiResource.getHeatmap();
     }
 
     @PlatformQuery("Get incident history")
     @RestPath("/incident-history")
-    public Object getIncidentHistory() {
+    public CbrScanResult getIncidentHistory() {
         return incidentHistoryResource.history(20, null, "default");
     }
 
-    @PlatformQuery("Find similar past incidents")
-    @RestPath("/similar-incidents")
-    public Object findSimilarIncidents(@QueryParam("caseId") UUID caseId) {
-        return similarIncidentResource.findSimilar(caseId != null ? caseId.toString() : null, "default");
+    @PlatformQuery("Find similar incidents")
+    @RestPath("/similar/{caseId}")
+    public List<PrecedentRecord> findSimilarIncidents(@PathParam UUID caseId) {
+        return similarIncidentResource.findSimilar(caseId.toString(), "default");
     }
 }

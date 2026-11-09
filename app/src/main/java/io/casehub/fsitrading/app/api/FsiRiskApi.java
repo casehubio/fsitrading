@@ -28,24 +28,22 @@ public class FsiRiskApi {
         this.riskThresholds = riskThresholds;
     }
 
-    @PlatformMutation("Assess risk for instrument")
+    @PlatformQuery("Assess risk for an instrument under a scenario")
     @RestPath("/assess")
-    public Object assess(AssessRequest request) {
+    public RiskResult assess(AssessRequest request) {
         return riskEngine.assess(request.instrument(), request.scenario());
     }
 
-    @PlatformMutation("Evaluate risk gate for trade approval")
+    @PlatformMutation("Evaluate risk gate for a trading action")
     @RestPath("/gate")
-    public Object gate(GateRequest request) {
-        return riskGate.evaluate(request.instrument(), request.action(),
-                request.side(), request.riskLevel());
+    public GateResult gate(GateRequest request) {
+        return riskGate.evaluate(request.instrument(), request.action(), request.side(), request.riskLevel());
     }
 
-    @PlatformMutation("Adjust runtime risk thresholds")
-    @RestPath("/adjustThresholds")
-    public Object adjustThresholds(AdjustThresholdsRequest request) {
-        return riskThresholds.adjust(request.instrument(), request.thresholdType(),
-                request.newValue());
+    @PlatformMutation("Adjust risk thresholds for an instrument")
+    @RestPath("/thresholds")
+    public ThresholdAdjustment adjustThresholds(AdjustThresholdsRequest request) {
+        return riskThresholds.adjust(request.instrument(), request.thresholdType(), request.newValue());
     }
 
     public record AssessRequest(String instrument, String scenario) {}

@@ -1,6 +1,9 @@
 package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.OrderResource;
+import io.casehub.fsitrading.app.view.OrderView;
+import io.casehub.fsitrading.app.view.ReconcileResultView;
+import io.casehub.fsitrading.app.view.ReleaseResultView;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
 import io.casehub.platform.api.mcp.PlatformQuery;
@@ -21,32 +24,34 @@ public class FsiOrderApi {
 
     @PlatformQuery("List all orders")
     @RestPath("/")
-    public Object listAll() {
-        return resource.listAll();
+    public List<OrderView> listAll() {
+        return resource.listAll().stream().map(OrderView::toView).toList();
     }
 
     @PlatformQuery("List orders by strategy")
     @RestPath("/strategy/{strategyId}")
-    public Object listByStrategy(@PathParam UUID strategyId) {
-        return resource.listByStrategy(strategyId);
+    public List<OrderView> listByStrategy(@PathParam UUID strategyId) {
+        return resource.listByStrategy(strategyId).stream().map(OrderView::toView).toList();
     }
 
-    @io.casehub.platform.api.mcp.PlatformMutation("Halt new orders for instrument")
-    @io.casehub.platform.api.mcp.RestPath("/halt")
-    public Object halt(HaltRequest request) {
-        return semaphoreService.halt(request.reason(), request.scope(), request.instrument(), request.playbookInstanceId());
+    @PlatformMutation("Halt order execution")
+    @RestPath("/halt")
+    public SemaphoreTicket halt(HaltRequest request) {
+        return semaphoreService.halt(request.scope(), request.playbookInstanceId());
     }
 
-    @io.casehub.platform.api.mcp.PlatformMutation("Release order halt")
-    @io.casehub.platform.api.mcp.RestPath("/release")
-    public Object release(ReleaseRequest request) {
-        return semaphoreService.release(request.ticketId());
+    @PlatformMutation("Release an order halt")
+    @RestPath("/release")
+    public ReleaseResultView release(ReleaseRequest request) {
+        boolean released = semaphoreService.release(request.ticketId());
+        return new ReleaseResultView(released, request.ticketId());
     }
 
-    @io.casehub.platform.api.mcp.PlatformMutation("Reconcile orders after incident")
-    @io.casehub.platform.api.mcp.RestPath("/reconcile")
-    public Object reconcile(ReconcileRequest request) {
-        return semaphoreService.releaseAllForPlaybook(request.playbookInstanceId());
+    @PlatformMutation("Reconcile all halts for a playbook")
+    @RestPath("/reconcile")
+    public ReconcileResultView reconcile(ReconcileRequest request) {
+        int count = semaphoreService.releaseAllForPlaybook(request.playbookInstanceId());
+        return new ReconcileResultView(count, request.playbookInstanceId());
     }
 
     public record HaltRequest(String reason, String scope, String instrument, String playbookInstanceId) {}

@@ -10,7 +10,6 @@ import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.QueryParam;
 
 import java.util.UUID;
 
@@ -24,32 +23,31 @@ public class FsiComplianceApi {
 
     @PlatformQuery("Get compliance status")
     @RestPath("/status")
-    public Object complianceStatus() {
+    public List<ComplianceStatusRecord> complianceStatus() {
         return complianceResource.status();
     }
 
     @PlatformQuery("List deliberations")
     @RestPath("/deliberations")
-    public Object listDeliberations(@QueryParam("instrument") String instrument,
-                                     @QueryParam("limit") Integer limit) {
+    public List<DeliberationRecord> listDeliberations(String instrument, Integer limit) {
         return deliberationResource.list(instrument, null, null);
     }
 
-    @PlatformQuery("Get deliberation by ID")
+    @PlatformQuery("Get a deliberation by ID")
     @RestPath("/deliberations/{id}")
-    public Object getDeliberation(@PathParam UUID id) {
-        return deliberationResource.getById(id).getEntity();
+    public DeliberationRecord getDeliberation(@PathParam UUID id) {
+        return (DeliberationRecord) deliberationResource.getById(id).getEntity();
     }
 
-    @PlatformMutation("Trigger manual deliberation")
+    @PlatformMutation("Trigger a deliberation for an instrument")
     @RestPath("/deliberations/trigger")
-    public Object triggerDeliberation(@QueryParam("instrument") String instrument) {
-        return deliberationResource.manualTrigger(instrument).getEntity();
+    public UUID triggerDeliberation(String instrument) {
+        return (UUID) deliberationResource.manualTrigger(instrument).getEntity();
     }
 
-    @PlatformMutation("Request GDPR erasure")
+    @PlatformMutation("Erase personal data (GDPR)")
     @RestPath("/gdpr/erase")
-    public Object gdprErase(GdprErasureResource.ErasureRequest request) {
-        return gdprResource.erase(request).getEntity();
+    public FsiErasureResult gdprErase(ErasureRequest request) {
+        return (FsiErasureResult) gdprResource.erase(request).getEntity();
     }
 }

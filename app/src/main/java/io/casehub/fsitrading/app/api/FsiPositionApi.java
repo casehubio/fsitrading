@@ -1,6 +1,7 @@
 package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.PositionResource;
+import io.casehub.fsitrading.app.view.PositionView;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
 import io.casehub.platform.api.mcp.PlatformQuery;
@@ -21,22 +22,20 @@ public class FsiPositionApi {
 
     @PlatformQuery("List all positions")
     @RestPath("/")
-    public Object listAll() {
-        return resource.listAll();
+    public List<PositionView> listAll() {
+        return resource.listAll().stream().map(PositionView::toView).toList();
     }
 
     @PlatformQuery("List positions by strategy")
     @RestPath("/strategy/{strategyId}")
-    public Object listByStrategy(@PathParam UUID strategyId) {
-        return resource.listByStrategy(strategyId);
+    public List<PositionView> listByStrategy(@PathParam UUID strategyId) {
+        return resource.listByStrategy(strategyId).stream().map(PositionView::toView).toList();
     }
 
-    @io.casehub.platform.api.mcp.PlatformMutation("Close a position by submitting a counter-order")
-    @io.casehub.platform.api.mcp.RestPath("/close")
-    public Object close(CloseRequest request) {
-        return orderExecutionService.submit(request.instrument(),
-                                            io.casehub.fsitrading.model.OrderSide.SELL, request.quantity(),
-                                            io.casehub.fsitrading.model.OrderType.MARKET);
+    @PlatformMutation("Close a position")
+    @RestPath("/close")
+    public OrderResult close(CloseRequest request) {
+        return orderExecutionService.submit(request.instrument(), OrderSide.SELL, request.quantity(), OrderType.MARKET);
     }
 
     public record CloseRequest(String instrument, java.math.BigDecimal quantity) {}

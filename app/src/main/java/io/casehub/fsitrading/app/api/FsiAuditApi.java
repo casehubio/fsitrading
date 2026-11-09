@@ -1,6 +1,9 @@
 package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.AuditResource;
+import io.casehub.fsitrading.app.resource.AuditResource.AuditEntryDto;
+
+import java.util.List;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
 import io.casehub.platform.api.mcp.PlatformQuery;
@@ -18,7 +21,7 @@ public class FsiAuditApi {
 
     @PlatformQuery("Get audit trail for an order")
     @RestPath("/orders/{orderId}")
-    public Object getOrderAuditTrail(@PathParam UUID orderId) {
+    public List<AuditEntryDto> getOrderAuditTrail(@PathParam UUID orderId) {
         return resource.getOrderAuditTrail(orderId);
     }
 }

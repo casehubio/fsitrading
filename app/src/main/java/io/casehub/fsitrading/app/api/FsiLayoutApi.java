@@ -17,13 +17,14 @@ public class FsiLayoutApi {
 
     @PlatformQuery("Get layout by key")
     @RestPath("/{key}")
-    public Object getLayout(@PathParam String key) {
-        return resource.get(key).getEntity();
+    public String getLayout(@PathParam String key) {
+        return (String) resource.get(key).getEntity();
     }
 
     @PlatformMutation("Save layout by key")
     @RestPath("/{key}")
-    public Object putLayout(@PathParam String key, String body) {
-        return resource.put(key, body).getEntity();
+    public String putLayout(@PathParam String key, String body) {
+        resource.put(key, body);
+        return key;
     }
 }
