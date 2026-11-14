@@ -1,16 +1,19 @@
 package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.OrderResource;
+import io.casehub.fsitrading.app.service.OrderSemaphoreService.SemaphoreTicket;
 import io.casehub.fsitrading.app.view.OrderView;
 import io.casehub.fsitrading.app.view.ReconcileResultView;
 import io.casehub.fsitrading.app.view.ReleaseResultView;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
+import io.casehub.platform.api.mcp.PlatformMutation;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @McpDomain(value = "fsi/orders", basePath = "/api/fsi/orders")
@@ -37,7 +40,7 @@ public class FsiOrderApi {
     @PlatformMutation("Halt order execution")
     @RestPath("/halt")
     public SemaphoreTicket halt(HaltRequest request) {
-        return semaphoreService.halt(request.scope(), request.playbookInstanceId());
+        return semaphoreService.halt(request.reason(), request.scope(), request.instrument(), request.playbookInstanceId());
     }
 
     @PlatformMutation("Release an order halt")

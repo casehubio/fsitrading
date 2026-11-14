@@ -1,17 +1,24 @@
 package io.casehub.fsitrading.app.api;
 
+import io.casehub.agency.perception.narrative.DecisionNarrative;
 import io.casehub.fsitrading.app.incident.IncidentResource;
+import io.casehub.fsitrading.app.incident.WorkItemResource.ResolveRequest;
 import io.casehub.fsitrading.app.incident.WorkItemResource;
 import io.casehub.fsitrading.app.narrative.NarrativeResource;
 import io.casehub.fsitrading.app.postmortem.PostMortemResource;
+import io.casehub.fsitrading.model.IncidentRecord;
+import io.casehub.fsitrading.model.IncidentSummary;
+import io.casehub.fsitrading.model.IncidentTimelineRecord;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
 import io.casehub.platform.api.mcp.PlatformMutation;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
+import io.casehub.work.api.WorkItem;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @McpDomain(value = "fsi/incidents", basePath = "/api/fsi/incidents")

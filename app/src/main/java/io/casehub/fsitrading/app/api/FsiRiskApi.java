@@ -1,11 +1,15 @@
 package io.casehub.fsitrading.app.api;
 
+import io.casehub.fsitrading.app.service.RiskGateService.GateResult;
 import io.casehub.fsitrading.app.service.RiskGateService;
+import io.casehub.fsitrading.app.service.RiskThresholdService.ThresholdAdjustment;
 import io.casehub.fsitrading.app.service.RiskThresholdService;
 import io.casehub.fsitrading.model.OrderSide;
 import io.casehub.fsitrading.spi.RiskAssessmentEngine;
+import io.casehub.fsitrading.spi.RiskResult;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PlatformMutation;
+import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

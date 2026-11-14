@@ -2,14 +2,20 @@ package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.EvaluationResource;
 import io.casehub.fsitrading.app.resource.IncidentHistoryResource;
+import io.casehub.fsitrading.app.resource.KpiResource.HeatmapCell;
+import io.casehub.fsitrading.app.resource.KpiResource.KpiSummary;
 import io.casehub.fsitrading.app.resource.KpiResource;
+import io.casehub.fsitrading.app.resource.PrecedentRecord;
 import io.casehub.fsitrading.app.resource.SimilarIncidentResource;
+import io.casehub.neocortex.memory.cbr.CbrScanResult;
 import io.casehub.platform.api.mcp.McpDomain;
+import io.casehub.platform.api.mcp.PathParam;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @McpDomain(value = "fsi/kpis", basePath = "/api/fsi/kpis")

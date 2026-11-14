@@ -2,8 +2,8 @@ package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.PreferencesResource;
 import io.casehub.fsitrading.app.resource.RoutingDecisionResource;
-import io.casehub.fsitrading.app.resource.TrustScoreResource;
 import io.casehub.fsitrading.app.resource.TrustScoreResource.StrategyTrustView;
+import io.casehub.fsitrading.app.resource.TrustScoreResource;
 import io.casehub.fsitrading.app.view.RoutingDecisionView;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PlatformMutation;
@@ -12,6 +12,7 @@ import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.Map;
 
 @McpDomain(value = "fsi/trust", basePath = "/api/fsi/trust")

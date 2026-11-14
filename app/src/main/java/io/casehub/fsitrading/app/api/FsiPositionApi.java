@@ -2,13 +2,18 @@ package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.resource.PositionResource;
 import io.casehub.fsitrading.app.view.PositionView;
+import io.casehub.fsitrading.model.OrderSide;
+import io.casehub.fsitrading.model.OrderType;
+import io.casehub.fsitrading.spi.OrderResult;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
+import io.casehub.platform.api.mcp.PlatformMutation;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @McpDomain(value = "fsi/positions", basePath = "/api/fsi/positions")
