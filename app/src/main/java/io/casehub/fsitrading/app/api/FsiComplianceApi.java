@@ -1,7 +1,11 @@
 package io.casehub.fsitrading.app.api;
 
 import io.casehub.fsitrading.app.compliance.ComplianceResource;
+import io.casehub.fsitrading.app.compliance.ComplianceStatusRecord;
+import io.casehub.fsitrading.app.deliberation.DeliberationRecord;
 import io.casehub.fsitrading.app.deliberation.DeliberationResource;
+import io.casehub.fsitrading.app.gdpr.FsiErasureResult;
+import io.casehub.fsitrading.app.gdpr.GdprErasureResource.ErasureRequest;
 import io.casehub.fsitrading.app.gdpr.GdprErasureResource;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PathParam;
@@ -11,6 +15,7 @@ import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 @McpDomain(value = "fsi/compliance", basePath = "/api/fsi/compliance")

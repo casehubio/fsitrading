@@ -10,6 +10,8 @@ import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
+
 @McpDomain(value = "fsi/strategies", basePath = "/api/fsi/strategies")
 @ApplicationScoped
 public class FsiStrategyApi {

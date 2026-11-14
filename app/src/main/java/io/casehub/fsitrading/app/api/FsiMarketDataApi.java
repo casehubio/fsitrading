@@ -1,17 +1,23 @@
 package io.casehub.fsitrading.app.api;
 
+import io.casehub.fsitrading.app.resource.MarketDataResource.ScenarioRequest;
 import io.casehub.fsitrading.app.resource.MarketDataResource;
 import io.casehub.fsitrading.app.view.MarketEventView;
 import io.casehub.fsitrading.app.view.OhlcvBarView;
 import io.casehub.fsitrading.app.view.ScenarioResultView;
 import io.casehub.fsitrading.app.view.SchedulerStateView;
 import io.casehub.fsitrading.app.view.TrendSummaryView;
+import io.casehub.fsitrading.model.PriceTick;
+import io.casehub.fsitrading.model.RegimeAssessment;
+import io.casehub.fsitrading.model.SessionNarrative;
 import io.casehub.platform.api.mcp.McpDomain;
 import io.casehub.platform.api.mcp.PlatformMutation;
 import io.casehub.platform.api.mcp.PlatformQuery;
 import io.casehub.platform.api.mcp.RestPath;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.util.List;
 
 @McpDomain(value = "fsi/market-data", basePath = "/api/fsi/market-data")
 @ApplicationScoped
