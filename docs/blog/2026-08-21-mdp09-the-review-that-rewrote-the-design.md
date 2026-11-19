@@ -6,6 +6,9 @@ series: casehub-fsitrading
 entry: mdp09
 tags: [design-review, protocols, platform-coherence, spi, overnight-ops]
 publish: false
+entry_type: note
+subtype: diary
+projects: [casehubio/fsitrading]
 ---
 
 # The Review That Rewrote the Design

@@ -5,6 +5,9 @@ type: diary
 status: draft
 project: casehub-fsitrading
 tags: [architecture, blocks, orchestration, design]
+entry_type: note
+subtype: diary
+projects: [casehubio/fsitrading]
 ---
 
 The Strategy Arena evaluates market signals through multiple strategy agents concurrently, aggregates their trade decisions via voting, and executes the consensus. The interesting design question was where to put the orchestration.

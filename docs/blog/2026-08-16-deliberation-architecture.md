@@ -4,6 +4,9 @@ date: 2026-08-16
 type: diary
 project: casehub-fsitrading
 tags: [blocks, conversation-protocol, convergence, debate-pattern, qhorus, commitments]
+entry_type: note
+subtype: diary
+projects: [casehubio/fsitrading]
 ---
 
 The blocks conversation protocol was designed for structured multi-agent dialogue — points raised, agreed, disputed, resolved. Epistemic common ground tracks what's established fact versus contested claim. Convergence detection decides when to stop talking and act.

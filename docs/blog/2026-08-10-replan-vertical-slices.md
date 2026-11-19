@@ -3,6 +3,9 @@ date: 2026-08-10
 title: "Replanning fsitrading: from layers to vertical slices"
 type: diary
 tags: [replan, architecture, platform, blocks, pages]
+entry_type: note
+subtype: diary
+projects: [casehubio/fsitrading]
 ---
 
 The CaseHub platform has changed substantially since fsitrading was first scaffolded in June. blocks now has a full agentic orchestration framework with eight composable patterns. blocks-ui ships 31 domain components. pages just landed IntelliJ-style dock workbenches with drag-and-drop tool windows and floating panels. The old chapter-per-layer plan was designed for a platform that no longer exists.

@@ -6,6 +6,9 @@ series: casehub-fsitrading
 entry: mdp10
 tags: [implementation, agents, casehub, overnight-ops, yaml-casehub]
 publish: false
+entry_type: note
+subtype: diary
+projects: [casehubio/fsitrading]
 ---
 
 # Thirteen Agents and a Split
