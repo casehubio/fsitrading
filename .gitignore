@@ -17,3 +17,5 @@ proj
 .worktrees/
 .claude/
 
+# IntelliJ IDE
+*.iml
